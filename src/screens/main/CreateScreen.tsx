@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useTheme } from "@/core/theming/ThemeProvider";
 
-export const ProfileScreen = () => {
+export const CreateScreen = () => {
     const { t } = useTranslation();
     const { theme } = useTheme();
 
@@ -22,7 +22,7 @@ export const ProfileScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{t("navigation.profile")}</Text>
+            <Text style={styles.title}>{t("navigation.create")}</Text>
         </View>
     );
 };

@@ -1,58 +1,62 @@
 import { createStyles } from "@/core/theming/createStyledComponent";
 
-export const postCardStyles = createStyles<{
-    compactMode?: boolean;
-    variant?: "default" | "featured";
-}>((theme, props) => ({
+export const postCardStyles = createStyles<{}>((theme) => ({
     container: {
+        backgroundColor: theme.colors.surface.primary,
+        borderRadius: theme.borderRadius.lg,
         marginBottom: theme.spacing.md,
-        opacity: props.compactMode ? 0.8 : 1,
-        borderWidth: props.variant === "featured" ? 2 : 1,
-        borderColor: props.variant === "featured"
-            ? theme.colors.primary[500]
-            : theme.colors.border.primary,
+        padding: theme.spacing.md,
     },
     header: {
         flexDirection: "row",
         alignItems: "center",
         marginBottom: theme.spacing.sm,
     },
+    avatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginRight: theme.spacing.sm,
+    },
+    userInfo: {
+        flex: 1,
+    },
     username: {
-        fontSize: props.compactMode
-            ? theme.typography.fontSize.sm
-            : theme.typography.fontSize.md,
+        fontSize: theme.typography.fontSize.md,
         fontWeight: "600",
         color: theme.colors.text.primary,
-        marginRight: theme.spacing.sm,
     },
     timestamp: {
         fontSize: theme.typography.fontSize.sm,
-        color: theme.colors.text.tertiary,
+        color: theme.colors.text.secondary,
     },
     content: {
         fontSize: theme.typography.fontSize.md,
         color: theme.colors.text.primary,
-        lineHeight: theme.typography.lineHeight.normal *
+        lineHeight: theme.typography.lineHeight.relaxed *
             theme.typography.fontSize.md,
+        marginBottom: theme.spacing.md,
+    },
+    mediaContainer: {
+        borderRadius: theme.borderRadius.md,
+        overflow: "hidden",
         marginBottom: theme.spacing.md,
     },
     actions: {
         flexDirection: "row",
-        justifyContent: "space-around",
-        paddingTop: theme.spacing.sm,
-        borderTopWidth: 1,
-        borderTopColor: theme.colors.border.primary,
+        alignItems: "center",
+        gap: theme.spacing.lg,
     },
     actionButton: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: theme.spacing.xs,
-        paddingHorizontal: theme.spacing.sm,
-        borderRadius: theme.borderRadius.sm,
+        gap: theme.spacing.xs,
+    },
+    actionIcon: {
+        fontSize: 16,
     },
     actionText: {
         fontSize: theme.typography.fontSize.sm,
         color: theme.colors.text.secondary,
-        marginLeft: theme.spacing.xs,
     },
 }));

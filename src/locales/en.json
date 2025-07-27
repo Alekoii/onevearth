@@ -28,10 +28,10 @@
     },
     "navigation": {
         "home": "Home",
-        "profile": "Profile",
         "search": "Search",
+        "create": "Create",
         "notifications": "Notifications",
-        "messages": "Messages",
+        "profile": "Profile",
         "settings": "Settings"
     },
     "posts": {
