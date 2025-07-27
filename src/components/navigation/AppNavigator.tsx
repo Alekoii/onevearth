@@ -4,25 +4,12 @@ import { useTheme } from "@/core/theming/ThemeProvider";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useComponentStyles } from "@/core/theming/useComponentStyles";
 import { appNavigatorStyles } from "./AppNavigator.styles";
+import { Icon, IconName } from "@/components/ui/Icon";
 import { HomeScreen } from "@/screens/main/HomeScreen";
 import { SearchScreen } from "@/screens/main/SearchScreen";
 import { CreateScreen } from "@/screens/main/CreateScreen";
 import { NotificationsScreen } from "@/screens/main/NotificationsScreen";
 import { ProfileScreen } from "@/screens/main/ProfileScreen";
-import {
-    BellIcon,
-    HomeIcon,
-    MagnifyingGlassIcon,
-    PlusIcon,
-    UserIcon,
-} from "react-native-heroicons/outline";
-import {
-    BellIcon as BellIconSolid,
-    HomeIcon as HomeIconSolid,
-    MagnifyingGlassIcon as MagnifyingGlassIconSolid,
-    PlusIcon as PlusIconSolid,
-    UserIcon as UserIconSolid,
-} from "react-native-heroicons/solid";
 
 const Tab = createBottomTabNavigator();
 
@@ -38,11 +25,13 @@ export const AppNavigator = () => {
     const styles = useComponentStyles("AppNavigator", appNavigatorStyles);
 
     const createTabIcon =
-        (OutlineIcon: any, SolidIcon: any) =>
-        ({ focused, color, size }: TabIconProps) => {
-            const Icon = focused ? SolidIcon : OutlineIcon;
-            return <Icon color={color} size={size} />;
-        };
+        (iconName: IconName) => ({ focused, color, size }: TabIconProps) => (
+            <Icon
+                name={iconName}
+                color={focused ? theme.colors.primary[500] : color}
+                size={size}
+            />
+        );
 
     return (
         <NavigationContainer>
@@ -63,7 +52,7 @@ export const AppNavigator = () => {
                     component={HomeScreen}
                     options={{
                         title: t("navigation.home"),
-                        tabBarIcon: createTabIcon(HomeIcon, HomeIconSolid),
+                        tabBarIcon: createTabIcon("home"),
                     }}
                 />
                 <Tab.Screen
@@ -71,10 +60,7 @@ export const AppNavigator = () => {
                     component={SearchScreen}
                     options={{
                         title: t("navigation.search"),
-                        tabBarIcon: createTabIcon(
-                            MagnifyingGlassIcon,
-                            MagnifyingGlassIconSolid,
-                        ),
+                        tabBarIcon: createTabIcon("search"),
                     }}
                 />
                 <Tab.Screen
@@ -82,7 +68,7 @@ export const AppNavigator = () => {
                     component={CreateScreen}
                     options={{
                         title: t("navigation.create"),
-                        tabBarIcon: createTabIcon(PlusIcon, PlusIconSolid),
+                        tabBarIcon: createTabIcon("plus"),
                     }}
                 />
                 <Tab.Screen
@@ -90,7 +76,7 @@ export const AppNavigator = () => {
                     component={NotificationsScreen}
                     options={{
                         title: t("navigation.notifications"),
-                        tabBarIcon: createTabIcon(BellIcon, BellIconSolid),
+                        tabBarIcon: createTabIcon("bell"),
                     }}
                 />
                 <Tab.Screen
@@ -98,7 +84,7 @@ export const AppNavigator = () => {
                     component={ProfileScreen}
                     options={{
                         title: t("navigation.profile"),
-                        tabBarIcon: createTabIcon(UserIcon, UserIconSolid),
+                        tabBarIcon: createTabIcon("user"),
                     }}
                 />
             </Tab.Navigator>

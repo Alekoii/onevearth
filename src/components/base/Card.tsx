@@ -1,24 +1,24 @@
-import { StyleSheet, View, ViewStyle } from "react-native";
+import { View, ViewStyle } from "react-native";
 import { ReactNode } from "react";
-import { useTheme } from "@/core/theming/ThemeProvider";
+import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { cardStyles } from "./Card.styles";
 
 interface CardProps {
     children: ReactNode;
     style?: ViewStyle;
     padding?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+    variant?: "default" | "elevated" | "outlined";
 }
 
-export const Card = ({ children, style, padding = "md" }: CardProps) => {
-    const { theme } = useTheme();
-
-    const styles = StyleSheet.create({
-        card: {
-            backgroundColor: theme.colors.surface.primary,
-            borderRadius: theme.borderRadius.lg,
-            borderWidth: 1,
-            borderColor: theme.colors.border.primary,
-            padding: theme.spacing[padding],
-        },
+export const Card = ({
+    children,
+    style,
+    padding = "md",
+    variant = "default",
+}: CardProps) => {
+    const styles = useComponentStyles("Card", cardStyles, {
+        padding,
+        variant,
     });
 
     return (

@@ -1,6 +1,7 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
+import { ActivityIndicator, Pressable, Text } from "react-native";
 import { ReactNode } from "react";
-import { useTheme } from "@/core/theming/ThemeProvider";
+import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { buttonStyles } from "./Button.styles";
 
 interface ButtonProps {
     onPress: () => void;
@@ -19,43 +20,11 @@ export const Button = ({
     disabled = false,
     loading = false,
 }: ButtonProps) => {
-    const { theme } = useTheme();
-
-    const styles = StyleSheet.create({
-        button: {
-            borderRadius: theme.borderRadius.md,
-            alignItems: "center",
-            justifyContent: "center",
-            paddingHorizontal: theme.spacing[
-                size === "sm"
-                    ? "sm"
-                    : size === "lg"
-                    ? "lg"
-                    : "md"
-            ],
-            paddingVertical: theme.spacing[size === "sm" ? "xs" : "sm"],
-            backgroundColor: variant === "primary"
-                ? theme.colors.primary[500]
-                : variant === "secondary"
-                ? theme.colors.surface.secondary
-                : "transparent",
-            borderWidth: variant === "ghost" ? 1 : 0,
-            borderColor: theme.colors.border.primary,
-            opacity: disabled ? 0.6 : 1,
-        },
-        text: {
-            color: variant === "primary"
-                ? theme.colors.text.inverse
-                : theme.colors.text.primary,
-            fontSize: theme.typography.fontSize[
-                size === "sm"
-                    ? "sm"
-                    : size === "lg"
-                    ? "lg"
-                    : "md"
-            ],
-            fontWeight: "600",
-        },
+    const styles = useComponentStyles("Button", buttonStyles, {
+        variant,
+        size,
+        disabled,
+        loading,
     });
 
     return (
