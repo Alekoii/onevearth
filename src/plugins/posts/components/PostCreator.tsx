@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { TextInput, View } from "react-native";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { addPost } from "@/store/slices/postsSlice";
+import { useTheme } from "@/core/theming/ThemeProvider";
+import { usePosts } from "@/hooks/usePosts";
 import { Button } from "@/components/base/Button";
 import { Card } from "@/components/base/Card";
 import { useComponentStyles } from "@/core/theming/useComponentStyles";
@@ -16,31 +16,25 @@ export const PostCreator = ({ onSubmit }: PostCreatorProps) => {
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
-    const dispatch = useAppDispatch();
+    const { theme } = useTheme();
+    const { createPost } = usePosts();
 
     const styles = useComponentStyles("PostCreator", postCreatorStyles, {
         loading,
     });
+
+    const placeholderColor = theme.colors.text.tertiary;
 
     const handleSubmit = async () => {
         if (!content.trim()) return;
 
         setLoading(true);
         try {
-            const newPost = {
-                id: Date.now().toString(),
-                userId: "current-user",
+            await createPost({
                 content: content.trim(),
-                emotion: undefined,
-                media: [],
-                visibility: "public" as const,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                likeCount: 0,
-                commentCount: 0,
-            };
+                visibility: "public",
+            });
 
-            dispatch(addPost(newPost));
             onSubmit?.(content.trim());
             setContent("");
         } catch (error) {
@@ -55,6 +49,7 @@ export const PostCreator = ({ onSubmit }: PostCreatorProps) => {
             <TextInput
                 style={styles.input}
                 placeholder={t("posts.whatsOnYourMind")}
+                placeholderTextColor={placeholderColor}
                 value={content}
                 onChangeText={setContent}
                 multiline

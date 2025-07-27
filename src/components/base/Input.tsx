@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import { Text, TextInput, TextInputProps, View } from "react-native";
 import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { useTheme } from "@/core/theming/ThemeProvider";
 import { inputStyles } from "./Input.styles";
 
 interface InputProps extends Omit<TextInputProps, "style"> {
@@ -22,12 +23,16 @@ export const Input = forwardRef<TextInput, InputProps>(({
     placeholder,
     ...props
 }, ref) => {
+    const { theme } = useTheme();
     const styles = useComponentStyles("Input", inputStyles, {
         variant,
         size,
         disabled,
         hasError: !!error,
     });
+
+    const placeholderColor = styles.placeholder?.color ||
+        theme.colors.text.tertiary;
 
     return (
         <View style={styles.container}>
@@ -41,7 +46,7 @@ export const Input = forwardRef<TextInput, InputProps>(({
                 ref={ref}
                 style={styles.input}
                 placeholder={placeholder}
-                placeholderTextColor={styles.placeholder?.color}
+                placeholderTextColor={placeholderColor}
                 editable={!disabled}
                 accessibilityLabel={label}
                 accessibilityHint={error}

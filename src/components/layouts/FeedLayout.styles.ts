@@ -6,6 +6,7 @@ export const feedLayoutStyles = createStyles((theme) => ({
         backgroundColor: theme.colors.background.primary,
     },
     content: {
+        flex: 1,
         paddingHorizontal: theme.spacing.md,
         paddingTop: theme.spacing.md,
     },

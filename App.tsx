@@ -9,10 +9,12 @@ import { PluginProvider } from "@/core/plugins/PluginProvider";
 import { PluginLoader } from "@/core/plugins/PluginLoader";
 import { AppNavigator } from "@/components/navigation/AppNavigator";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useAuthInitializer } from "@/hooks/useAuthInitializer";
 import "@/i18n";
 
 const AppContent = () => {
   const { loading } = useConfig();
+  useAuthInitializer();
 
   if (loading) {
     return <LoadingScreen />;

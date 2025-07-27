@@ -1,20 +1,23 @@
 import { ReactNode } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { useComponentStyles } from "@/core/theming/useComponentStyles";
 import { feedLayoutStyles } from "./FeedLayout.styles";
 
 interface FeedLayoutProps {
     children: ReactNode;
+    scrollable?: boolean;
 }
 
-export const FeedLayout = ({ children }: FeedLayoutProps) => {
+export const FeedLayout = (
+    { children, scrollable = false }: FeedLayoutProps,
+) => {
     const styles = useComponentStyles("FeedLayout", feedLayoutStyles);
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.content}>
+            <View style={styles.content}>
                 {children}
-            </ScrollView>
+            </View>
         </View>
     );
 };

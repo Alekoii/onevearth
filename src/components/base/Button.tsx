@@ -1,6 +1,7 @@
 import { ActivityIndicator, Pressable, Text } from "react-native";
 import { ReactNode } from "react";
 import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { useTheme } from "@/core/theming/ThemeProvider";
 import { buttonStyles } from "./Button.styles";
 
 interface ButtonProps {
@@ -20,12 +21,15 @@ export const Button = ({
     disabled = false,
     loading = false,
 }: ButtonProps) => {
+    const { theme } = useTheme();
     const styles = useComponentStyles("Button", buttonStyles, {
         variant,
         size,
         disabled,
         loading,
     });
+
+    const textColor = styles.text?.color || theme.colors.text.primary;
 
     return (
         <Pressable
@@ -37,7 +41,7 @@ export const Button = ({
             disabled={disabled || loading}
         >
             {loading
-                ? <ActivityIndicator color={styles.text.color} />
+                ? <ActivityIndicator color={textColor} />
                 : <Text style={styles.text}>{children}</Text>}
         </Pressable>
     );

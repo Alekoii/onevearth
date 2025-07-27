@@ -1,28 +1,48 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useEffect } from "react";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { useComponentStyles } from "@/core/theming/useComponentStyles";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useTheme } from "@/core/theming/ThemeProvider";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
+import { ProfileHeader } from "@/components/profile/ProfileHeader";
+import { Button } from "@/components/base/Button";
+import { profileScreenStyles } from "./ProfileScreen.styles";
 
 export const ProfileScreen = () => {
     const { t } = useTranslation();
-    const { theme } = useTheme();
+    const { user } = useAuth();
+    const { profile, loading, loadProfile } = useProfile();
+    const styles = useComponentStyles("ProfileScreen", profileScreenStyles);
 
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: theme.colors.background.primary,
-        },
-        title: {
-            fontSize: theme.typography.fontSize["2xl"],
-            fontWeight: "bold",
-            color: theme.colors.text.primary,
-        },
-    });
+    useEffect(() => {
+        if (user?.id) {
+            loadProfile(user.id);
+        }
+    }, [user?.id]);
+
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" />
+                <Text style={styles.loadingText}>{t("common.loading")}</Text>
+            </View>
+        );
+    }
+
+    if (!profile) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>Profile not found</Text>
+                <Button onPress={() => user?.id && loadProfile(user.id)}>
+                    {t("common.retry")}
+                </Button>
+            </View>
+        );
+    }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>{t("navigation.profile")}</Text>
-        </View>
+        <ScrollView style={styles.container}>
+            <ProfileHeader profile={profile} />
+        </ScrollView>
     );
 };

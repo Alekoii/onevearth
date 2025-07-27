@@ -26,7 +26,11 @@ export const FeedHeader = () => {
         );
     };
 
-    const containerStyles = useComponentStyles("FeedHeader", feedHeaderStyles);
+    const containerStyles = useComponentStyles(
+        "FeedHeader",
+        feedHeaderStyles,
+        {},
+    );
 
     return (
         <View style={containerStyles.container}>

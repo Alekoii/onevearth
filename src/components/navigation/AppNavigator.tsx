@@ -5,6 +5,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useComponentStyles } from "@/core/theming/useComponentStyles";
 import { appNavigatorStyles } from "./AppNavigator.styles";
 import { Icon, IconName } from "@/components/ui/Icon";
+import { AuthGuard } from "./AuthGuard";
 import { HomeScreen } from "@/screens/main/HomeScreen";
 import { SearchScreen } from "@/screens/main/SearchScreen";
 import { CreateScreen } from "@/screens/main/CreateScreen";
@@ -35,59 +36,61 @@ export const AppNavigator = () => {
 
     return (
         <NavigationContainer>
-            <Tab.Navigator
-                screenOptions={{
-                    tabBarStyle: styles.tabBar,
-                    tabBarActiveTintColor: theme.colors.primary[500],
-                    tabBarInactiveTintColor: theme.colors.text.secondary,
-                    headerShown: false,
-                    tabBarLabelStyle: {
-                        fontSize: theme.typography.fontSize.xs,
-                        fontWeight: "500",
-                    },
-                }}
-            >
-                <Tab.Screen
-                    name="Home"
-                    component={HomeScreen}
-                    options={{
-                        title: t("navigation.home"),
-                        tabBarIcon: createTabIcon("home"),
+            <AuthGuard>
+                <Tab.Navigator
+                    screenOptions={{
+                        tabBarStyle: styles.tabBar,
+                        tabBarActiveTintColor: theme.colors.primary[500],
+                        tabBarInactiveTintColor: theme.colors.text.secondary,
+                        headerShown: false,
+                        tabBarLabelStyle: {
+                            fontSize: theme.typography.fontSize.xs,
+                            fontWeight: "500",
+                        },
                     }}
-                />
-                <Tab.Screen
-                    name="Search"
-                    component={SearchScreen}
-                    options={{
-                        title: t("navigation.search"),
-                        tabBarIcon: createTabIcon("search"),
-                    }}
-                />
-                <Tab.Screen
-                    name="Create"
-                    component={CreateScreen}
-                    options={{
-                        title: t("navigation.create"),
-                        tabBarIcon: createTabIcon("plus"),
-                    }}
-                />
-                <Tab.Screen
-                    name="Notifications"
-                    component={NotificationsScreen}
-                    options={{
-                        title: t("navigation.notifications"),
-                        tabBarIcon: createTabIcon("bell"),
-                    }}
-                />
-                <Tab.Screen
-                    name="Profile"
-                    component={ProfileScreen}
-                    options={{
-                        title: t("navigation.profile"),
-                        tabBarIcon: createTabIcon("user"),
-                    }}
-                />
-            </Tab.Navigator>
+                >
+                    <Tab.Screen
+                        name="Home"
+                        component={HomeScreen}
+                        options={{
+                            title: t("navigation.home"),
+                            tabBarIcon: createTabIcon("home"),
+                        }}
+                    />
+                    <Tab.Screen
+                        name="Search"
+                        component={SearchScreen}
+                        options={{
+                            title: t("navigation.search"),
+                            tabBarIcon: createTabIcon("search"),
+                        }}
+                    />
+                    <Tab.Screen
+                        name="Create"
+                        component={CreateScreen}
+                        options={{
+                            title: t("navigation.create"),
+                            tabBarIcon: createTabIcon("plus"),
+                        }}
+                    />
+                    <Tab.Screen
+                        name="Notifications"
+                        component={NotificationsScreen}
+                        options={{
+                            title: t("navigation.notifications"),
+                            tabBarIcon: createTabIcon("bell"),
+                        }}
+                    />
+                    <Tab.Screen
+                        name="Profile"
+                        component={ProfileScreen}
+                        options={{
+                            title: t("navigation.profile"),
+                            tabBarIcon: createTabIcon("user"),
+                        }}
+                    />
+                </Tab.Navigator>
+            </AuthGuard>
         </NavigationContainer>
     );
 };

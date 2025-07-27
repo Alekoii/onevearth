@@ -22,7 +22,9 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export const useTheme = () => {
     const context = useContext(ThemeContext);
-    if (!context) throw new Error("useTheme must be used within ThemeProvider");
+    if (!context) {
+        throw new Error("useTheme must be used within ThemeProvider");
+    }
     return context;
 };
 
@@ -32,13 +34,26 @@ const themes = {
 };
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-    const [themeName, setThemeName] = useState<ThemeName>("auto");
-    const [systemTheme, setSystemTheme] = useState<ColorSchemeName>(
-        Appearance.getColorScheme(),
-    );
+    const [themeName, setThemeName] = useState<ThemeName>("light");
+    const [systemTheme, setSystemTheme] = useState<ColorSchemeName>("light");
+    const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
-        loadThemePreference();
+        const initialize = async () => {
+            try {
+                const systemColorScheme = Appearance.getColorScheme();
+                setSystemTheme(systemColorScheme);
+
+                await loadThemePreference();
+                setIsInitialized(true);
+            } catch (error) {
+                console.warn("Theme initialization failed:", error);
+                setThemeName("light");
+                setIsInitialized(true);
+            }
+        };
+
+        initialize();
 
         const subscription = Appearance.addChangeListener(({ colorScheme }) => {
             setSystemTheme(colorScheme);
@@ -71,8 +86,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         if (themeName === "auto") {
             return systemTheme === "dark" ? themes.dark : themes.light;
         }
-        return themes[themeName];
+        return themes[themeName] || themes.light;
     };
+
+    if (!isInitialized) {
+        return null;
+    }
 
     const activeTheme = getActiveTheme();
 

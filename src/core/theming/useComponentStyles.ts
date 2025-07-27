@@ -3,7 +3,7 @@ import { styleRegistry } from "./StyleRegistry";
 
 export const useComponentStyles = <T = any>(
     componentName: string,
-    styleFunction: (theme: any, props: T) => any,
+    styleFunction: (theme: any, props?: T) => any,
     props?: T,
 ) => {
     const { theme } = useTheme();
