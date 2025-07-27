@@ -1,0 +1,80 @@
+{
+    "common": {
+        "loading": "Loading...",
+        "error": "Something went wrong",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "share": "Share",
+        "close": "Close",
+        "back": "Back",
+        "next": "Next",
+        "done": "Done",
+        "retry": "Retry"
+    },
+    "auth": {
+        "login": "Login",
+        "logout": "Logout",
+        "signup": "Sign Up",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "forgotPassword": "Forgot Password?",
+        "welcomeBack": "Welcome back!",
+        "createAccount": "Create your account",
+        "invalidCredentials": "Invalid email or password",
+        "passwordTooShort": "Password must be at least 8 characters"
+    },
+    "navigation": {
+        "home": "Home",
+        "profile": "Profile",
+        "search": "Search",
+        "notifications": "Notifications",
+        "messages": "Messages",
+        "settings": "Settings"
+    },
+    "posts": {
+        "posts": "Posts",
+        "createPost": "Create Post",
+        "whatsOnYourMind": "What's on your mind?",
+        "publish": "Publish",
+        "like": "Like",
+        "comment": "Comment",
+        "share": "Share",
+        "comments_one": "{{count}} comment",
+        "comments_other": "{{count}} comments",
+        "likes_one": "{{count}} like",
+        "likes_other": "{{count}} likes",
+        "sharePost": "Share post",
+        "reportPost": "Report post",
+        "deletePost": "Delete post",
+        "editPost": "Edit post"
+    },
+    "profile": {
+        "editProfile": "Edit Profile",
+        "followers": "Followers",
+        "following": "Following",
+        "posts": "Posts",
+        "bio": "Bio",
+        "location": "Location",
+        "website": "Website",
+        "joinedDate": "Joined {{date}}",
+        "follow": "Follow",
+        "unfollow": "Unfollow",
+        "block": "Block",
+        "unblock": "Unblock"
+    },
+    "settings": {
+        "title": "Settings",
+        "account": "Account",
+        "privacy": "Privacy",
+        "notifications": "Notifications",
+        "appearance": "Appearance",
+        "language": "Language",
+        "about": "About",
+        "help": "Help",
+        "termsOfService": "Terms of Service",
+        "privacyPolicy": "Privacy Policy"
+    }
+}

@@ -1,0 +1,98 @@
+import { Theme } from "@/core/theming/types";
+
+export const darkTheme: Theme = {
+    name: "dark",
+    dark: true,
+    colors: {
+        primary: {
+            50: "#1e3a8a",
+            100: "#1e40af",
+            200: "#1d4ed8",
+            300: "#2563eb",
+            400: "#3b82f6",
+            500: "#60a5fa",
+            600: "#93c5fd",
+            700: "#bfdbfe",
+            800: "#dbeafe",
+            900: "#eff6ff",
+        },
+        secondary: {
+            50: "#0f172a",
+            100: "#1e293b",
+            200: "#334155",
+            300: "#475569",
+            400: "#64748b",
+            500: "#94a3b8",
+            600: "#cbd5e1",
+            700: "#e2e8f0",
+            800: "#f1f5f9",
+            900: "#f8fafc",
+        },
+        background: {
+            primary: "#000000",
+            secondary: "#0f172a",
+            tertiary: "#1e293b",
+        },
+        surface: {
+            primary: "#0f172a",
+            secondary: "#1e293b",
+            tertiary: "#334155",
+        },
+        text: {
+            primary: "#f8fafc",
+            secondary: "#cbd5e1",
+            tertiary: "#94a3b8",
+            inverse: "#0f172a",
+        },
+        border: {
+            primary: "#334155",
+            secondary: "#475569",
+            focus: "#60a5fa",
+        },
+        status: {
+            success: "#10b981",
+            warning: "#f59e0b",
+            error: "#ef4444",
+            info: "#60a5fa",
+        },
+    },
+    typography: {
+        fontFamily: {
+            regular: "System",
+            medium: "System",
+            semibold: "System",
+            bold: "System",
+        },
+        fontSize: {
+            xs: 12,
+            sm: 14,
+            md: 16,
+            lg: 18,
+            xl: 20,
+            "2xl": 24,
+            "3xl": 30,
+        },
+        lineHeight: {
+            tight: 1.2,
+            normal: 1.5,
+            relaxed: 1.75,
+        },
+    },
+    spacing: {
+        xs: 4,
+        sm: 8,
+        md: 16,
+        lg: 24,
+        xl: 32,
+        "2xl": 48,
+        "3xl": 64,
+    },
+    borderRadius: {
+        none: 0,
+        sm: 4,
+        md: 8,
+        lg: 12,
+        xl: 16,
+        full: 9999,
+    },
+};

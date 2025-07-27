@@ -1,0 +1,52 @@
+{
+    "common": {
+        "loading": "Cargando...",
+        "error": "Algo salió mal",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "share": "Compartir",
+        "close": "Cerrar",
+        "back": "Atrás",
+        "next": "Siguiente",
+        "done": "Hecho",
+        "retry": "Reintentar"
+    },
+    "auth": {
+        "login": "Iniciar Sesión",
+        "logout": "Cerrar Sesión",
+        "signup": "Registrarse",
+        "email": "Correo",
+        "password": "Contraseña",
+        "confirmPassword": "Confirmar Contraseña",
+        "forgotPassword": "¿Olvidaste tu contraseña?",
+        "welcomeBack": "¡Bienvenido de nuevo!",
+        "createAccount": "Crea tu cuenta",
+        "invalidCredentials": "Correo o contraseña inválidos",
+        "passwordTooShort": "La contraseña debe tener al menos 8 caracteres"
+    },
+    "navigation": {
+        "home": "Inicio",
+        "profile": "Perfil",
+        "search": "Buscar",
+        "notifications": "Notificaciones",
+        "messages": "Mensajes",
+        "settings": "Configuración"
+    },
+    "posts": {
+        "createPost": "Crear Publicación",
+        "whatsOnYourMind": "¿Qué estás pensando?",
+        "publish": "Publicar",
+        "like": "Me gusta",
+        "comment": "Comentar",
+        "comments_one": "{{count}} comentario",
+        "comments_other": "{{count}} comentarios",
+        "likes_one": "{{count}} me gusta",
+        "likes_other": "{{count}} me gusta",
+        "sharePost": "Compartir publicación",
+        "reportPost": "Reportar publicación",
+        "deletePost": "Eliminar publicación",
+        "editPost": "Editar publicación"
+    }
+}
