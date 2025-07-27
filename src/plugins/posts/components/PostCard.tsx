@@ -1,68 +1,35 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@/core/theming/ThemeProvider";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { incrementComments, incrementLikes } from "@/store/slices/postsSlice";
 import { Card } from "@/components/base/Card";
 import { Post } from "@/types/posts";
+import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { postCardStyles } from "../styles/PostCard.styles";
 
 interface PostCardProps {
     post: Post;
     onComment?: () => void;
     onShare?: () => void;
+    compactMode?: boolean;
+    variant?: "default" | "featured";
 }
 
-export const PostCard = ({ post, onComment, onShare }: PostCardProps) => {
-    const { theme } = useTheme();
+export const PostCard = ({
+    post,
+    onComment,
+    onShare,
+    compactMode = false,
+    variant = "default",
+}: PostCardProps) => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch();
 
-    const styles = StyleSheet.create({
-        container: {
-            marginBottom: theme.spacing.md,
-        },
-        header: {
-            flexDirection: "row",
-            alignItems: "center",
-            marginBottom: theme.spacing.sm,
-        },
-        username: {
-            fontSize: theme.typography.fontSize.md,
-            fontWeight: "600",
-            color: theme.colors.text.primary,
-            marginRight: theme.spacing.sm,
-        },
-        timestamp: {
-            fontSize: theme.typography.fontSize.sm,
-            color: theme.colors.text.tertiary,
-        },
-        content: {
-            fontSize: theme.typography.fontSize.md,
-            color: theme.colors.text.primary,
-            lineHeight: theme.typography.lineHeight.normal *
-                theme.typography.fontSize.md,
-            marginBottom: theme.spacing.md,
-        },
-        actions: {
-            flexDirection: "row",
-            justifyContent: "space-around",
-            paddingTop: theme.spacing.sm,
-            borderTopWidth: 1,
-            borderTopColor: theme.colors.border.primary,
-        },
-        actionButton: {
-            flexDirection: "row",
-            alignItems: "center",
-            paddingVertical: theme.spacing.xs,
-            paddingHorizontal: theme.spacing.sm,
-            borderRadius: theme.borderRadius.sm,
-        },
-        actionText: {
-            fontSize: theme.typography.fontSize.sm,
-            color: theme.colors.text.secondary,
-            marginLeft: theme.spacing.xs,
-        },
-    });
+    const styles = useComponentStyles(
+        "PostCard",
+        postCardStyles,
+        { compactMode, variant },
+    );
 
     const formatTimestamp = (timestamp: string) => {
         const date = new Date(timestamp);
@@ -76,10 +43,7 @@ export const PostCard = ({ post, onComment, onShare }: PostCardProps) => {
         return date.toLocaleDateString();
     };
 
-    const handleLike = () => {
-        dispatch(incrementLikes(post.id));
-    };
-
+    const handleLike = () => dispatch(incrementLikes(post.id));
     const handleComment = () => {
         dispatch(incrementComments(post.id));
         onComment?.();
@@ -103,9 +67,7 @@ export const PostCard = ({ post, onComment, onShare }: PostCardProps) => {
                     style={styles.actionButton}
                     onPress={handleLike}
                 >
-                    <Text style={styles.actionText}>
-                        ❤️ {post.likeCount}
-                    </Text>
+                    <Text style={styles.actionText}>❤️ {post.likeCount}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -118,9 +80,7 @@ export const PostCard = ({ post, onComment, onShare }: PostCardProps) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.actionButton} onPress={onShare}>
-                    <Text style={styles.actionText}>
-                        📤 {t("posts.share")}
-                    </Text>
+                    <Text style={styles.actionText}>📤 {t("posts.share")}</Text>
                 </TouchableOpacity>
             </View>
         </Card>

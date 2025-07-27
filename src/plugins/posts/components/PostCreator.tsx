@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { StyleSheet, TextInput, View } from "react-native";
-import { useTheme } from "@/core/theming/ThemeProvider";
+import { TextInput, View } from "react-native";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { addPost } from "@/store/slices/postsSlice";
 import { Button } from "@/components/base/Button";
 import { Card } from "@/components/base/Card";
+import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { postCreatorStyles } from "../styles/PostCreator.styles";
 
 interface PostCreatorProps {
     onSubmit?: (content: string) => void;
@@ -14,33 +15,18 @@ interface PostCreatorProps {
 export const PostCreator = ({ onSubmit }: PostCreatorProps) => {
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
-    const { theme } = useTheme();
     const { t } = useTranslation();
     const dispatch = useAppDispatch();
 
-    const styles = StyleSheet.create({
-        container: {
-            marginBottom: theme.spacing.md,
-        },
-        input: {
-            minHeight: 100,
-            fontSize: theme.typography.fontSize.md,
-            color: theme.colors.text.primary,
-            textAlignVertical: "top",
-            marginBottom: theme.spacing.md,
-        },
-        buttonContainer: {
-            alignItems: "flex-end",
-        },
+    const styles = useComponentStyles("PostCreator", postCreatorStyles, {
+        loading,
     });
 
     const handleSubmit = async () => {
         if (!content.trim()) return;
 
         setLoading(true);
-
         try {
-            // Create mock post for now
             const newPost = {
                 id: Date.now().toString(),
                 userId: "current-user",
@@ -69,7 +55,6 @@ export const PostCreator = ({ onSubmit }: PostCreatorProps) => {
             <TextInput
                 style={styles.input}
                 placeholder={t("posts.whatsOnYourMind")}
-                placeholderTextColor={theme.colors.text.tertiary}
                 value={content}
                 onChangeText={setContent}
                 multiline
