@@ -174,6 +174,12 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
     // Input component
     Input: {
         base: {
+            marginBottom: theme.spacing.sm,
+        },
+        container: { 
+            marginBottom: theme.spacing.sm,
+        },
+        input: {
             borderRadius: theme.borderRadius.md,
             borderWidth: 1,
             borderColor: theme.colors.border.primary,
@@ -183,14 +189,19 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             fontSize: theme.typography.fontSize.md,
             color: theme.colors.text.primary,
             fontFamily: theme.typography.fontFamily.primary,
+            minHeight: 44,
+            textAlignVertical: "center",
         },
-        container: { marginBottom: theme.spacing.sm },
         label: {
             fontSize: theme.typography.fontSize.sm,
             fontWeight: theme.typography.fontWeight.medium,
             color: theme.colors.text.primary,
             marginBottom: theme.spacing.xs,
             fontFamily: theme.typography.fontFamily.primary,
+        },
+        required: {
+            color: theme.colors.error[500],
+            marginLeft: 2,
         },
         error: {
             fontSize: theme.typography.fontSize.xs,
@@ -204,16 +215,26 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             marginTop: theme.spacing.xs,
             fontFamily: theme.typography.fontFamily.primary,
         },
+        placeholder: {
+            color: theme.colors.text.placeholder,
+        },
         states: {
-            focused: { borderColor: theme.colors.border.focus, borderWidth: 2 },
-            error: { borderColor: theme.colors.error[500] },
+            focused: { 
+                borderColor: theme.colors.border.focus, 
+                borderWidth: 2,
+            },
+            error: { 
+                borderColor: theme.colors.error[500],
+            },
             disabled: {
                 backgroundColor: theme.colors.surface.secondary,
                 opacity: 0.6,
             },
         },
         variants: {
-            outline: { backgroundColor: "transparent" },
+            outline: { 
+                backgroundColor: "transparent",
+            },
             filled: {
                 backgroundColor: theme.colors.surface.secondary,
                 borderWidth: 0,
