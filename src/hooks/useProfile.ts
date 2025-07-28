@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { setError, setLoading, setProfile } from "@/store/slices/usersSlice";
-import { ProfileService } from "@/services/ProfileService";
+import { supabase } from "@/core/api/SupabaseClient";
 
 export const useProfile = (userId?: string) => {
     const dispatch = useAppDispatch();
@@ -13,7 +13,13 @@ export const useProfile = (userId?: string) => {
     const loadProfile = async (id: string) => {
         dispatch(setLoading(true));
         try {
-            const profileData = await ProfileService.getProfile(id);
+            const { data: profileData, error } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", id)
+                .single();
+
+            if (error) throw error;
             dispatch(setProfile(profileData));
         } catch (err) {
             const error = err as Error;
@@ -27,10 +33,14 @@ export const useProfile = (userId?: string) => {
         if (!targetUserId) return;
 
         try {
-            const updated = await ProfileService.updateProfile(
-                targetUserId,
-                updates,
-            );
+            const { data: updated, error } = await supabase
+                .from("profiles")
+                .update(updates)
+                .eq("id", targetUserId)
+                .select()
+                .single();
+
+            if (error) throw error;
             dispatch(setProfile(updated));
         } catch (err) {
             const error = err as Error;

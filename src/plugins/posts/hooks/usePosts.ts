@@ -21,15 +21,21 @@ import { CreatePostData, Post } from "../types";
 
 export const usePosts = () => {
     const { pluginManager } = useEnhancedPlugins();
+
+    const posts = useSelector(selectPosts) || [];
+    const loading = useSelector(selectPostsLoading) || false;
+    const refreshing = useSelector(selectPostsRefreshing) || false;
+    const hasMore = useSelector(selectHasMorePosts) ?? true;
+    const error = useSelector(selectPostsError) || null;
+
     const store = pluginManager.pluginManager.getStore();
 
-    const posts = useSelector(selectPosts);
-    const loading = useSelector(selectPostsLoading);
-    const refreshing = useSelector(selectPostsRefreshing);
-    const hasMore = useSelector(selectHasMorePosts);
-    const error = useSelector(selectPostsError);
-
     const loadPosts = useCallback(async (refresh = false) => {
+        if (!store) {
+            console.warn("Store not available for posts loading");
+            return;
+        }
+
         try {
             store.dispatch(refresh ? setRefreshing(true) : setLoading(true));
 
@@ -51,6 +57,10 @@ export const usePosts = () => {
 
     const createPost = useCallback(
         async (postData: CreatePostData): Promise<Post> => {
+            if (!store) {
+                throw new Error("Store not available for post creation");
+            }
+
             const newPost = await PostService.createPost(postData);
             store.dispatch(addPost(newPost));
             return newPost;

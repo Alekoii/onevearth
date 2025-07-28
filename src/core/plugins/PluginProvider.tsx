@@ -6,7 +6,7 @@ import {
     useMemo,
     useState,
 } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useStore } from "react-redux";
 import { RootState } from "@/store";
 import {
     EnhancedPlugin,
@@ -86,22 +86,33 @@ export const EnhancedPluginProvider = (
         Map<string, LegacyExtensionRegistration[]>
     >(new Map());
 
-    const store = useSelector((state: RootState) => state);
+    const store = useStore();
     const config = useSelector((state: RootState) => state.config?.config);
 
     useEffect(() => {
         if (store) {
-            pluginManager.setStore(store as any);
+            pluginManager.setStore(store);
+            console.log("PluginManager store set");
         }
     }, [store, pluginManager]);
 
     useEffect(() => {
         if (config) {
             pluginManager.setConfig(config);
+            console.log("PluginManager config set");
         }
     }, [config, pluginManager]);
 
     const loadPlugin = async (plugin: EnhancedPlugin) => {
+        // Ensure store is set on pluginManager before loading
+        if (store) {
+            pluginManager.setStore(store);
+        }
+
+        if (config) {
+            pluginManager.setConfig(config);
+        }
+
         try {
             await pluginManager.loadPlugin(plugin);
             setPlugins(pluginManager.getLoadedPlugins());

@@ -1,6 +1,5 @@
 import { supabase } from "@/core/api/SupabaseClient";
 import { User } from "@supabase/supabase-js";
-import { ProfileService } from "./ProfileService";
 
 export class AuthService {
     static async signUp(email: string, password: string, username: string) {
@@ -44,11 +43,19 @@ export class AuthService {
             .single();
 
         if (error && error.code === "PGRST116") {
-            return await ProfileService.createProfile({
-                id: user.id,
-                username,
-                fullName: user.user_metadata?.full_name,
-            });
+            // Profile doesn't exist, create it
+            const { data: newProfile, error: createError } = await supabase
+                .from("profiles")
+                .insert({
+                    id: user.id,
+                    username,
+                    full_name: user.user_metadata?.full_name,
+                })
+                .select()
+                .single();
+
+            if (createError) throw createError;
+            return newProfile;
         }
 
         if (error) throw error;

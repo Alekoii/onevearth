@@ -2,10 +2,18 @@ import { createSelector } from "@reduxjs/toolkit";
 import { PostsState } from "../types";
 
 interface RootState {
-    posts: PostsState;
+    posts?: PostsState;
 }
 
-const selectPostsState = (state: RootState) => state.posts;
+const selectPostsState = (state: RootState) =>
+    state.posts || {
+        items: [],
+        loading: false,
+        error: null,
+        hasMore: true,
+        page: 0,
+        refreshing: false,
+    };
 
 export const selectPosts = createSelector(
     [selectPostsState],
