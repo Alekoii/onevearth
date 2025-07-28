@@ -5,8 +5,7 @@ import { useTheme } from "@/core/theming/ThemeProvider";
 import { usePosts } from "@/hooks/usePosts";
 import { Button } from "@/components/base/Button";
 import { Card } from "@/components/base/Card";
-import { useComponentStyles } from "@/core/theming/useComponentStyles";
-import { postCreatorStyles } from "../styles/PostCreator.styles";
+import { useStyles } from "@/core/theming/useStyles";
 
 interface PostCreatorProps {
     onSubmit?: (content: string) => void;
@@ -18,12 +17,7 @@ export const PostCreator = ({ onSubmit }: PostCreatorProps) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
     const { createPost } = usePosts();
-
-    const styles = useComponentStyles("PostCreator", postCreatorStyles, {
-        loading,
-    });
-
-    const placeholderColor = theme.colors.text.tertiary;
+    const styles = useStyles("PostCreator", { loading });
 
     const handleSubmit = async () => {
         if (!content.trim()) return;
@@ -45,11 +39,11 @@ export const PostCreator = ({ onSubmit }: PostCreatorProps) => {
     };
 
     return (
-        <Card style={styles.container}>
+        <Card style={styles.base}>
             <TextInput
                 style={styles.input}
                 placeholder={t("posts.whatsOnYourMind")}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={theme.colors.text.tertiary}
                 value={content}
                 onChangeText={setContent}
                 multiline

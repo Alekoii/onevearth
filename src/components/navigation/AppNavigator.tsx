@@ -2,8 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "@/core/theming/ThemeProvider";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useComponentStyles } from "@/core/theming/useComponentStyles";
-import { appNavigatorStyles } from "./AppNavigator.styles";
+import { useStyles } from "@/core/theming/useStyles";
 import { Icon, IconName } from "@/components/ui/Icon";
 import { AuthGuard } from "./AuthGuard";
 import { HomeScreen } from "@/screens/main/HomeScreen";
@@ -23,7 +22,7 @@ interface TabIconProps {
 export const AppNavigator = () => {
     const { theme } = useTheme();
     const { t } = useTranslation();
-    const styles = useComponentStyles("AppNavigator", appNavigatorStyles);
+    const styles = useStyles("AppNavigator");
 
     const createTabIcon =
         (iconName: IconName) => ({ focused, color, size }: TabIconProps) => (

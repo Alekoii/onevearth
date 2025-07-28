@@ -1,19 +1,18 @@
 import { useEffect } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
-import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { Button } from "@/components/base/Button";
 import { Card } from "@/components/base/Card";
-import { profileScreenStyles } from "./ProfileScreen.styles";
 
 export const ProfileScreen = () => {
     const { t } = useTranslation();
     const { user, signOut } = useAuth();
     const { profile, loading, loadProfile } = useProfile();
-    const styles = useComponentStyles("ProfileScreen", profileScreenStyles);
+    const styles = useStyles("Screen");
 
     useEffect(() => {
         if (user?.id) {
@@ -23,17 +22,38 @@ export const ProfileScreen = () => {
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
+            <View
+                style={[styles.base, {
+                    justifyContent: "center",
+                    alignItems: "center",
+                }]}
+            >
                 <ActivityIndicator size="large" />
-                <Text style={styles.loadingText}>{t("common.loading")}</Text>
+                <Text style={{ marginTop: 16, color: "#6D6D6D" }}>
+                    {t("common.loading")}
+                </Text>
             </View>
         );
     }
 
     if (!profile) {
         return (
-            <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>Profile not found</Text>
+            <View
+                style={[styles.base, {
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: 24,
+                }]}
+            >
+                <Text
+                    style={{
+                        color: "#ef4444",
+                        textAlign: "center",
+                        marginBottom: 16,
+                    }}
+                >
+                    Profile not found
+                </Text>
                 <Button onPress={() => user?.id && loadProfile(user.id)}>
                     {t("common.retry")}
                 </Button>
@@ -42,15 +62,12 @@ export const ProfileScreen = () => {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.base}>
             <ProfileHeader profile={profile} />
 
             <View style={styles.content}>
-                <Card style={styles.settingsCard}>
-                    <Button
-                        onPress={signOut}
-                        variant="ghost"
-                    >
+                <Card>
+                    <Button onPress={signOut} variant="ghost">
                         {t("auth.logout")}
                     </Button>
                 </Card>

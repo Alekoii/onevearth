@@ -1,8 +1,6 @@
 import { ActivityIndicator, Pressable, Text } from "react-native";
 import { ReactNode } from "react";
-import { useComponentStyles } from "@/core/theming/useComponentStyles";
-import { useTheme } from "@/core/theming/ThemeProvider";
-import { buttonStyles } from "./Button.styles";
+import { useStyles } from "@/core/theming/useStyles";
 
 interface ButtonProps {
     onPress: () => void;
@@ -21,27 +19,19 @@ export const Button = ({
     disabled = false,
     loading = false,
 }: ButtonProps) => {
-    const { theme } = useTheme();
-    const styles = useComponentStyles("Button", buttonStyles, {
-        variant,
-        size,
-        disabled,
-        loading,
-    });
-
-    const textColor = styles.text?.color || theme.colors.text.primary;
+    const styles = useStyles("Button", { variant, size, disabled, loading });
 
     return (
         <Pressable
             style={({ pressed }) => [
-                styles.button,
+                styles.container,
                 { opacity: pressed ? 0.8 : (disabled ? 0.6 : 1) },
             ]}
             onPress={onPress}
             disabled={disabled || loading}
         >
             {loading
-                ? <ActivityIndicator color={textColor} />
+                ? <ActivityIndicator color={styles.text.color} />
                 : <Text style={styles.text}>{children}</Text>}
         </Pressable>
     );

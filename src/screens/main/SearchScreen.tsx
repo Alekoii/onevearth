@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { FlatList, View } from "react-native";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { useStyles } from "@/core/theming/useStyles";
 import { Input } from "@/components/base/Input";
 import { PostCard } from "@/plugins/posts/components/PostCard";
-import { searchScreenStyles } from "./SearchScreen.styles";
 
 export const SearchScreen = () => {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
-    const styles = useComponentStyles("SearchScreen", searchScreenStyles);
+    const styles = useStyles("Screen");
 
     const handleSearch = async (searchQuery: string) => {
         if (!searchQuery.trim()) {
@@ -32,8 +31,8 @@ export const SearchScreen = () => {
     const renderResult = ({ item }: { item: any }) => <PostCard post={item} />;
 
     return (
-        <View style={styles.container}>
-            <View style={styles.searchContainer}>
+        <View style={styles.base}>
+            <View style={styles.content}>
                 <Input
                     placeholder={t("navigation.search")}
                     value={query}
@@ -41,7 +40,6 @@ export const SearchScreen = () => {
                         setQuery(text);
                         handleSearch(text);
                     }}
-                    variant="ghost"
                 />
             </View>
 

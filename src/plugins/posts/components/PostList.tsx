@@ -1,11 +1,10 @@
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { useTheme } from "@/core/theming/ThemeProvider";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { useStyles } from "@/core/theming/useStyles";
 import { usePosts } from "@/hooks/usePosts";
 import { Card } from "@/components/base/Card";
 import { PostCard } from "./PostCard";
-import { postListStyles } from "../styles/PostList.styles";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 export const PostList = () => {
@@ -13,7 +12,7 @@ export const PostList = () => {
         const { theme } = useTheme();
         const { t } = useTranslation();
         const { posts, loading, refreshPosts, loadMorePosts } = usePosts();
-        const styles = useComponentStyles("PostList", postListStyles);
+        const styles = useStyles("PostList");
 
         const renderPost = ({ item }: { item: any }) => (
             <PostCard post={item} />

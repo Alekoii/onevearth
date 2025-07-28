@@ -1,7 +1,5 @@
-// src/components/profile/ProfileHeader.tsx
 import { Text, View } from "react-native";
-import { useComponentStyles } from "@/core/theming/useComponentStyles";
-import { profileHeaderStyles } from "./ProfileHeader.styles";
+import { useStyles } from "@/core/theming/useStyles";
 
 interface ProfileHeaderProps {
     profile: {
@@ -14,7 +12,7 @@ interface ProfileHeaderProps {
 }
 
 export const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
-    const styles = useComponentStyles("ProfileHeader", profileHeaderStyles);
+    const styles = useStyles("ProfileHeader");
 
     return (
         <View style={styles.container}>

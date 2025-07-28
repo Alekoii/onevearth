@@ -1,10 +1,9 @@
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { useStyles } from "@/core/theming/useStyles";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import { Card } from "@/components/base/Card";
 import { Icon } from "@/components/ui/Icon";
-import { notificationsScreenStyles } from "./NotificationsScreen.styles";
 
 interface NotificationItemProps {
     notification: {
@@ -17,13 +16,7 @@ interface NotificationItemProps {
 }
 
 const NotificationItem = ({ notification }: NotificationItemProps) => {
-    const styles = useComponentStyles(
-        "NotificationItem",
-        notificationsScreenStyles,
-        {
-            read: notification.read,
-        },
-    );
+    const styles = useStyles("NotificationItem", { read: notification.read });
 
     const getNotificationIcon = (type: string) => {
         switch (type) {
@@ -57,17 +50,24 @@ const NotificationItem = ({ notification }: NotificationItemProps) => {
 
     return (
         <TouchableOpacity>
-            <Card style={styles.notificationCard}>
-                <View style={styles.notificationContent}>
+            <Card style={styles.container}>
+                <View style={styles.content}>
                     <View style={styles.iconContainer}>
                         <Icon
                             name={getNotificationIcon(notification.type)}
-                            color={styles.icon.color}
+                            color="#DB00FF"
                             size={20}
                         />
                     </View>
                     <View style={styles.textContainer}>
-                        <Text style={styles.notificationText}>
+                        <Text
+                            style={[
+                                styles.text,
+                                notification.read
+                                    ? styles.states.read
+                                    : styles.states.unread,
+                            ]}
+                        >
                             {getNotificationText(notification.type)}
                         </Text>
                         <Text style={styles.timestamp}>
@@ -87,23 +87,22 @@ export const NotificationsScreen = () => {
     const { items: notifications } = useAppSelector((state) =>
         state.notifications
     );
-    const styles = useComponentStyles(
-        "NotificationsScreen",
-        notificationsScreenStyles,
-    );
+    const styles = useStyles("Screen");
 
     const renderNotification = ({ item }: { item: any }) => (
         <NotificationItem notification={item} />
     );
 
     const ListEmptyComponent = () => (
-        <Card style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No notifications yet</Text>
+        <Card style={{ padding: 24, alignItems: "center" }}>
+            <Text style={{ textAlign: "center", color: "#6D6D6D" }}>
+                No notifications yet
+            </Text>
         </Card>
     );
 
     return (
-        <View style={styles.container}>
+        <View style={styles.base}>
             <FlatList
                 data={notifications}
                 renderItem={renderNotification}

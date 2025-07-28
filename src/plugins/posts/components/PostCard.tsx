@@ -4,9 +4,8 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { incrementComments, incrementLikes } from "@/store/slices/postsSlice";
 import { Card } from "@/components/base/Card";
 import { Icon } from "@/components/ui/Icon";
-import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { useStyles } from "@/core/theming/useStyles";
 import { useTheme } from "@/core/theming/ThemeProvider";
-import { postCardStyles } from "../styles/PostCard.styles";
 
 interface PostCardProps {
     post?: {
@@ -36,11 +35,7 @@ export const PostCard = ({
     const { t } = useTranslation();
     const { theme } = useTheme();
     const dispatch = useAppDispatch();
-
-    const styles = useComponentStyles("PostCard", postCardStyles, {
-        compactMode,
-        variant,
-    });
+    const styles = useStyles("PostCard", { variant });
 
     if (!post) {
         return null;

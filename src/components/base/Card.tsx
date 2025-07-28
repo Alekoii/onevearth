@@ -1,28 +1,24 @@
 import { View, ViewStyle } from "react-native";
 import { ReactNode } from "react";
-import { useComponentStyles } from "@/core/theming/useComponentStyles";
-import { cardStyles } from "./Card.styles";
+import { useStyles } from "@/core/theming/useStyles";
 
 interface CardProps {
     children: ReactNode;
     style?: ViewStyle;
-    padding?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
     variant?: "default" | "elevated" | "outlined";
+    padding?: "sm" | "md" | "lg";
 }
 
 export const Card = ({
     children,
     style,
-    padding = "md",
     variant = "default",
+    padding = "md",
 }: CardProps) => {
-    const styles = useComponentStyles("Card", cardStyles, {
-        padding,
-        variant,
-    });
+    const styles = useStyles("Card", { variant, padding });
 
     return (
-        <View style={[styles.card, style]}>
+        <View style={[styles.container, style]}>
             {children}
         </View>
     );
