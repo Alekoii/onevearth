@@ -89,8 +89,8 @@ export const defaultAppConfig: AppConfig = {
             darkModeDefault: false,
             customColors: {
                 // Add custom brand colors here
-                primary: '#DB00FF',
-                secondary: '#6D6D6D'
+                primary: "#DB00FF",
+                secondary: "#6D6D6D",
             },
         },
 
@@ -105,9 +105,9 @@ export const defaultAppConfig: AppConfig = {
     plugins: {
         enabled: [
             "posts",
-            "comments",
-            "reactions",
-            "emotions",
+            // "comments",
+            // "reactions",
+            // "emotions",
             // 'groups',     // Uncomment to enable
             // 'premium',    // Uncomment to enable
             // 'analytics'   // Uncomment to enable
@@ -123,8 +123,14 @@ export const defaultAppConfig: AppConfig = {
                 showReactionCounts: true,
             },
             posts: {
+                maxLength: 280,
+                allowMedia: true,
+                allowEditing: true,
+                editTimeLimit: 15,
+                requireModeration: false,
                 showTimestamps: true,
                 allowHashtags: true,
+                enableRealTimeUpdates: false,
             },
         },
     },

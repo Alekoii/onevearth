@@ -220,70 +220,190 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
     // Post Card component
     PostCard: {
         base: { ...createBaseStyle(theme), ...theme.shadows.sm },
+        ...createBaseStyle(theme),
+        ...theme.shadows.sm,
+        marginBottom: theme.spacing.sm,
         header: {
             flexDirection: "row",
             alignItems: "center",
             marginBottom: theme.spacing.sm,
         },
-        content: { marginBottom: theme.spacing.md },
-        actions: {
+        userInfo: {
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-between",
+            flex: 1,
+        },
+        avatar: {
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            marginRight: theme.spacing.sm,
+        },
+        avatarPlaceholder: {
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: theme.colors.surface.secondary,
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: theme.spacing.sm,
+        },
+        userDetails: {
+            flex: 1,
         },
         username: {
             fontSize: theme.typography.fontSize.md,
             fontWeight: theme.typography.fontWeight.semibold,
             color: theme.colors.text.primary,
-            fontFamily: theme.typography.fontFamily.primary,
         },
         timestamp: {
             fontSize: theme.typography.fontSize.sm,
             color: theme.colors.text.secondary,
-            fontFamily: theme.typography.fontFamily.primary,
+        },
+        content: {
+            marginBottom: theme.spacing.md,
         },
         contentText: {
             fontSize: theme.typography.fontSize.md,
             lineHeight: theme.typography.lineHeight.relaxed *
                 theme.typography.fontSize.md,
             color: theme.colors.text.primary,
-            fontFamily: theme.typography.fontFamily.primary,
         },
-        variants: {
-            compact: {
-                padding: theme.spacing.sm,
-                marginBottom: theme.spacing.sm,
-            },
-            featured: {
-                borderWidth: 2,
-                borderColor: theme.colors.primary[500],
-            },
+        mediaContainer: {
+            flexDirection: "row",
+            flexWrap: "wrap",
+            marginBottom: theme.spacing.md,
+            borderRadius: theme.borderRadius.md,
+            overflow: "hidden",
         },
-    },
-
-    // Post Creator component
-    PostCreator: {
-        base: createBaseStyle(theme),
-        input: {
-            minHeight: 80,
-            fontSize: theme.typography.fontSize.md,
-            color: theme.colors.text.primary,
-            fontFamily: theme.typography.fontFamily.primary,
-            padding: 0,
+        mediaImage: {
+            width: "50%",
+            aspectRatio: 1,
         },
-        toolbar: {
+        actions: {
             flexDirection: "row",
             alignItems: "center",
             paddingTop: theme.spacing.sm,
             borderTopWidth: 1,
             borderTopColor: theme.colors.border.primary,
-            marginTop: theme.spacing.sm,
         },
-        actions: {
+        defaultActions: {
+            flexDirection: "row",
+            alignItems: "center",
+            flex: 1,
+        },
+        actionButton: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginRight: theme.spacing.lg,
+        },
+        actionText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.secondary,
+            marginLeft: theme.spacing.xs,
+        },
+        variants: {
+            compact: {
+                padding: theme.spacing.sm,
+                marginBottom: theme.spacing.xs,
+            },
+        },
+    },
+
+    PostList: {
+        base: { flex: 1 },
+        emptyContainer: {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: theme.spacing.xl,
+        },
+        emptyText: {
+            fontSize: theme.typography.fontSize.md,
+            color: theme.colors.text.secondary,
+            textAlign: "center",
+        },
+        emptyList: {
+            flex: 1,
+            justifyContent: "center",
+        },
+        footerLoader: {
+            padding: theme.spacing.md,
+            alignItems: "center",
+        },
+        loadingText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.secondary,
+        },
+    },
+
+    // Post Creator component
+
+    PostCreator: {
+        base: createBaseStyle(theme),
+        ...createBaseStyle(theme),
+        inputContainer: {
+            marginBottom: theme.spacing.md,
+        },
+        input: {
+            minHeight: 100,
+            fontSize: theme.typography.fontSize.md,
+            color: theme.colors.text.primary,
+            padding: 0,
+            textAlignVertical: "top",
+        },
+        inputFooter: {
             flexDirection: "row",
             justifyContent: "flex-end",
-            gap: theme.spacing.sm,
-            marginTop: theme.spacing.sm,
+            marginTop: theme.spacing.xs,
+        },
+        charCount: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.secondary,
+        },
+        charCountWarning: {
+            color: theme.colors.warning[500],
+        },
+        charCountError: {
+            color: theme.colors.error[500],
+        },
+        toolbar: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingTop: theme.spacing.sm,
+            borderTopWidth: 1,
+            borderTopColor: theme.colors.border.primary,
+        },
+        toolbarLeft: {
+            flexDirection: "row",
+            alignItems: "center",
+            flex: 1,
+        },
+        defaultToolbar: {
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        toolbarButton: {
+            padding: theme.spacing.xs,
+            marginRight: theme.spacing.sm,
+        },
+        visibilityButton: {
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: theme.spacing.sm,
+            paddingVertical: theme.spacing.xs,
+            borderRadius: theme.borderRadius.md,
+            backgroundColor: theme.colors.surface.secondary,
+            marginLeft: theme.spacing.md,
+        },
+        visibilityText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.secondary,
+            marginLeft: theme.spacing.xs,
+        },
+        placeholder: {
+            color: theme.colors.text.placeholder,
         },
     },
 
