@@ -360,4 +360,9 @@ export class PluginManager {
         }
         return services;
     }
+
+    getStore(): Store {
+        if (!this.store) throw new Error("Store not available");
+        return this.store;
+    }
 }

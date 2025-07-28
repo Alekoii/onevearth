@@ -28,7 +28,7 @@ export const usePosts = () => {
     const hasMore = useSelector(selectHasMorePosts) ?? true;
     const error = useSelector(selectPostsError) || null;
 
-    const store = pluginManager.pluginManager.getStore();
+    const store = pluginManager.getStore();
 
     const loadPosts = useCallback(async (refresh = false) => {
         if (!store) {

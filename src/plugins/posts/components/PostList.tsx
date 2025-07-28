@@ -41,7 +41,7 @@ export const PostList = ({
     const refreshing = useSelector(selectPostsRefreshing);
     const hasMore = useSelector(selectHasMorePosts);
 
-    const store = pluginManager.pluginManager.getStore();
+    const store = pluginManager.getStore();
 
     const loadPosts = useCallback(async (refresh = false) => {
         try {

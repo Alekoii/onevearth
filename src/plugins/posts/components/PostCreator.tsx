@@ -35,7 +35,7 @@ export const PostCreator = ({
     );
 
     const user = useAppSelector((state) => state.auth.user);
-    const store = pluginManager.pluginManager.getStore();
+    const store = pluginManager.getStore();
 
     const handleSubmit = async () => {
         if (!content.trim() || !user) return;
