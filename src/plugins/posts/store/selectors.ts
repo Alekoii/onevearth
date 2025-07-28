@@ -5,15 +5,17 @@ interface RootState {
     posts?: PostsState;
 }
 
-const selectPostsState = (state: RootState) =>
-    state.posts || {
-        items: [],
-        loading: false,
-        error: null,
-        hasMore: true,
-        page: 0,
-        refreshing: false,
-    };
+// Create a stable default state to avoid creating new objects
+const defaultPostsState: PostsState = {
+    items: [],
+    loading: false,
+    error: null,
+    hasMore: true,
+    page: 0,
+    refreshing: false,
+};
+
+const selectPostsState = (state: RootState) => state.posts || defaultPostsState;
 
 export const selectPosts = createSelector(
     [selectPostsState],

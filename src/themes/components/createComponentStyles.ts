@@ -441,4 +441,125 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             justifyContent: "center",
         },
     },
+
+    AppNavigator: {
+        base: { flex: 1 },
+        tabBar: {
+            backgroundColor: theme.colors.surface.primary,
+            borderTopWidth: 1,
+            borderTopColor: theme.colors.border.primary,
+            paddingBottom: theme.spacing.sm,
+            paddingTop: theme.spacing.xs,
+            height: 60,
+        },
+        tabBarLabel: {
+            fontSize: theme.typography.fontSize.xs,
+            fontWeight: theme.typography.fontWeight.medium,
+            fontFamily: theme.typography.fontFamily.primary,
+        },
+        tabBarIcon: {
+            marginBottom: 2,
+        },
+        variants: {
+            floating: {
+                position: "absolute",
+                bottom: theme.spacing.md,
+                left: theme.spacing.md,
+                right: theme.spacing.md,
+                borderRadius: theme.borderRadius.xl,
+                ...theme.shadows.lg,
+            },
+        },
+    },
+
+    ProfileHeader: {
+        base: {
+            backgroundColor: theme.colors.surface.primary,
+            padding: theme.spacing.md,
+        },
+        container: {
+            padding: theme.spacing.md,
+        },
+        avatarSection: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: theme.spacing.md,
+        },
+        avatar: {
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            marginRight: theme.spacing.md,
+        },
+        avatarPlaceholder: {
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            backgroundColor: theme.colors.surface.secondary,
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: theme.spacing.md,
+        },
+        userInfo: {
+            flex: 1,
+        },
+        nameContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: theme.spacing.xs,
+        },
+        displayName: {
+            fontSize: theme.typography.fontSize.xl,
+            fontWeight: theme.typography.fontWeight.bold,
+            color: theme.colors.text.primary,
+            marginRight: theme.spacing.xs,
+        },
+        username: {
+            fontSize: theme.typography.fontSize.md,
+            color: theme.colors.text.secondary,
+        },
+        bio: {
+            fontSize: theme.typography.fontSize.md,
+            color: theme.colors.text.primary,
+            lineHeight: theme.typography.lineHeight.relaxed *
+                theme.typography.fontSize.md,
+            marginBottom: theme.spacing.md,
+        },
+        metadata: {
+            flexDirection: "row",
+            flexWrap: "wrap",
+            marginBottom: theme.spacing.md,
+        },
+        metadataItem: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginRight: theme.spacing.lg,
+            marginBottom: theme.spacing.xs,
+        },
+        metadataText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.secondary,
+            marginLeft: theme.spacing.xs,
+        },
+        stats: {
+            flexDirection: "row",
+            justifyContent: "space-around",
+            paddingTop: theme.spacing.md,
+            borderTopWidth: 1,
+            borderTopColor: theme.colors.border.primary,
+        },
+        statItem: {
+            alignItems: "center",
+        },
+        statNumber: {
+            fontSize: theme.typography.fontSize.lg,
+            fontWeight: theme.typography.fontWeight.bold,
+            color: theme.colors.text.primary,
+        },
+        statLabel: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.secondary,
+            marginTop: theme.spacing.xs,
+        },
+    },
 });

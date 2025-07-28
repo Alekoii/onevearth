@@ -47,6 +47,7 @@
         "sharePost": "Compartir publicación",
         "reportPost": "Reportar publicación",
         "deletePost": "Eliminar publicación",
-        "editPost": "Editar publicación"
+        "editPost": "Editar publicación",
+        "noPosts": "No hay publicaciones disponibles"
     }
 }

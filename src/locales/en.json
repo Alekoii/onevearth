@@ -49,7 +49,8 @@
         "sharePost": "Share post",
         "reportPost": "Report post",
         "deletePost": "Delete post",
-        "editPost": "Edit post"
+        "editPost": "Edit post",
+        "noPosts": "No posts available"
     },
     "profile": {
         "editProfile": "Edit Profile",
