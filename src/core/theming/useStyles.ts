@@ -1,9 +1,8 @@
-// src/core/theming/useStyles.ts - Fixed TypeScript issues
 import { useMemo } from "react";
 import { StyleSheet, TextStyle, ViewStyle } from "react-native";
 import { useTheme } from "./ThemeProvider";
 import { useConfig } from "@/core/config/ConfigProvider";
-import { Theme } from "./types"; // Import Theme type
+import { ComponentStyleDefinition, Theme } from "./types";
 
 interface UseStylesProps {
     variant?: string;
@@ -20,22 +19,38 @@ interface UseStylesProps {
     [key: string]: any;
 }
 
+// Better type definition for component styles result
+interface ComponentStylesResult {
+    container: ViewStyle | TextStyle;
+    [key: string]: ViewStyle | TextStyle | any;
+}
+
+// Type guard to check if component styles are valid
+function isValidComponentStyle(
+    styles: any,
+): styles is ComponentStyleDefinition {
+    return styles && typeof styles === "object" && styles.base;
+}
+
 export const useStyles = (
     componentName: string,
     props: UseStylesProps = {},
-) => {
+): ComponentStylesResult => {
     const { theme } = useTheme();
     const { config } = useConfig();
 
     return useMemo(() => {
-        const componentStyles = theme.components[componentName];
+        // Get component styles with proper type checking
+        const componentStyles = theme.components?.[componentName];
 
-        if (!componentStyles) {
-            console.warn(`No styles found for component: ${componentName}`);
-            return StyleSheet.create({ container: {} });
+        if (!isValidComponentStyle(componentStyles)) {
+            console.warn(
+                `No valid styles found for component: ${componentName}`,
+            );
+            return { container: {} as ViewStyle };
         }
 
-        // Start with base styles
+        // Start with base styles (now TypeScript knows componentStyles.base exists)
         let computedStyles: ViewStyle | TextStyle = { ...componentStyles.base };
 
         // Apply variant styles
@@ -56,7 +71,6 @@ export const useStyles = (
 
         // Apply state styles
         if (componentStyles.states) {
-            // Disabled state
             if (props.disabled && componentStyles.states.disabled) {
                 computedStyles = {
                     ...computedStyles,
@@ -64,7 +78,6 @@ export const useStyles = (
                 };
             }
 
-            // Error state
             if (props.error && componentStyles.states.error) {
                 computedStyles = {
                     ...computedStyles,
@@ -72,7 +85,6 @@ export const useStyles = (
                 };
             }
 
-            // Focused state
             if (props.focused && componentStyles.states.focused) {
                 computedStyles = {
                     ...computedStyles,
@@ -80,7 +92,6 @@ export const useStyles = (
                 };
             }
 
-            // Loading state
             if (props.loading && componentStyles.states.loading) {
                 computedStyles = {
                     ...computedStyles,
@@ -88,7 +99,6 @@ export const useStyles = (
                 };
             }
 
-            // Custom state
             if (props.state && componentStyles.states[props.state]) {
                 computedStyles = {
                     ...computedStyles,
@@ -97,7 +107,7 @@ export const useStyles = (
             }
         }
 
-        // Apply accessibility overrides based on config
+        // Apply accessibility overrides
         if (config.ui.accessibility) {
             computedStyles = applyAccessibilityStyles(
                 computedStyles,
@@ -105,34 +115,35 @@ export const useStyles = (
             );
         }
 
-        // Create style object with all component-specific styles
-        const styles: Record<string, any> = {
+        // Create the result object with proper typing
+        const result: ComponentStylesResult = {
             container: computedStyles,
         };
 
-        // Add other component-specific styles
-        Object.keys(componentStyles).forEach((key) => {
-            if (!["base", "variants", "sizes", "states"].includes(key)) {
-                styles[key] = componentStyles[key];
-            }
+        // Add other component-specific styles with safe access
+        const styleKeys = Object.keys(componentStyles).filter((key) =>
+            !["base", "variants", "sizes", "states"].includes(key)
+        );
+
+        styleKeys.forEach((key) => {
+            result[key] = componentStyles[key];
         });
 
         // Special handling for text styles in buttons
         if (componentName === "Button" && componentStyles.text) {
             const textVariant = props.variant || "primary";
-            styles.text = componentStyles.text[textVariant] ||
+            result.text = componentStyles.text[textVariant] ||
                 componentStyles.text.primary;
 
-            // Apply accessibility text styles
             if (config.ui.accessibility) {
-                styles.text = applyAccessibilityStyles(
-                    styles.text,
+                result.text = applyAccessibilityStyles(
+                    result.text,
                     config.ui.accessibility,
                 );
             }
         }
 
-        return StyleSheet.create(styles);
+        return result;
     }, [theme, componentName, props, config]);
 };
 
@@ -141,76 +152,46 @@ function applyAccessibilityStyles(
     styles: ViewStyle | TextStyle,
     accessibility: any,
 ): ViewStyle | TextStyle {
-    let modifiedStyles = { ...styles };
+    const modifiedStyles = { ...styles };
 
-    // Large text - Fixed: ensure we're working with a number
-    if (
-        accessibility.largeText && "fontSize" in modifiedStyles &&
-        typeof modifiedStyles.fontSize === "number"
-    ) {
-        modifiedStyles.fontSize = modifiedStyles.fontSize * 1.2;
+    // Large text scaling
+    if (accessibility.largeText && "fontSize" in modifiedStyles) {
+        const fontSize = modifiedStyles.fontSize;
+        if (typeof fontSize === "number") {
+            modifiedStyles.fontSize = fontSize * 1.2;
+        }
     }
 
-    // High contrast
+    // High contrast enhancements
     if (accessibility.highContrast) {
-        // Increase border widths for better visibility - Fixed: ensure we're working with a number
-        if (
-            "borderWidth" in modifiedStyles &&
-            typeof modifiedStyles.borderWidth === "number"
-        ) {
-            modifiedStyles.borderWidth = Math.max(
-                modifiedStyles.borderWidth,
-                2,
-            );
+        if ("borderWidth" in modifiedStyles) {
+            const borderWidth = modifiedStyles.borderWidth;
+            if (typeof borderWidth === "number") {
+                modifiedStyles.borderWidth = Math.max(borderWidth, 2);
+            }
         }
 
-        // Ensure minimum opacity for better contrast - Fixed: handle opacity properly
-        if (
-            "opacity" in modifiedStyles &&
-            typeof modifiedStyles.opacity === "number"
-        ) {
-            modifiedStyles.opacity = Math.max(modifiedStyles.opacity, 0.8);
+        if ("opacity" in modifiedStyles) {
+            const opacity = modifiedStyles.opacity;
+            if (typeof opacity === "number") {
+                modifiedStyles.opacity = Math.max(opacity, 0.8);
+            }
         }
     }
 
     // Reduced motion
     if (accessibility.reducedMotion) {
-        // Remove or reduce animation-related styles
         delete modifiedStyles.transform;
     }
 
     return modifiedStyles;
 }
 
-// Fixed: Hook for component-specific styles with better typing
-export const useComponentStyles = (
-    componentName: string,
-    props: UseStylesProps = {},
-) => {
-    const baseStyles = useStyles(componentName, props);
-
-    return useMemo(() => {
-        // Return organized styles object for easier component usage
-        const organizedStyles: Record<string, any> = {
-            container: baseStyles.container,
-        };
-
-        // Add other styles with proper typing
-        Object.keys(baseStyles).forEach((key) => {
-            if (key !== "container") {
-                organizedStyles[key] = baseStyles[key];
-            }
-        });
-
-        return organizedStyles;
-    }, [baseStyles]);
-};
-
-// Hook for text styles specifically with proper font weight handling
+// Hook for text styles with proper font weight handling
 export const useTextStyles = (
     variant: string = "body",
     props: UseStylesProps = {},
-) => {
+): TextStyle => {
     const { theme } = useTheme();
     const { config } = useConfig();
 
@@ -257,7 +238,6 @@ export const useTextStyles = (
                 textStyles.fontWeight = theme.typography.fontWeight.medium;
                 break;
             case "body":
-                // Default body styles (already set above)
                 break;
             case "bodySmall":
                 textStyles.fontSize = theme.typography.fontSize.sm;
@@ -289,7 +269,6 @@ export const useTextStyles = (
             }
         }
 
-        // Handle font weight props
         if (props.weight) {
             const weightKey = props
                 .weight as keyof typeof theme.typography.fontWeight;
@@ -380,7 +359,7 @@ export const useColors = () => {
     const { theme } = useTheme();
 
     return useMemo(() => ({
-        // Color getters
+        // Color getters with proper typing
         primary: (shade: keyof typeof theme.colors.primary = 500) =>
             theme.colors.primary[shade],
         secondary: (shade: keyof typeof theme.colors.secondary = 500) =>

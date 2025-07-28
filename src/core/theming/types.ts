@@ -96,66 +96,65 @@ export interface Theme {
             primary: string;
             secondary: string;
             monospace: string;
-            display: string; // For headings
+            display: string;
         };
 
         fontSize: {
-            xs: number; // 12
-            sm: number; // 14
-            md: number; // 16
-            lg: number; // 18
-            xl: number; // 20
-            "2xl": number; // 24
-            "3xl": number; // 30
-            "4xl": number; // 36
-            "5xl": number; // 48
+            xs: number;
+            sm: number;
+            md: number;
+            lg: number;
+            xl: number;
+            "2xl": number;
+            "3xl": number;
+            "4xl": number;
+            "5xl": number;
         };
 
-        // Fixed: Use React Native compatible font weights
         fontWeight: {
-            light: FontWeight; // '300'
-            normal: FontWeight; // 'normal' or '400'
-            medium: FontWeight; // '500'
-            semibold: FontWeight; // '600'
-            bold: FontWeight; // 'bold' or '700'
-            extrabold: FontWeight; // '800'
+            light: FontWeight;
+            normal: FontWeight;
+            medium: FontWeight;
+            semibold: FontWeight;
+            bold: FontWeight;
+            extrabold: FontWeight;
         };
 
         lineHeight: {
-            tight: number; // 1.2
-            normal: number; // 1.5
-            relaxed: number; // 1.75
-            loose: number; // 2.0
+            tight: number;
+            normal: number;
+            relaxed: number;
+            loose: number;
         };
 
         letterSpacing: {
-            tight: number; // -0.5
-            normal: number; // 0
-            wide: number; // 0.5
-            wider: number; // 1
+            tight: number;
+            normal: number;
+            wide: number;
+            wider: number;
         };
     };
 
     spacing: {
-        xs: number; // 4
-        sm: number; // 8
-        md: number; // 16
-        lg: number; // 24
-        xl: number; // 32
-        "2xl": number; // 48
-        "3xl": number; // 64
-        "4xl": number; // 96
+        xs: number;
+        sm: number;
+        md: number;
+        lg: number;
+        xl: number;
+        "2xl": number;
+        "3xl": number;
+        "4xl": number;
     };
 
     borderRadius: {
-        none: number; // 0
-        xs: number; // 2
-        sm: number; // 4
-        md: number; // 8
-        lg: number; // 12
-        xl: number; // 16
-        "2xl": number; // 24
-        full: number; // 9999
+        none: number;
+        xs: number;
+        sm: number;
+        md: number;
+        lg: number;
+        xl: number;
+        "2xl": number;
+        full: number;
     };
 
     shadows: {
@@ -169,11 +168,11 @@ export interface Theme {
 
     animations: {
         durations: {
-            instant: number; // 0
-            fast: number; // 150
-            normal: number; // 300
-            slow: number; // 500
-            slower: number; // 1000
+            instant: number;
+            fast: number;
+            normal: number;
+            slow: number;
+            slower: number;
         };
 
         easings: {
@@ -198,30 +197,23 @@ export interface ShadowStyle {
     };
     shadowOpacity: number;
     shadowRadius: number;
-    elevation: number; // Android
+    elevation: number;
 }
 
+// More flexible component styles interface
 export interface ComponentStyles {
-    // Layout components
-    Screen: ScreenStyles;
-    Card: CardStyles;
-    Header: HeaderStyles;
-
-    // Form components
-    Button: ButtonStyles;
-    Input: InputStyles;
-
-    // Content components
-    PostCard: PostCardStyles;
-    PostCreator: PostCreatorStyles;
-
-    // Navigation
-    TabBar: TabBarStyles;
-
-    // Additional components can be added here
-    [componentName: string]: any;
+    [componentName: string]: ComponentStyleDefinition;
 }
 
+export interface ComponentStyleDefinition {
+    base: ViewStyle | TextStyle; // Make base required
+    variants?: Record<string, ViewStyle | TextStyle>;
+    sizes?: Record<string, ViewStyle | TextStyle>;
+    states?: Record<string, ViewStyle | TextStyle>;
+    [key: string]: any; // Allow arbitrary additional styles
+}
+
+// Specific component style interfaces for better typing where needed
 export interface BaseComponentStyle {
     base: ViewStyle | TextStyle;
     variants?: Record<string, ViewStyle | TextStyle>;

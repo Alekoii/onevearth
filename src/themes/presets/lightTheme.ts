@@ -1,4 +1,3 @@
-// src/themes/presets/lightTheme.ts - Replace existing light.ts
 import { Theme } from "@/core/theming/types";
 import { createBaseTheme } from "../base/baseTheme";
 import { createComponentStyles } from "../components/createComponentStyles";
