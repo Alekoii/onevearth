@@ -2,14 +2,16 @@ import { ScrollView, Text, View } from "react-native";
 import { useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ExtensionPoint } from "@/core/plugins/ExtensionPoint";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const CreateScreen = () => {
     const styles = useStyles("Screen");
     const { t } = useTranslation();
+    const insets = useSafeAreaInsets();
 
     return (
         <ScrollView style={styles.base}>
-            <View style={styles.content}>
+            <View style={[styles.base, { paddingTop: insets.top }]}>
                 <ExtensionPoint
                     name="create.content"
                     fallback={() => (

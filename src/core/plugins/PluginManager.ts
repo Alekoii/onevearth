@@ -1,6 +1,8 @@
 import { Middleware, Reducer, Store } from "@reduxjs/toolkit";
 import { ComponentType } from "react";
 import { EventEmitter } from "./EventEmitter";
+import { pluginReduxManager } from "./PluginReduxIntegration";
+import { serviceRegistry } from "./ServiceRegistry";
 
 export interface EnhancedPlugin {
     id: string;
@@ -90,13 +92,13 @@ interface PluginEntry {
 export class PluginManager {
     private plugins = new Map<string, PluginEntry>();
     private extensions = new Map<string, ExtensionRegistration[]>();
-    private services = new Map<string, ServiceRegistration>();
     private eventEmitter = new EventEmitter();
     private store: Store | null = null;
     private config: any = {};
 
     setStore(store: Store) {
         this.store = store;
+        pluginReduxManager.setStore(store);
     }
 
     setConfig(config: any) {
@@ -232,29 +234,30 @@ export class PluginManager {
 
             registerReducer: (name, reducer) => {
                 if (!this.store) throw new Error("Store not available");
+
+                pluginReduxManager.registerReducer(name, reducer, pluginId);
                 entry.registrations.reducers.add(name);
             },
 
             registerMiddleware: (middleware) => {
                 if (!this.store) throw new Error("Store not available");
+
+                pluginReduxManager.registerMiddleware(middleware, pluginId);
             },
 
             registerSelector: (name, selector) => {
+                // Store selectors for potential future use
             },
 
             registerService: (name, service) => {
-                const registration: ServiceRegistration = {
-                    id: name,
-                    pluginId,
-                    service,
-                };
-                this.services.set(name, registration);
+                serviceRegistry.register(name, service, pluginId, {
+                    singleton: true,
+                });
                 entry.registrations.services.add(name);
             },
 
             getService: <T = any>(name: string): T | null => {
-                const registration = this.services.get(name);
-                return registration ? registration.service : null;
+                return serviceRegistry.get<T>(name);
             },
 
             getPluginConfig: (targetPluginId = pluginId) => {
@@ -305,8 +308,14 @@ export class PluginManager {
         });
 
         registrations.services.forEach((name) => {
-            this.services.delete(name);
+            serviceRegistry.unregister(name);
         });
+
+        registrations.reducers.forEach((name) => {
+            pluginReduxManager.unregisterReducer(name);
+        });
+
+        pluginReduxManager.unregisterMiddlewareByPlugin(pluginId);
     }
 
     private validateDependencies(plugin: EnhancedPlugin) {
@@ -349,16 +358,11 @@ export class PluginManager {
     }
 
     getService<T = any>(name: string): T | null {
-        const registration = this.services.get(name);
-        return registration ? registration.service : null;
+        return serviceRegistry.get<T>(name);
     }
 
     getAllServices(): Record<string, any> {
-        const services: Record<string, any> = {};
-        for (const [name, registration] of this.services.entries()) {
-            services[name] = registration.service;
-        }
-        return services;
+        return serviceRegistry.getAll();
     }
 
     getStore(): Store {

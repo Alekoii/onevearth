@@ -1,5 +1,4 @@
 import {
-    combineReducers,
     Dispatch,
     Middleware,
     MiddlewareAPI,
@@ -7,6 +6,7 @@ import {
     Store,
     UnknownAction,
 } from "@reduxjs/toolkit";
+import { addDynamicReducer, removeDynamicReducer } from "@/store";
 
 interface PluginReducerRegistry {
     [key: string]: {
@@ -23,25 +23,12 @@ interface PluginMiddlewareRegistry {
 
 class PluginReduxManager {
     private store: Store | null = null;
-    private baseReducers: Record<string, Reducer<any, any>> = {};
     private pluginReducers: PluginReducerRegistry = {};
     private pluginMiddleware: PluginMiddlewareRegistry[] = [];
-    private currentRootReducer: Reducer<any, any> | null = null;
 
     setStore(store: Store) {
         this.store = store;
-        this.extractBaseReducers();
-    }
-
-    private extractBaseReducers() {
-        if (!this.store) return;
-
-        const state = this.store.getState();
-        this.baseReducers = {
-            auth: (state: any = null) => state,
-            config: (state: any = null) => state,
-            users: (state: any = null) => state,
-        };
+        console.log("PluginReduxManager: Store set");
     }
 
     registerReducer(
@@ -58,14 +45,31 @@ class PluginReduxManager {
         }
 
         this.pluginReducers[name] = { reducer, pluginId };
-        this.updateRootReducer();
+
+        try {
+            addDynamicReducer(name, reducer);
+            console.log(
+                `Successfully registered reducer ${name} for plugin ${pluginId}`,
+            );
+        } catch (error) {
+            console.error(`Failed to register reducer ${name}:`, error);
+            delete this.pluginReducers[name];
+            throw error;
+        }
     }
 
     unregisterReducer(name: string): void {
         if (!this.pluginReducers[name]) return;
 
+        const pluginId = this.pluginReducers[name].pluginId;
         delete this.pluginReducers[name];
-        this.updateRootReducer();
+
+        try {
+            removeDynamicReducer(name);
+            console.log(`Unregistered reducer ${name} for plugin ${pluginId}`);
+        } catch (error) {
+            console.error(`Failed to unregister reducer ${name}:`, error);
+        }
     }
 
     unregisterReducersByPlugin(pluginId: string): void {
@@ -73,10 +77,12 @@ class PluginReduxManager {
             (name) => this.pluginReducers[name].pluginId === pluginId,
         );
 
-        toRemove.forEach((name) => delete this.pluginReducers[name]);
+        toRemove.forEach((name) => this.unregisterReducer(name));
 
         if (toRemove.length > 0) {
-            this.updateRootReducer();
+            console.log(
+                `Unregistered ${toRemove.length} reducers for plugin ${pluginId}`,
+            );
         }
     }
 
@@ -93,38 +99,33 @@ class PluginReduxManager {
             id: middlewareId,
         });
 
+        console.log(
+            `Registered middleware ${middlewareId} for plugin ${pluginId}`,
+        );
         return middlewareId;
     }
 
     unregisterMiddleware(id: string): void {
         const index = this.pluginMiddleware.findIndex((m) => m.id === id);
         if (index !== -1) {
+            const pluginId = this.pluginMiddleware[index].pluginId;
             this.pluginMiddleware.splice(index, 1);
+            console.log(`Unregistered middleware ${id} for plugin ${pluginId}`);
         }
     }
 
     unregisterMiddlewareByPlugin(pluginId: string): void {
+        const removed = this.pluginMiddleware.filter((m) =>
+            m.pluginId === pluginId
+        );
         this.pluginMiddleware = this.pluginMiddleware.filter(
             (m) => m.pluginId !== pluginId,
         );
-    }
 
-    private updateRootReducer(): void {
-        if (!this.store) return;
-
-        const allReducers = {
-            ...this.baseReducers,
-            ...Object.keys(this.pluginReducers).reduce((acc, name) => {
-                acc[name] = this.pluginReducers[name].reducer;
-                return acc;
-            }, {} as Record<string, Reducer<any, any>>),
-        };
-
-        const newRootReducer = combineReducers(allReducers);
-
-        if (this.store.replaceReducer) {
-            this.store.replaceReducer(newRootReducer);
-            this.currentRootReducer = newRootReducer;
+        if (removed.length > 0) {
+            console.log(
+                `Unregistered ${removed.length} middleware for plugin ${pluginId}`,
+            );
         }
     }
 
@@ -156,8 +157,7 @@ class PluginReduxManager {
     }
 
     hasSlice(sliceName: string): boolean {
-        return sliceName in this.pluginReducers ||
-            sliceName in this.baseReducers;
+        return sliceName in this.pluginReducers;
     }
 
     getSliceState<T>(sliceName: string): T | undefined {

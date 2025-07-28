@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { useSelector } from "react-redux";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useEnhancedPlugins } from "@/core/plugins/PluginProvider";
@@ -35,6 +36,7 @@ export const PostList = ({
     const styles = useStyles("PostList", { variant });
     const { t } = useTranslation();
     const { pluginManager } = useEnhancedPlugins();
+    const insets = useSafeAreaInsets();
 
     const posts = useSelector(selectPosts);
     const loading = useSelector(selectPostsLoading);
@@ -86,11 +88,9 @@ export const PostList = ({
             post={item}
             variant={variant}
             onPress={() => {
-                // TODO: Navigate to post detail
                 console.log("Post pressed:", item.id);
             }}
             onUserPress={() => {
-                // TODO: Navigate to user profile
                 console.log("User pressed:", item.user_id);
             }}
         />
@@ -132,9 +132,10 @@ export const PostList = ({
             onEndReachedThreshold={0.3}
             ListEmptyComponent={!loading ? renderEmpty : null}
             ListFooterComponent={renderFooter}
-            contentContainerStyle={posts.length === 0
-                ? styles.emptyList
-                : undefined}
+            contentContainerStyle={[
+                posts.length === 0 ? styles.emptyList : { flexGrow: 1 },
+                { paddingBottom: insets.bottom + 70 },
+            ]}
             removeClippedSubviews={true}
             maxToRenderPerBatch={10}
             windowSize={10}

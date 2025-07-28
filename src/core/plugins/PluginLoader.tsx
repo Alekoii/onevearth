@@ -17,7 +17,6 @@ export const PluginLoader = () => {
         const enabledPlugins = config.plugins?.enabled || [];
         const configKey = enabledPlugins.join(",");
 
-        // Skip if we're already loading or have processed this exact config
         if (isLoading || processedConfigRef.current === configKey) {
             return;
         }
@@ -32,13 +31,8 @@ export const PluginLoader = () => {
 
                 if (plugin) {
                     try {
-                        console.log(`Loading plugin: ${pluginId}`);
                         await loadPlugin(plugin);
-                        console.log(
-                            `Successfully loaded plugin: ${pluginId}`,
-                        );
                     } catch (error) {
-                        // Only log if it's not an "already loaded" error
                         if (
                             !(error as Error).message.includes("already loaded")
                         ) {

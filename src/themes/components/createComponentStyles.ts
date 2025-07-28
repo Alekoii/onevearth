@@ -11,7 +11,10 @@ const createBaseStyle = (theme: Theme, backgroundColor = "primary") => ({
 export const createComponentStyles = (theme: Theme): ComponentStyles => ({
     // Screen layout
     Screen: {
-        base: { flex: 1, backgroundColor: theme.colors.background.primary },
+        base: {
+            flex: 1,
+            backgroundColor: theme.colors.background.primary,
+        },
         content: {
             paddingHorizontal: theme.spacing.md,
             paddingBottom: theme.spacing.xl,
@@ -20,6 +23,7 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
         variants: {
             centered: { justifyContent: "center", alignItems: "center" },
             padded: { padding: theme.spacing.lg },
+            safe: { flex: 1 }, // For screens that handle their own safe area
         },
     },
 
@@ -340,17 +344,26 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
     // Post Creator component
 
     PostCreator: {
-        base: createBaseStyle(theme),
-        ...createBaseStyle(theme),
+        base: {
+            backgroundColor: theme.colors.surface.primary,
+            borderRadius: theme.borderRadius.lg,
+            padding: theme.spacing.md,
+            flex: 1,
+        },
         inputContainer: {
             marginBottom: theme.spacing.md,
+            flex: 1,
         },
         input: {
-            minHeight: 100,
             fontSize: theme.typography.fontSize.md,
             color: theme.colors.text.primary,
-            padding: 0,
+            padding: theme.spacing.sm,
+            backgroundColor: theme.colors.background.secondary,
+            borderRadius: theme.borderRadius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.border.primary,
             textAlignVertical: "top",
+            fontFamily: theme.typography.fontFamily.primary,
         },
         inputFooter: {
             flexDirection: "row",
@@ -374,6 +387,7 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             paddingTop: theme.spacing.sm,
             borderTopWidth: 1,
             borderTopColor: theme.colors.border.primary,
+            marginTop: "auto",
         },
         toolbarLeft: {
             flexDirection: "row",
@@ -387,6 +401,8 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
         toolbarButton: {
             padding: theme.spacing.xs,
             marginRight: theme.spacing.sm,
+            borderRadius: theme.borderRadius.md,
+            backgroundColor: theme.colors.surface.secondary,
         },
         visibilityButton: {
             flexDirection: "row",
