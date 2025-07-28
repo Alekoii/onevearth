@@ -12,8 +12,9 @@ import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useAuthInitializer } from "@/hooks/useAuthInitializer";
 import "@/i18n";
 
+// In App.tsx, make sure ConfigProvider is wrapping everything:
 const AppContent = () => {
-  const { loading } = useConfig();
+  const { loading, config } = useConfig();
   useAuthInitializer();
 
   if (loading) {
@@ -29,6 +30,7 @@ export default function App() {
       <SafeAreaProvider>
         <Provider store={store}>
           <ConfigProvider>
+            {/* This should be here */}
             <ThemeProvider>
               <PluginProvider>
                 <PluginLoader />
