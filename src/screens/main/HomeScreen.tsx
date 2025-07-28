@@ -1,30 +1,50 @@
-import { FlatList, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { useStyles } from "@/core/theming/useStyles";
-import { usePosts } from "@/hooks/usePosts";
-import { PostCreator } from "@/plugins/posts/components/PostCreator";
-import { PostCard } from "@/plugins/posts/components/PostCard";
+import { useTranslation } from "@/hooks/useTranslation";
+import { ExtensionPoint } from "@/core/plugins/ExtensionPoint";
 
 export const HomeScreen = () => {
-    const { posts, loading, refreshPosts, loadMorePosts } = usePosts();
     const styles = useStyles("Screen");
-
-    const renderPost = ({ item }: { item: any }) => <PostCard post={item} />;
-
-    const ListHeaderComponent = () => <PostCreator />;
+    const { t } = useTranslation();
 
     return (
         <View style={styles.base}>
-            <FlatList
-                data={posts}
-                renderItem={renderPost}
-                keyExtractor={(item) => item.id}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.content}
-                ListHeaderComponent={ListHeaderComponent}
-                onEndReached={loadMorePosts}
-                onEndReachedThreshold={0.1}
-                refreshing={loading}
-                onRefresh={refreshPosts}
+            <ExtensionPoint
+                name="home.content"
+                fallback={() => (
+                    <ScrollView style={styles.base}>
+                        <View style={styles.content}>
+                            <View
+                                style={{
+                                    flex: 1,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    padding: 24,
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        textAlign: "center",
+                                        color: "#6D6D6D",
+                                        fontSize: 16,
+                                    }}
+                                >
+                                    No posts available
+                                </Text>
+                                <Text
+                                    style={{
+                                        textAlign: "center",
+                                        color: "#999",
+                                        fontSize: 14,
+                                        marginTop: 8,
+                                    }}
+                                >
+                                    Enable the posts plugin to see content
+                                </Text>
+                            </View>
+                        </View>
+                    </ScrollView>
+                )}
             />
         </View>
     );

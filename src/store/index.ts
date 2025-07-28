@@ -1,19 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "@/store/slices/authSlice";
-import postsSlice from "@/store/slices/postsSlice";
-import commentsSlice from "@/store/slices/commentsSlice";
-import notificationsSlice from "@/store/slices/notificationsSlice";
 import configSlice from "@/store/slices/configSlice";
 import usersSlice from "@/store/slices/usersSlice";
 
 export const store = configureStore({
     reducer: {
+        // Core slices only - plugins register their own slices dynamically
         auth: authSlice,
-        posts: postsSlice,
-        comments: commentsSlice,
-        notifications: notificationsSlice,
         config: configSlice,
         users: usersSlice,
+        // Plugin slices (posts, comments, notifications) are registered dynamically
+        // by the PluginManager when plugins are loaded
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
