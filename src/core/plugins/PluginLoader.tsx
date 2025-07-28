@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useEnhancedPlugins } from "./PluginProvider";
 import { useConfig } from "@/core/config/ConfigProvider";
-import { PostsPlugin } from "@/plugins/posts/types";
+import { PostsPlugin } from "@/plugins/posts";
 
 const availablePlugins = {
     posts: PostsPlugin,
