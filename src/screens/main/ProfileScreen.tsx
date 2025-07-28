@@ -6,11 +6,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { Button } from "@/components/base/Button";
+import { Card } from "@/components/base/Card";
 import { profileScreenStyles } from "./ProfileScreen.styles";
 
 export const ProfileScreen = () => {
     const { t } = useTranslation();
-    const { user } = useAuth();
+    const { user, signOut } = useAuth();
     const { profile, loading, loadProfile } = useProfile();
     const styles = useComponentStyles("ProfileScreen", profileScreenStyles);
 
@@ -43,6 +44,17 @@ export const ProfileScreen = () => {
     return (
         <ScrollView style={styles.container}>
             <ProfileHeader profile={profile} />
+
+            <View style={styles.content}>
+                <Card style={styles.settingsCard}>
+                    <Button
+                        onPress={signOut}
+                        variant="ghost"
+                    >
+                        {t("auth.logout")}
+                    </Button>
+                </Card>
+            </View>
         </ScrollView>
     );
 };
