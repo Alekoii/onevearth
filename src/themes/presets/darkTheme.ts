@@ -1,4 +1,3 @@
-// src/themes/presets/darkTheme.ts - Replace existing dark.ts
 import { Theme } from "@/core/theming/types";
 import { createBaseTheme } from "../base/baseTheme";
 import { createComponentStyles } from "../components/createComponentStyles";
@@ -170,7 +169,9 @@ const createDarkColors = () => ({
     },
 });
 
-// Create the complete dark theme
+// Create the complete dark theme using proper type composition
+const baseTheme = createBaseTheme(true);
+
 export const darkTheme: Theme = {
     meta: {
         name: "dark",
@@ -183,10 +184,14 @@ export const darkTheme: Theme = {
 
     colors: createDarkColors(),
 
-    // Extend from base theme with dark modifications
-    ...createBaseTheme(true),
+    // Now we can safely use the base theme properties
+    typography: baseTheme.typography,
+    spacing: baseTheme.spacing,
+    borderRadius: baseTheme.borderRadius,
+    shadows: baseTheme.shadows,
+    animations: baseTheme.animations,
 
-    // Component styles will be added by the theme engine
+    // Component styles will be added below
     components: {} as any,
 };
 
@@ -266,7 +271,7 @@ export const customizeDarkTheme = (customizations: {
         }
     }
 
-    // Apply same typography, border radius, and spacing customizations as light theme
+    // Apply typography, border radius, and spacing customizations
     if (customizations.fontFamily) {
         customTheme.typography.fontFamily.primary = customizations.fontFamily;
         customTheme.typography.fontFamily.secondary = customizations.fontFamily;

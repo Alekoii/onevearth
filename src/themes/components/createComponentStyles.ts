@@ -1,57 +1,42 @@
 import { ComponentStyles, Theme } from "@/core/theming/types";
 
+// Helper function to create consistent component styles
+const createBaseStyle = (theme: Theme, backgroundColor = "primary") => ({
+    backgroundColor:
+        theme.colors
+            .surface[backgroundColor as keyof typeof theme.colors.surface],
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
+});
+
 export const createComponentStyles = (theme: Theme): ComponentStyles => ({
     // Screen layout
     Screen: {
-        base: {
-            flex: 1,
-            backgroundColor: theme.colors.background.primary,
-        },
+        base: { flex: 1, backgroundColor: theme.colors.background.primary },
         content: {
             paddingHorizontal: theme.spacing.md,
             paddingBottom: theme.spacing.xl,
         },
-        padding: {
-            padding: theme.spacing.md,
-        },
+        padding: { padding: theme.spacing.md },
         variants: {
-            centered: {
-                justifyContent: "center",
-                alignItems: "center",
-            },
-            padded: {
-                padding: theme.spacing.lg,
-            },
+            centered: { justifyContent: "center", alignItems: "center" },
+            padded: { padding: theme.spacing.lg },
         },
     },
 
     // Card component
     Card: {
-        base: {
-            backgroundColor: theme.colors.surface.primary,
-            borderRadius: theme.borderRadius.lg,
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.sm,
-        },
-        shadow: {
-            ...theme.shadows.sm,
-        },
-        border: {
-            borderWidth: 1,
-            borderColor: theme.colors.border.primary,
-        },
+        base: { ...createBaseStyle(theme), marginBottom: theme.spacing.sm },
+        shadow: theme.shadows.sm,
+        border: { borderWidth: 1, borderColor: theme.colors.border.primary },
         variants: {
-            elevated: {
-                ...theme.shadows.md,
-            },
+            elevated: theme.shadows.md,
             outlined: {
                 borderWidth: 1,
                 borderColor: theme.colors.border.primary,
                 backgroundColor: "transparent",
             },
-            filled: {
-                backgroundColor: theme.colors.surface.secondary,
-            },
+            filled: { backgroundColor: theme.colors.surface.secondary },
         },
         sizes: {
             sm: {
@@ -89,7 +74,6 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
         },
         subtitle: {
             fontSize: theme.typography.fontSize.sm,
-            fontWeight: theme.typography.fontWeight.normal,
             color: theme.colors.text.secondary,
             fontFamily: theme.typography.fontFamily.primary,
         },
@@ -99,9 +83,7 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             gap: theme.spacing.sm,
         },
         variants: {
-            large: {
-                paddingVertical: theme.spacing.md,
-            },
+            large: { paddingVertical: theme.spacing.md },
             transparent: {
                 backgroundColor: "transparent",
                 borderBottomWidth: 0,
@@ -109,7 +91,7 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
         },
     },
 
-    // Button component
+    // Button component with comprehensive styling
     Button: {
         base: {
             borderRadius: theme.borderRadius.md,
@@ -119,23 +101,15 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             gap: theme.spacing.xs,
         },
         variants: {
-            primary: {
-                backgroundColor: theme.colors.primary[500],
-            },
-            secondary: {
-                backgroundColor: theme.colors.secondary[500],
-            },
+            primary: { backgroundColor: theme.colors.primary[500] },
+            secondary: { backgroundColor: theme.colors.secondary[500] },
             outline: {
                 backgroundColor: "transparent",
                 borderWidth: 1,
                 borderColor: theme.colors.border.primary,
             },
-            ghost: {
-                backgroundColor: "transparent",
-            },
-            danger: {
-                backgroundColor: theme.colors.error[500],
-            },
+            ghost: { backgroundColor: "transparent" },
+            danger: { backgroundColor: theme.colors.error[500] },
         },
         sizes: {
             xs: {
@@ -160,12 +134,8 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             },
         },
         states: {
-            disabled: {
-                opacity: 0.6,
-            },
-            loading: {
-                opacity: 0.8,
-            },
+            disabled: { opacity: 0.6 },
+            loading: { opacity: 0.8 },
         },
         text: {
             primary: {
@@ -194,12 +164,8 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
                 fontWeight: theme.typography.fontWeight.semibold,
             },
         },
-        icon: {
-            marginRight: theme.spacing.xs,
-        },
-        loading: {
-            position: "absolute",
-        },
+        icon: { marginRight: theme.spacing.xs },
+        loading: { position: "absolute" },
     },
 
     // Input component
@@ -215,9 +181,7 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             color: theme.colors.text.primary,
             fontFamily: theme.typography.fontFamily.primary,
         },
-        container: {
-            marginBottom: theme.spacing.sm,
-        },
+        container: { marginBottom: theme.spacing.sm },
         label: {
             fontSize: theme.typography.fontSize.sm,
             fontWeight: theme.typography.fontWeight.medium,
@@ -238,22 +202,15 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             fontFamily: theme.typography.fontFamily.primary,
         },
         states: {
-            focused: {
-                borderColor: theme.colors.border.focus,
-                borderWidth: 2,
-            },
-            error: {
-                borderColor: theme.colors.error[500],
-            },
+            focused: { borderColor: theme.colors.border.focus, borderWidth: 2 },
+            error: { borderColor: theme.colors.error[500] },
             disabled: {
                 backgroundColor: theme.colors.surface.secondary,
                 opacity: 0.6,
             },
         },
         variants: {
-            outline: {
-                backgroundColor: "transparent",
-            },
+            outline: { backgroundColor: "transparent" },
             filled: {
                 backgroundColor: theme.colors.surface.secondary,
                 borderWidth: 0,
@@ -263,21 +220,13 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
 
     // Post Card component
     PostCard: {
-        base: {
-            backgroundColor: theme.colors.surface.primary,
-            borderRadius: theme.borderRadius.lg,
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.md,
-            ...theme.shadows.sm,
-        },
+        base: { ...createBaseStyle(theme), ...theme.shadows.sm },
         header: {
             flexDirection: "row",
             alignItems: "center",
             marginBottom: theme.spacing.sm,
         },
-        content: {
-            marginBottom: theme.spacing.md,
-        },
+        content: { marginBottom: theme.spacing.md },
         actions: {
             flexDirection: "row",
             alignItems: "center",
@@ -315,12 +264,7 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
 
     // Post Creator component
     PostCreator: {
-        base: {
-            backgroundColor: theme.colors.surface.primary,
-            borderRadius: theme.borderRadius.lg,
-            padding: theme.spacing.md,
-            marginBottom: theme.spacing.md,
-        },
+        base: createBaseStyle(theme),
         input: {
             minHeight: 80,
             fontSize: theme.typography.fontSize.md,
@@ -365,9 +309,7 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             marginTop: theme.spacing.xs / 2,
             fontFamily: theme.typography.fontFamily.primary,
         },
-        icon: {
-            marginBottom: theme.spacing.xs / 2,
-        },
+        icon: { marginBottom: theme.spacing.xs / 2 },
         badge: {
             position: "absolute",
             top: -2,

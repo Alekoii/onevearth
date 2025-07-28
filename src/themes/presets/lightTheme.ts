@@ -170,7 +170,9 @@ const createColors = () => ({
     },
 });
 
-// Create the complete light theme
+// Create the complete light theme using proper type composition
+const baseTheme = createBaseTheme(false);
+
 export const lightTheme: Theme = {
     meta: {
         name: "light",
@@ -183,10 +185,14 @@ export const lightTheme: Theme = {
 
     colors: createColors(),
 
-    // Extend from base theme
-    ...createBaseTheme(false),
+    // Now we can safely spread the base theme since we know the types
+    typography: baseTheme.typography,
+    spacing: baseTheme.spacing,
+    borderRadius: baseTheme.borderRadius,
+    shadows: baseTheme.shadows,
+    animations: baseTheme.animations,
 
-    // Component styles will be added by the theme engine
+    // Component styles will be added below
     components: {} as any,
 };
 

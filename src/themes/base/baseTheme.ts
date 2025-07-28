@@ -1,7 +1,18 @@
 import { Theme } from "@/core/theming/types";
 
+// Create a more specific type for what createBaseTheme returns
+export interface BaseThemeProperties {
+    typography: Theme["typography"];
+    spacing: Theme["spacing"];
+    borderRadius: Theme["borderRadius"];
+    shadows: Theme["shadows"];
+    animations: Theme["animations"];
+}
+
 // Base theme that other themes extend from
-export const createBaseTheme = (isDark: boolean = false): Partial<Theme> => ({
+export const createBaseTheme = (
+    isDark: boolean = false,
+): BaseThemeProperties => ({
     typography: {
         fontFamily: {
             primary: "System",
