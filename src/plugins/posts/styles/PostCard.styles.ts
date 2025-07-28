@@ -4,7 +4,7 @@ export const postCardStyles = createStyles<{
     compactMode?: boolean;
     variant?: "default" | "featured";
 }>((theme, props = {}) => {
-    const { compactMode = false } = props;
+    const { compactMode = false, variant = "default" } = props;
 
     return {
         container: {
@@ -12,6 +12,10 @@ export const postCardStyles = createStyles<{
             borderRadius: theme.borderRadius.lg,
             marginBottom: theme.spacing.md,
             padding: compactMode ? theme.spacing.sm : theme.spacing.md,
+            borderWidth: variant === "featured" ? 1 : 0,
+            borderColor: variant === "featured"
+                ? theme.colors.primary[500]
+                : "transparent",
         },
         header: {
             flexDirection: "row",
@@ -44,10 +48,14 @@ export const postCardStyles = createStyles<{
             flexDirection: "row",
             alignItems: "center",
             gap: theme.spacing.xs,
+            paddingVertical: theme.spacing.xs,
+            paddingHorizontal: theme.spacing.sm,
+            borderRadius: theme.borderRadius.sm,
         },
         actionText: {
             fontSize: theme.typography.fontSize.sm,
             color: theme.colors.text.secondary,
+            fontWeight: "500",
         },
     };
 });

@@ -1,10 +1,11 @@
-// src/plugins/posts/components/PostCard.tsx
 import { Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { incrementComments, incrementLikes } from "@/store/slices/postsSlice";
 import { Card } from "@/components/base/Card";
+import { Icon } from "@/components/ui/Icon";
 import { useComponentStyles } from "@/core/theming/useComponentStyles";
+import { useTheme } from "@/core/theming/ThemeProvider";
 import { postCardStyles } from "../styles/PostCard.styles";
 
 interface PostCardProps {
@@ -33,6 +34,7 @@ export const PostCard = ({
     variant = "default",
 }: PostCardProps) => {
     const { t } = useTranslation();
+    const { theme } = useTheme();
     const dispatch = useAppDispatch();
 
     const styles = useComponentStyles("PostCard", postCardStyles, {
@@ -92,22 +94,35 @@ export const PostCard = ({
                     style={styles.actionButton}
                     onPress={handleLike}
                 >
-                    <Text style={styles.actionText}>
-                        ❤️ {post.likeCount || 0}
-                    </Text>
+                    <Icon
+                        name="heart"
+                        color={theme.colors.text.secondary}
+                        size={18}
+                    />
+                    <Text style={styles.actionText}>{post.likeCount || 0}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={styles.actionButton}
                     onPress={handleComment}
                 >
+                    <Icon
+                        name="comment"
+                        color={theme.colors.text.secondary}
+                        size={18}
+                    />
                     <Text style={styles.actionText}>
-                        💬 {post.commentCount || 0}
+                        {post.commentCount || 0}
                     </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.actionButton} onPress={onShare}>
-                    <Text style={styles.actionText}>📤 {t("posts.share")}</Text>
+                    <Icon
+                        name="share"
+                        color={theme.colors.text.secondary}
+                        size={18}
+                    />
+                    <Text style={styles.actionText}>{t("posts.share")}</Text>
                 </TouchableOpacity>
             </View>
         </Card>
