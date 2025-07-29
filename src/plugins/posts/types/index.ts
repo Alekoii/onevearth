@@ -43,11 +43,39 @@ export interface UpdatePostData {
     visibility?: "public" | "private" | "group";
 }
 
+export interface PaginationResult<T> {
+    items: T[];
+    hasMore: boolean;
+    nextCursor: string | null;
+    total: number;
+}
+
 export interface PostsState {
     items: Post[];
     loading: boolean;
-    error: string | null;
-    hasMore: boolean;
-    page: number;
     refreshing: boolean;
+    loadingMore: boolean;
+    error: string | null;
+    paginationError: string | null;
+    hasMore: boolean;
+    nextCursor: string | null;
+    lastRefresh: number | null;
+    prefetching: boolean;
+}
+
+export interface PostCardSkeletonProps {
+    variant?: "default" | "compact";
+}
+
+export interface PostListErrorProps {
+    error: string;
+    onRetry: () => void;
+    type: "initial" | "pagination";
+}
+
+export interface LoadingState {
+    initial: boolean;
+    refresh: boolean;
+    pagination: boolean;
+    prefetch: boolean;
 }

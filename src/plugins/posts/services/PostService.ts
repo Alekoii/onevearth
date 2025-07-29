@@ -1,7 +1,14 @@
 import { supabase } from "@/core/api/SupabaseClient";
-import { CreatePostData, Post, UpdatePostData } from "../types";
+import {
+    CreatePostData,
+    PaginationResult,
+    Post,
+    UpdatePostData,
+} from "../types";
 
 export class PostService {
+    private static readonly PAGE_SIZE = 20;
+
     static async createPost(data: CreatePostData): Promise<Post> {
         const user = await supabase.auth.getUser();
         if (!user.data.user) throw new Error("User not authenticated");
@@ -19,11 +26,7 @@ export class PostService {
             .insert(postData)
             .select(`
                 *,
-                profiles:user_id (
-                    username,
-                    avatar_url,
-                    full_name
-                ),
+                profiles:user_id (username, avatar_url, full_name),
                 media_attachments (*),
                 _count:post_reactions(count)
             `)
@@ -33,50 +36,73 @@ export class PostService {
         return post;
     }
 
-    static async fetchPosts(page = 0, limit = 20): Promise<Post[]> {
-        const { data, error } = await supabase
+    static async fetchPosts(cursor?: string): Promise<PaginationResult<Post>> {
+        let query = supabase
             .from("posts")
             .select(`
                 *,
-                profiles:user_id (
-                    username,
-                    avatar_url,
-                    full_name
-                ),
+                profiles:user_id (username, avatar_url, full_name),
                 media_attachments (*),
                 _count:post_reactions(count)
             `)
             .eq("visibility", "public")
             .order("created_at", { ascending: false })
-            .range(page * limit, (page + 1) * limit - 1);
+            .limit(this.PAGE_SIZE + 1);
 
+        if (cursor) {
+            query = query.lt("created_at", cursor);
+        }
+
+        const { data, error } = await query;
         if (error) throw error;
-        return data || [];
+
+        const posts = data || [];
+        const hasMore = posts.length > this.PAGE_SIZE;
+        const items = hasMore ? posts.slice(0, -1) : posts;
+        const nextCursor = hasMore ? items[items.length - 1]?.created_at : null;
+
+        return {
+            items,
+            hasMore,
+            nextCursor,
+            total: items.length,
+        };
     }
 
     static async fetchUserPosts(
         userId: string,
-        page = 0,
-        limit = 20,
-    ): Promise<Post[]> {
-        const { data, error } = await supabase
+        cursor?: string,
+    ): Promise<PaginationResult<Post>> {
+        let query = supabase
             .from("posts")
             .select(`
                 *,
-                profiles:user_id (
-                    username,
-                    avatar_url,
-                    full_name
-                ),
+                profiles:user_id (username, avatar_url, full_name),
                 media_attachments (*),
                 _count:post_reactions(count)
             `)
             .eq("user_id", userId)
             .order("created_at", { ascending: false })
-            .range(page * limit, (page + 1) * limit - 1);
+            .limit(this.PAGE_SIZE + 1);
 
+        if (cursor) {
+            query = query.lt("created_at", cursor);
+        }
+
+        const { data, error } = await query;
         if (error) throw error;
-        return data || [];
+
+        const posts = data || [];
+        const hasMore = posts.length > this.PAGE_SIZE;
+        const items = hasMore ? posts.slice(0, -1) : posts;
+        const nextCursor = hasMore ? items[items.length - 1]?.created_at : null;
+
+        return {
+            items,
+            hasMore,
+            nextCursor,
+            total: items.length,
+        };
     }
 
     static async getPost(postId: number): Promise<Post> {
@@ -84,11 +110,7 @@ export class PostService {
             .from("posts")
             .select(`
                 *,
-                profiles:user_id (
-                    username,
-                    avatar_url,
-                    full_name
-                ),
+                profiles:user_id (username, avatar_url, full_name),
                 media_attachments (*),
                 _count:post_reactions(count)
             `)
@@ -109,11 +131,7 @@ export class PostService {
             .eq("id", postId)
             .select(`
                 *,
-                profiles:user_id (
-                    username,
-                    avatar_url,
-                    full_name
-                ),
+                profiles:user_id (username, avatar_url, full_name),
                 media_attachments (*),
                 _count:post_reactions(count)
             `)
@@ -132,25 +150,41 @@ export class PostService {
         if (error) throw error;
     }
 
-    static async searchPosts(query: string, limit = 20): Promise<Post[]> {
-        const { data, error } = await supabase
+    static async searchPosts(
+        query: string,
+        cursor?: string,
+    ): Promise<PaginationResult<Post>> {
+        let searchQuery = supabase
             .from("posts")
             .select(`
                 *,
-                profiles:user_id (
-                    username,
-                    avatar_url,
-                    full_name
-                ),
+                profiles:user_id (username, avatar_url, full_name),
                 media_attachments (*),
                 _count:post_reactions(count)
             `)
             .textSearch("content", query)
             .eq("visibility", "public")
-            .limit(limit);
+            .order("created_at", { ascending: false })
+            .limit(this.PAGE_SIZE + 1);
 
+        if (cursor) {
+            searchQuery = searchQuery.lt("created_at", cursor);
+        }
+
+        const { data, error } = await searchQuery;
         if (error) throw error;
-        return data || [];
+
+        const posts = data || [];
+        const hasMore = posts.length > this.PAGE_SIZE;
+        const items = hasMore ? posts.slice(0, -1) : posts;
+        const nextCursor = hasMore ? items[items.length - 1]?.created_at : null;
+
+        return {
+            items,
+            hasMore,
+            nextCursor,
+            total: items.length,
+        };
     }
 
     healthCheck(): boolean {

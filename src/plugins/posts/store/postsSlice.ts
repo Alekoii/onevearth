@@ -1,13 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Post, PostsState } from "../types";
+import { PaginationResult, Post, PostsState } from "../types";
 
 const initialState: PostsState = {
     items: [],
     loading: false,
-    error: null,
-    hasMore: true,
-    page: 0,
     refreshing: false,
+    loadingMore: false,
+    error: null,
+    paginationError: null,
+    hasMore: true,
+    nextCursor: null,
+    lastRefresh: null,
+    prefetching: false,
 };
 
 const postsSlice = createSlice({
@@ -16,30 +20,61 @@ const postsSlice = createSlice({
     reducers: {
         setLoading: (state, action: PayloadAction<boolean>) => {
             state.loading = action.payload;
+            if (action.payload) {
+                state.error = null;
+            }
         },
 
         setRefreshing: (state, action: PayloadAction<boolean>) => {
             state.refreshing = action.payload;
+            if (action.payload) {
+                state.error = null;
+                state.paginationError = null;
+            }
+        },
+
+        setLoadingMore: (state, action: PayloadAction<boolean>) => {
+            state.loadingMore = action.payload;
+            if (action.payload) {
+                state.paginationError = null;
+            }
+        },
+
+        setPrefetching: (state, action: PayloadAction<boolean>) => {
+            state.prefetching = action.payload;
         },
 
         setError: (state, action: PayloadAction<string | null>) => {
             state.error = action.payload;
+            state.loading = false;
+            state.refreshing = false;
         },
 
-        setPosts: (state, action: PayloadAction<Post[]>) => {
-            state.items = action.payload;
-            state.page = 0;
+        setPaginationError: (state, action: PayloadAction<string | null>) => {
+            state.paginationError = action.payload;
+            state.loadingMore = false;
+        },
+
+        setPosts: (state, action: PayloadAction<PaginationResult<Post>>) => {
+            const { items, hasMore, nextCursor } = action.payload;
+            state.items = items;
+            state.hasMore = hasMore;
+            state.nextCursor = nextCursor;
+            state.lastRefresh = Date.now();
             state.error = null;
+            state.paginationError = null;
         },
 
-        appendPosts: (state, action: PayloadAction<Post[]>) => {
-            const newPosts = action.payload.filter(
-                (newPost) =>
-                    !state.items.some((post) => post.id === newPost.id),
-            );
+        appendPosts: (state, action: PayloadAction<PaginationResult<Post>>) => {
+            const { items, hasMore, nextCursor } = action.payload;
+
+            const existingIds = new Set(state.items.map((post) => post.id));
+            const newPosts = items.filter((post) => !existingIds.has(post.id));
+
             state.items.push(...newPosts);
-            state.page += 1;
-            state.hasMore = action.payload.length === 20;
+            state.hasMore = hasMore;
+            state.nextCursor = nextCursor;
+            state.paginationError = null;
         },
 
         addPost: (state, action: PayloadAction<Post>) => {
@@ -64,24 +99,53 @@ const postsSlice = createSlice({
         },
 
         removePost: (state, action: PayloadAction<number>) => {
-            state.items = state.items.filter(
-                (post) => post.id !== action.payload,
+            state.items = state.items.filter((post) =>
+                post.id !== action.payload
             );
         },
 
-        setHasMore: (state, action: PayloadAction<boolean>) => {
-            state.hasMore = action.payload;
-        },
-
-        incrementPage: (state) => {
-            state.page += 1;
+        optimisticAddPost: (state, action: PayloadAction<Omit<Post, "id">>) => {
+            const optimisticPost: Post = {
+                ...action.payload,
+                id: Date.now(),
+                created_at: new Date().toISOString(),
+            };
+            state.items.unshift(optimisticPost);
         },
 
         resetPosts: (state) => {
-            state.items = [];
-            state.page = 0;
-            state.hasMore = true;
+            Object.assign(state, initialState);
+        },
+
+        clearErrors: (state) => {
             state.error = null;
+            state.paginationError = null;
+        },
+
+        markStale: (state) => {
+            const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+            if (!state.lastRefresh || state.lastRefresh < fiveMinutesAgo) {
+                state.hasMore = true;
+                state.nextCursor = null;
+            }
+        },
+
+        prefetchComplete: (
+            state,
+            action: PayloadAction<PaginationResult<Post>>,
+        ) => {
+            if (state.prefetching) {
+                const { items, hasMore, nextCursor } = action.payload;
+                const existingIds = new Set(state.items.map((post) => post.id));
+                const newPosts = items.filter((post) =>
+                    !existingIds.has(post.id)
+                );
+
+                state.items.push(...newPosts);
+                state.hasMore = hasMore;
+                state.nextCursor = nextCursor;
+                state.prefetching = false;
+            }
         },
     },
 });
@@ -89,15 +153,20 @@ const postsSlice = createSlice({
 export const {
     setLoading,
     setRefreshing,
+    setLoadingMore,
+    setPrefetching,
     setError,
+    setPaginationError,
     setPosts,
     appendPosts,
     addPost,
     updatePost,
     removePost,
-    setHasMore,
-    incrementPage,
+    optimisticAddPost,
     resetPosts,
+    clearErrors,
+    markStale,
+    prefetchComplete,
 } = postsSlice.actions;
 
 export default postsSlice.reducer;

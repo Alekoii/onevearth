@@ -81,7 +81,12 @@ export const HomeScreen = () => {
                 </TouchableOpacity>
             </View>
 
-            <ExtensionPoint name="home.content" />
+            <ExtensionPoint
+                name="home.content"
+                autoRefresh={true}
+                autoRefreshInterval={300000}
+                prefetchThreshold={3}
+            />
         </View>
     );
 };
