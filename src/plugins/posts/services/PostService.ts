@@ -27,13 +27,34 @@ export class PostService {
             .select(`
                 *,
                 profiles:user_id (username, avatar_url, full_name),
-                media_attachments (*),
-                _count:post_reactions(count)
+                media_attachments (*)
             `)
             .single();
 
         if (error) throw error;
-        return post;
+
+        // Get counts separately for better reliability
+        const [reactionsResult, commentsResult] = await Promise.all([
+            supabase
+                .from("post_reactions")
+                .select("*", { count: "exact", head: true })
+                .eq("post_id", post.id),
+            supabase
+                .from("comments")
+                .select("*", { count: "exact", head: true })
+                .eq("post_id", post.id),
+        ]);
+
+        // Add counts to the post object
+        const postWithCounts = {
+            ...post,
+            _count: {
+                reactions: reactionsResult.count || 0,
+                comments: commentsResult.count || 0,
+            },
+        };
+
+        return postWithCounts;
     }
 
     static async fetchPosts(cursor?: string): Promise<PaginationResult<Post>> {
@@ -42,8 +63,7 @@ export class PostService {
             .select(`
                 *,
                 profiles:user_id (username, avatar_url, full_name),
-                media_attachments (*),
-                _count:post_reactions(count)
+                media_attachments (*)
             `)
             .eq("visibility", "public")
             .order("created_at", { ascending: false })
@@ -61,11 +81,35 @@ export class PostService {
         const items = hasMore ? posts.slice(0, -1) : posts;
         const nextCursor = hasMore ? items[items.length - 1]?.created_at : null;
 
+        // Get counts for all posts in parallel
+        const postsWithCounts = await Promise.all(
+            items.map(async (post) => {
+                const [reactionsResult, commentsResult] = await Promise.all([
+                    supabase
+                        .from("post_reactions")
+                        .select("*", { count: "exact", head: true })
+                        .eq("post_id", post.id),
+                    supabase
+                        .from("comments")
+                        .select("*", { count: "exact", head: true })
+                        .eq("post_id", post.id),
+                ]);
+
+                return {
+                    ...post,
+                    _count: {
+                        reactions: reactionsResult.count || 0,
+                        comments: commentsResult.count || 0,
+                    },
+                };
+            }),
+        );
+
         return {
-            items,
+            items: postsWithCounts,
             hasMore,
             nextCursor,
-            total: items.length,
+            total: postsWithCounts.length,
         };
     }
 
@@ -78,8 +122,7 @@ export class PostService {
             .select(`
                 *,
                 profiles:user_id (username, avatar_url, full_name),
-                media_attachments (*),
-                _count:post_reactions(count)
+                media_attachments (*)
             `)
             .eq("user_id", userId)
             .order("created_at", { ascending: false })
@@ -97,11 +140,35 @@ export class PostService {
         const items = hasMore ? posts.slice(0, -1) : posts;
         const nextCursor = hasMore ? items[items.length - 1]?.created_at : null;
 
+        // Get counts for all posts in parallel
+        const postsWithCounts = await Promise.all(
+            items.map(async (post) => {
+                const [reactionsResult, commentsResult] = await Promise.all([
+                    supabase
+                        .from("post_reactions")
+                        .select("*", { count: "exact", head: true })
+                        .eq("post_id", post.id),
+                    supabase
+                        .from("comments")
+                        .select("*", { count: "exact", head: true })
+                        .eq("post_id", post.id),
+                ]);
+
+                return {
+                    ...post,
+                    _count: {
+                        reactions: reactionsResult.count || 0,
+                        comments: commentsResult.count || 0,
+                    },
+                };
+            }),
+        );
+
         return {
-            items,
+            items: postsWithCounts,
             hasMore,
             nextCursor,
-            total: items.length,
+            total: postsWithCounts.length,
         };
     }
 
@@ -111,14 +178,35 @@ export class PostService {
             .select(`
                 *,
                 profiles:user_id (username, avatar_url, full_name),
-                media_attachments (*),
-                _count:post_reactions(count)
+                media_attachments (*)
             `)
             .eq("id", postId)
             .single();
 
         if (error) throw error;
-        return data;
+
+        // Get counts separately
+        const [reactionsResult, commentsResult] = await Promise.all([
+            supabase
+                .from("post_reactions")
+                .select("*", { count: "exact", head: true })
+                .eq("post_id", postId),
+            supabase
+                .from("comments")
+                .select("*", { count: "exact", head: true })
+                .eq("post_id", postId),
+        ]);
+
+        // Add counts to the post object
+        const postWithCounts = {
+            ...data,
+            _count: {
+                reactions: reactionsResult.count || 0,
+                comments: commentsResult.count || 0,
+            },
+        };
+
+        return postWithCounts;
     }
 
     static async updatePost(
@@ -132,13 +220,34 @@ export class PostService {
             .select(`
                 *,
                 profiles:user_id (username, avatar_url, full_name),
-                media_attachments (*),
-                _count:post_reactions(count)
+                media_attachments (*)
             `)
             .single();
 
         if (error) throw error;
-        return post;
+
+        // Get counts separately
+        const [reactionsResult, commentsResult] = await Promise.all([
+            supabase
+                .from("post_reactions")
+                .select("*", { count: "exact", head: true })
+                .eq("post_id", postId),
+            supabase
+                .from("comments")
+                .select("*", { count: "exact", head: true })
+                .eq("post_id", postId),
+        ]);
+
+        // Add counts to the post object
+        const postWithCounts = {
+            ...post,
+            _count: {
+                reactions: reactionsResult.count || 0,
+                comments: commentsResult.count || 0,
+            },
+        };
+
+        return postWithCounts;
     }
 
     static async deletePost(postId: number): Promise<void> {
@@ -159,8 +268,7 @@ export class PostService {
             .select(`
                 *,
                 profiles:user_id (username, avatar_url, full_name),
-                media_attachments (*),
-                _count:post_reactions(count)
+                media_attachments (*)
             `)
             .textSearch("content", query)
             .eq("visibility", "public")
@@ -179,11 +287,35 @@ export class PostService {
         const items = hasMore ? posts.slice(0, -1) : posts;
         const nextCursor = hasMore ? items[items.length - 1]?.created_at : null;
 
+        // Get counts for all posts in parallel
+        const postsWithCounts = await Promise.all(
+            items.map(async (post) => {
+                const [reactionsResult, commentsResult] = await Promise.all([
+                    supabase
+                        .from("post_reactions")
+                        .select("*", { count: "exact", head: true })
+                        .eq("post_id", post.id),
+                    supabase
+                        .from("comments")
+                        .select("*", { count: "exact", head: true })
+                        .eq("post_id", post.id),
+                ]);
+
+                return {
+                    ...post,
+                    _count: {
+                        reactions: reactionsResult.count || 0,
+                        comments: commentsResult.count || 0,
+                    },
+                };
+            }),
+        );
+
         return {
-            items,
+            items: postsWithCounts,
             hasMore,
             nextCursor,
-            total: items.length,
+            total: postsWithCounts.length,
         };
     }
 

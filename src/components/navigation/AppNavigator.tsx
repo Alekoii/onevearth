@@ -1,8 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
+import { TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { View } from "react-native"; // Add this import
 import { useTheme } from "@/core/theming/ThemeProvider";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useStyles } from "@/core/theming/useStyles";
@@ -120,7 +120,6 @@ const MainTabs = () => {
     );
 };
 
-// Rest of the AppNavigator component remains the same
 export const AppNavigator = () => {
     const { theme } = useTheme();
 
@@ -149,14 +148,40 @@ export const AppNavigator = () => {
                     <Stack.Screen
                         name="PostDetail"
                         component={PostDetailScreen}
-                        options={{
+                        options={({ navigation }) => ({
                             title: "Post",
                             headerStyle: {
                                 backgroundColor: theme.colors.surface.primary,
                                 borderBottomWidth: 1,
                                 borderBottomColor: theme.colors.border.primary,
                             },
-                        }}
+                            // ✅ Use Icon.tsx directly in headerLeft
+                            headerLeft: () => (
+                                <TouchableOpacity
+                                    onPress={() => navigation.goBack()}
+                                    style={{
+                                        paddingLeft: 16,
+                                        paddingRight: 8,
+                                        paddingVertical: 8,
+                                    }}
+                                    hitSlop={{
+                                        top: 10,
+                                        bottom: 10,
+                                        left: 10,
+                                        right: 10,
+                                    }}
+                                >
+                                    <Icon
+                                        name="arrow-left"
+                                        color={theme.colors.text.primary}
+                                        size={24}
+                                        strokeWidth={2}
+                                    />
+                                </TouchableOpacity>
+                            ),
+                            // Hide the default back button
+                            headerBackVisible: false,
+                        })}
                     />
                 </Stack.Navigator>
             </AuthGuard>

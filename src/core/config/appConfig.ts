@@ -13,7 +13,7 @@ export const defaultAppConfig: AppConfig = {
             enabled: true,
             allowPhotos: true,
             allowVideos: true,
-            maxLength: 280,
+            maxLength: 5000,
             requireModeration: false,
             allowEditing: true,
             editTimeLimit: 15,
@@ -105,7 +105,6 @@ export const defaultAppConfig: AppConfig = {
             "posts",
             "comments",
             "notifications",
-            
         ],
         config: {
             emotions: {
@@ -117,7 +116,7 @@ export const defaultAppConfig: AppConfig = {
                 showReactionCounts: true,
             },
             posts: {
-                maxLength: 280,
+                maxLength: 5000,
                 allowMedia: true,
                 allowEditing: true,
                 editTimeLimit: 15,

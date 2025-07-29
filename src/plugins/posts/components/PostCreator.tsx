@@ -3,6 +3,7 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 import { useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useConfig } from "@/core/config/ConfigProvider";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import { useEnhancedPlugins } from "@/core/plugins/PluginProvider";
 import { Icon } from "@/components/ui/Icon";
@@ -25,6 +26,7 @@ export const PostCreator = ({
 }: PostCreatorProps) => {
     const styles = useStyles("PostCreator", { variant });
     const { t } = useTranslation();
+    const { config } = useConfig();
     const { pluginManager } = useEnhancedPlugins();
 
     const [content, setContent] = useState("");
@@ -36,6 +38,11 @@ export const PostCreator = ({
 
     const user = useAppSelector((state) => state.auth.user);
     const store = pluginManager.getStore();
+
+    // Get maxLength from configuration, fallback to 280 if not configured
+    const maxLength = config.plugins?.config?.posts?.maxLength ||
+        config.features?.posts?.maxLength ||
+        280;
 
     const handleSubmit = async () => {
         if (!content.trim() || !user) return;
@@ -62,8 +69,12 @@ export const PostCreator = ({
         }
     };
 
-    const isValid = content.trim().length > 0 && content.length <= 280;
-    const remainingChars = 280 - content.length;
+    // Use configured maxLength instead of hardcoded values
+    const isValid = content.trim().length > 0 && content.length <= maxLength;
+    const remainingChars = maxLength - content.length;
+
+    // Add some buffer to TextInput maxLength (e.g., 10% more)
+    const textInputMaxLength = Math.ceil(maxLength * 1.1);
 
     return (
         <View style={styles.container}>
@@ -76,7 +87,7 @@ export const PostCreator = ({
                     onChangeText={setContent}
                     multiline
                     textAlignVertical="top"
-                    maxLength={300}
+                    maxLength={textInputMaxLength}
                 />
 
                 <View style={styles.inputFooter}>
@@ -135,33 +146,26 @@ export const PostCreator = ({
                             )}
                     >
                         <Icon
-                            name={visibility === "public" ? "user" : "home"}
+                            name={visibility === "public" ? "globe" : "lock"}
                             size={16}
                             color="#6D6D6D"
                         />
                         <Text style={styles.visibilityText}>
-                            {visibility === "public" ? "Public" : "Private"}
+                            {t(`posts.visibility.${visibility}`)}
                         </Text>
                     </TouchableOpacity>
                 </View>
 
                 <Button
                     onPress={handleSubmit}
-                    disabled={!isValid || loading}
                     loading={loading}
+                    disabled={!isValid || loading}
                     variant="primary"
                     size="sm"
                 >
-                    {t("posts.publish")}
+                    {t("posts.post")}
                 </Button>
             </View>
-
-            <ExtensionPoint
-                name="post.creator.footer"
-                content={content}
-                visibility={visibility}
-                selectedEmotion={selectedEmotion}
-            />
         </View>
     );
 };

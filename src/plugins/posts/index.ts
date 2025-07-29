@@ -47,7 +47,7 @@ export const PostsPlugin: EnhancedPlugin = {
     },
 
     defaultConfig: {
-        maxLength: 280,
+        maxLength: 5000, // ✅ Updated to 5000 to match app config
         allowMedia: true,
         allowEditing: true,
         editTimeLimit: 15,
@@ -80,16 +80,13 @@ export const PostsPlugin: EnhancedPlugin = {
             "user:login",
             (userData: { id: string; email?: string }) => {
                 console.log("Posts plugin: User logged in", userData.id);
+                // Could initialize user-specific post settings here
             },
         );
 
         api.subscribeToEvent("user:logout", () => {
-            console.log("Posts plugin: User logged out, clearing posts");
-        });
-
-        api.emitEvent("posts:ready", {
-            pluginId: "posts",
-            timestamp: Date.now(),
+            console.log("Posts plugin: User logged out, clearing post cache");
+            // Could clear sensitive post data here
         });
 
         console.log("Posts plugin activated successfully");
@@ -97,17 +94,11 @@ export const PostsPlugin: EnhancedPlugin = {
 
     async deactivate(api) {
         console.log("Deactivating Posts plugin...");
-
-        api.emitEvent("posts:deactivated", {
-            pluginId: "posts",
-            timestamp: Date.now(),
-        });
-
-        console.log("Posts plugin deactivated");
+        // Cleanup logic here
     },
 
     async uninstall(api) {
         console.log("Uninstalling Posts plugin...");
-        console.log("Posts plugin uninstalled");
+        // Cleanup logic here
     },
 };

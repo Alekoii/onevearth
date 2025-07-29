@@ -1,29 +1,29 @@
-import React from "react";
-import type { EnhancedPlugin } from "@/core/plugins/PluginManager";
+import { EnhancedPlugin } from "@/core/plugins/PluginManager";
 import { CommentService } from "./services/CommentService";
 import commentsReducer from "./store/commentsSlice";
 import { CommentItem } from "./components/CommentItem";
 import { CommentList } from "./components/CommentList";
 import { CommentCreator } from "./components/CommentCreator";
+import { StickyCommentCreator } from "./components/StickyCommentCreator";
 import { CommentActionButton } from "./components/CommentActionButton";
-import { clearCommentsForPost } from "./store/commentsSlice";
 
 export const CommentsPlugin: EnhancedPlugin = {
     id: "comments",
     name: "Comments",
     version: "1.0.0",
     description:
-        "Comprehensive commenting system with nested replies and moderation",
+        "Comprehensive commenting system with threaded replies, reactions, and moderation",
     author: "OneVEarth Team",
 
     dependencies: [],
-    peerDependencies: ["posts"], // Comments work well with posts
+    peerDependencies: ["posts"],
     conflicts: [],
 
     components: {
         CommentItem: CommentItem,
         CommentList: CommentList,
         CommentCreator: CommentCreator,
+        StickyCommentCreator: StickyCommentCreator,
         CommentActionButton: CommentActionButton,
     },
 
@@ -44,7 +44,7 @@ export const CommentsPlugin: EnhancedPlugin = {
             allowEditing: { type: "boolean" },
             allowReactions: { type: "boolean" },
             autoRefresh: { type: "boolean" },
-            maxLength: { type: "number", minimum: 1, maximum: 1000 },
+            maxLength: { type: "number", minimum: 1, maximum: 2000 },
             enableMentions: { type: "boolean" },
             showTimestamps: { type: "boolean" },
             collapseLongThreads: { type: "boolean" },
@@ -77,6 +77,7 @@ export const CommentsPlugin: EnhancedPlugin = {
         api.registerComponent("CommentItem", CommentItem);
         api.registerComponent("CommentList", CommentList);
         api.registerComponent("CommentCreator", CommentCreator);
+        api.registerComponent("StickyCommentCreator", StickyCommentCreator);
         api.registerComponent("CommentActionButton", CommentActionButton);
 
         console.log("Comments plugin installed successfully");
@@ -85,14 +86,18 @@ export const CommentsPlugin: EnhancedPlugin = {
     async activate(api) {
         console.log("Activating Comments plugin...");
 
-        // Register at the main extension point for post details
+        // Register at the main extension point for post details - this shows the comments list
         api.registerExtension("post.detail.comments", CommentList, 100);
 
-        // Add comment button to post actions
-        api.registerExtension("post.actions", CommentActionButton, 80);
+        // ✅ NEW: Register at the sticky footer extension point - this shows the comment creator
+        api.registerExtension(
+            "post.detail.comment-creator",
+            StickyCommentCreator,
+            100,
+        );
 
-        // Register comment creator in post detail if needed
-        api.registerExtension("post.detail.actions", CommentCreator, 50);
+        // Add comment button to post actions (for post cards)
+        api.registerExtension("post.actions", CommentActionButton, 80);
 
         // Subscribe to relevant events
         api.subscribeToEvent("user:login", (userData: { id: string }) => {
@@ -107,30 +112,17 @@ export const CommentsPlugin: EnhancedPlugin = {
             // Could clear sensitive comment data here
         });
 
-        api.subscribeToEvent("post:created", (data: { postId: number }) => {
-            console.log("Comments plugin: New post created", data.postId);
-            // Could initialize comment tracking for new posts
-        });
-
-        api.subscribeToEvent("post:deleted", (data: { postId: number }) => {
+        api.subscribeToEvent("post:created", (postData: { postId: number }) => {
             console.log(
-                "Comments plugin: Post deleted, cleaning up comments",
-                data.postId,
+                "Comments plugin: New post created, preparing comment system",
+                postData.postId,
             );
-            // Clean up comments for deleted posts
-            const store = api.getStore();
-            store.dispatch(clearCommentsForPost(data.postId));
+            // Could pre-initialize comment state for new posts
         });
 
-        // Emit plugin ready event
-        api.emitEvent("comments:ready", {
-            pluginId: "comments",
-            timestamp: Date.now(),
-            features: {
-                nestedComments: true,
-                realTimeUpdates: false,
-                moderation: false,
-            },
+        api.subscribeToEvent("comment:created", (commentData: any) => {
+            console.log("Comments plugin: New comment created", commentData);
+            // Could trigger notifications or other side effects
         });
 
         console.log("Comments plugin activated successfully");
@@ -138,31 +130,11 @@ export const CommentsPlugin: EnhancedPlugin = {
 
     async deactivate(api) {
         console.log("Deactivating Comments plugin...");
-
-        // Emit deactivation event
-        api.emitEvent("comments:deactivated", {
-            pluginId: "comments",
-            timestamp: Date.now(),
-        });
-
-        console.log("Comments plugin deactivated");
+        // Cleanup logic here
     },
 
     async uninstall(api) {
         console.log("Uninstalling Comments plugin...");
-
-        // Clean up any persistent data if needed
-        // Note: Redux state will be cleaned up automatically by the plugin manager
-
-        console.log("Comments plugin uninstalled");
+        // Cleanup logic here
     },
 };
-
-// Re-export types and components for external use
-export * from "./types";
-export * from "./components/CommentItem";
-export * from "./components/CommentList";
-export * from "./components/CommentCreator";
-export * from "./components/CommentActionButton";
-export * from "./hooks/useComments";
-export * from "./services/CommentService";

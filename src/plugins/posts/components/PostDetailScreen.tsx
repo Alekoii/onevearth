@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import {
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Text,
+    View,
+} from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ExtensionPoint } from "@/core/plugins/ExtensionPoint";
@@ -17,6 +25,7 @@ export const PostDetailScreen = () => {
     const { postId } = route.params;
     const styles = useStyles("Screen");
     const { t } = useTranslation();
+    const insets = useSafeAreaInsets();
 
     const [post, setPost] = useState<Post | null>(null);
     const [loading, setLoading] = useState(true);
@@ -90,25 +99,32 @@ export const PostDetailScreen = () => {
     }
 
     return (
-        <View style={styles.base}>
-            {/* Post Content Section - scrollable but contained */}
-            <View
-                style={{
-                    backgroundColor: "#fff",
-                    borderBottomWidth: 1,
-                    borderBottomColor: "#e5e7eb",
-                }}
-            >
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+        >
+            <View style={{ flex: 1, backgroundColor: "#fff" }}>
+                {/* Main Content - Scrollable */}
                 <ScrollView
-                    style={{ maxHeight: 400 }} // Reasonable max height, not 50%
+                    style={{ flex: 1 }}
+                    contentContainerStyle={{ paddingBottom: 20 }}
                     showsVerticalScrollIndicator={false}
                     bounces={true}
                 >
-                    <View style={{ padding: 16 }}>
+                    {/* Post Content */}
+                    <View
+                        style={{
+                            backgroundColor: "#fff",
+                            borderBottomWidth: 1,
+                            borderBottomColor: "#e5e7eb",
+                            padding: 16,
+                        }}
+                    >
                         <PostCard
                             post={post}
                             variant="default"
-                            maxLines={0}
+                            maxLines={0} // No line limit in detail view
                             onUserPress={() => handleUserPress(post.user_id)}
                         />
 
@@ -118,61 +134,87 @@ export const PostDetailScreen = () => {
                             maxExtensions={5}
                         />
                     </View>
-                </ScrollView>
-            </View>
 
-            {/* Comment Creation Section */}
-            <View
-                style={{
-                    backgroundColor: "#fff",
-                    borderBottomWidth: 1,
-                    borderBottomColor: "#e5e7eb",
-                    paddingHorizontal: 16,
-                    paddingVertical: 12,
-                }}
-            >
-                <ExtensionPoint
-                    name="post.detail.actions"
-                    post={post}
-                    postId={post.id}
-                    fallback={() => (
-                        <View
-                            style={{
-                                backgroundColor: "#f9fafb",
-                                borderRadius: 8,
-                                padding: 12,
-                                alignItems: "center",
-                            }}
-                        >
-                            <Text
+                    {/* Comments Section */}
+                    <View style={{ flex: 1, backgroundColor: "#f9fafb" }}>
+                        <ExtensionPoint
+                            name="post.detail.comments"
+                            post={post}
+                            maxExtensions={1}
+                            fallback={() => (
+                                <View
+                                    style={{
+                                        padding: 16,
+                                        alignItems: "center",
+                                        minHeight: 200,
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            color: "#6D6D6D",
+                                            fontSize: 16,
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        No comments yet. Be the first to
+                                        comment!
+                                    </Text>
+                                </View>
+                            )}
+                        />
+                    </View>
+                </ScrollView>
+
+                {/* Sticky Comment Creator Footer */}
+                <View
+                    style={{
+                        backgroundColor: "#fff",
+                        borderTopWidth: 1,
+                        borderTopColor: "#e5e7eb",
+                        paddingHorizontal: 16,
+                        paddingTop: 12,
+                        paddingBottom: insets.bottom + 12,
+                        shadowColor: "#000",
+                        shadowOffset: {
+                            width: 0,
+                            height: -2,
+                        },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 3,
+                        elevation: 5,
+                    }}
+                >
+                    <ExtensionPoint
+                        name="post.detail.comment-creator"
+                        post={post}
+                        maxExtensions={1}
+                        fallback={() => (
+                            <View
                                 style={{
-                                    color: "#6D6D6D",
-                                    fontSize: 14,
-                                    textAlign: "center",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    backgroundColor: "#f3f4f6",
+                                    borderRadius: 20,
+                                    paddingHorizontal: 16,
+                                    paddingVertical: 12,
+                                    minHeight: 44,
                                 }}
                             >
-                                Comment creation will appear here when comments
-                                plugin is enabled
-                            </Text>
-                        </View>
-                    )}
-                />
+                                <Text
+                                    style={{
+                                        flex: 1,
+                                        color: "#9ca3af",
+                                        fontSize: 16,
+                                    }}
+                                >
+                                    Write a comment...
+                                </Text>
+                            </View>
+                        )}
+                    />
+                </View>
             </View>
-
-            {/* Comments List Section - independent FlatList area */}
-            <View
-                style={{
-                    flex: 1,
-                    backgroundColor: "#f9fafb",
-                }}
-            >
-                <ExtensionPoint
-                    name="post.detail.comments"
-                    post={post}
-                    postId={post.id}
-                    // Remove fallback since CommentList will handle empty state
-                />
-            </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };

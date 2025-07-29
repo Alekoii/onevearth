@@ -50,7 +50,13 @@
         "reportPost": "Report post",
         "deletePost": "Delete post",
         "editPost": "Edit post",
-        "noPosts": "No posts available"
+        "noPosts": "No posts available",
+        "post": "Post",
+        "visibility": {
+            "private": "Private",
+            "public": "Public"
+        }
+
     },
     "profile": {
         "editProfile": "Edit Profile",

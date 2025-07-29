@@ -7,9 +7,11 @@ import {
     Camera,
     Check,
     Edit3,
+    Globe,
     Heart,
     Home,
     Image,
+    Lock,
     Menu,
     MessageCircle,
     Paperclip,
@@ -52,7 +54,9 @@ export type IconName =
     | "video"
     | "paperclip"
     | "arrow-up"
-    | "arrow-down";
+    | "arrow-down"
+    | "globe" // ✅ Added
+    | "lock"; // ✅ Added
 
 const iconMap = {
     home: Home,
@@ -77,6 +81,8 @@ const iconMap = {
     image: Image,
     video: Video,
     paperclip: Paperclip,
+    globe: Globe, // ✅ Added
+    lock: Lock, // ✅ Added
 };
 
 export const Icon = ({
