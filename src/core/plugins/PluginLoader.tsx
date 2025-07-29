@@ -3,10 +3,12 @@ import { useEnhancedPlugins } from "./PluginProvider";
 import { useConfig } from "@/core/config/ConfigProvider";
 import { PostsPlugin } from "@/plugins/posts";
 import { CommentsPlugin } from "@/plugins/comments";
+import { NotificationsPlugin } from "@/plugins/notifications"; // Add this import
 
 const availablePlugins = {
     posts: PostsPlugin,
-    comments: CommentsPlugin, // Add the comments plugin
+    comments: CommentsPlugin,
+    notifications: NotificationsPlugin, // Add the notifications plugin here
 };
 
 export const PluginLoader = () => {

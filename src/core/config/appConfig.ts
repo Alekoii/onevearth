@@ -104,6 +104,7 @@ export const defaultAppConfig: AppConfig = {
         enabled: [
             "posts",
             "comments",
+            
         ],
         config: {
             emotions: {
@@ -136,6 +137,18 @@ export const defaultAppConfig: AppConfig = {
                 enableMentions: false,
                 showTimestamps: true,
                 collapseLongThreads: true,
+            },
+            notifications: {
+                maxNotifications: 1000,
+                groupSimilar: true,
+                autoMarkRead: false,
+                showAvatars: true,
+                notificationTypes: {
+                    new_reaction: true,
+                    new_comment: true,
+                    new_mention: true,
+                    new_follower: true,
+                },
             },
         },
     },

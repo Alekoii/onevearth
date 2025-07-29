@@ -1,8 +1,8 @@
-// src/components/navigation/AppNavigator.tsx
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View } from "react-native"; // Add this import
 import { useTheme } from "@/core/theming/ThemeProvider";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useStyles } from "@/core/theming/useStyles";
@@ -15,6 +15,9 @@ import { NotificationsScreen } from "@/screens/main/NotificationsScreen";
 import { SettingsScreen } from "@/screens/main/SettingsScreen";
 import { PostDetailScreen } from "@/plugins/posts/components/PostDetailScreen";
 import { RootStackParamList, TabParamList } from "@/types/navigation";
+
+// Import notification badge (this will be available after plugin is loaded)
+import { TabNotificationBadge } from "@/plugins/notifications/components/NotificationBadge";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
@@ -40,6 +43,21 @@ const MainTabs = () => {
                 strokeWidth={focused ? 2 : 1.5}
             />
         );
+
+    // Enhanced notifications tab icon with badge
+    const createNotificationsTabIcon = (
+        { focused, color, size }: TabIconProps,
+    ) => (
+        <View style={{ position: "relative" }}>
+            <Icon
+                name="bell"
+                color={focused ? theme.colors.primary[500] : color}
+                size={size}
+                strokeWidth={focused ? 2 : 1.5}
+            />
+            <TabNotificationBadge />
+        </View>
+    );
 
     return (
         <Tab.Navigator
@@ -87,7 +105,7 @@ const MainTabs = () => {
                 component={NotificationsScreen}
                 options={{
                     title: t("navigation.notifications"),
-                    tabBarIcon: createTabIcon("bell"),
+                    tabBarIcon: createNotificationsTabIcon, // Use enhanced icon with badge
                 }}
             />
             <Tab.Screen
@@ -102,6 +120,7 @@ const MainTabs = () => {
     );
 };
 
+// Rest of the AppNavigator component remains the same
 export const AppNavigator = () => {
     const { theme } = useTheme();
 

@@ -75,5 +75,29 @@
         "help": "Ayuda",
         "termsOfService": "Términos de Servicio",
         "privacyPolicy": "Política de Privacidad"
+    },
+    "notifications": {
+        "deleteTitle": "Eliminar Notificación",
+        "deleteMessage": "¿Estás seguro de que quieres eliminar esta notificación?",
+        "markAllRead": "Marcar todo como leído",
+        "noMoreNotifications": "No hay más notificaciones",
+        "loadingNotifications": "Cargando notificaciones...",
+        "errorTitle": "Error al cargar notificaciones",
+        "noNotifications": "Aún no hay notificaciones",
+        "noNotificationsMessage": "Cuando recibas me gusta, comentarios y seguidores, aparecerán aquí.",
+        "singleReaction": "A {{actor}} le gustó tu publicación",
+        "singleComment": "{{actor}} comentó en tu publicación",
+        "singleMention": "{{actor}} te mencionó",
+        "singleFollow": "{{actor}} comenzó a seguirte",
+        "singleGeneric": "{{actor}} interactuó con tu contenido",
+        "multipleReactions": "A {{actors}} les gustó tu publicación",
+        "multipleComments": "{{actors}} comentaron en tu publicación",
+        "multipleMentions": "{{actors}} te mencionaron",
+        "multipleFollows": "{{actors}} comenzaron a seguirte",
+        "multipleGeneric": "{{actors}} interactuaron con tu contenido",
+        "actorsWithOthers": "{{actors}} y {{count}} más",
+        "justNow": "ahora mismo",
+        "hoursAgo": "hace {{count}}h",
+        "daysAgo": "hace {{count}}d"
     }
 }
