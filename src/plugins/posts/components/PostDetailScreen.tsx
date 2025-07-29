@@ -1,4 +1,3 @@
-// src/plugins/posts/components/PostDetailScreen.tsx
 import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
@@ -91,48 +90,89 @@ export const PostDetailScreen = () => {
     }
 
     return (
-        <ScrollView style={styles.base} showsVerticalScrollIndicator={false}>
-            <View style={styles.content}>
-                <PostCard
-                    post={post}
-                    variant="default"
-                    maxLines={0}
-                    onUserPress={() => handleUserPress(post.user_id)}
-                />
+        <View style={styles.base}>
+            {/* Post Content Section - scrollable but contained */}
+            <View
+                style={{
+                    backgroundColor: "#fff",
+                    borderBottomWidth: 1,
+                    borderBottomColor: "#e5e7eb",
+                }}
+            >
+                <ScrollView
+                    style={{ maxHeight: 400 }} // Reasonable max height, not 50%
+                    showsVerticalScrollIndicator={false}
+                    bounces={true}
+                >
+                    <View style={{ padding: 16 }}>
+                        <PostCard
+                            post={post}
+                            variant="default"
+                            maxLines={0}
+                            onUserPress={() => handleUserPress(post.user_id)}
+                        />
 
-                <ExtensionPoint
-                    name="post.detail.content"
-                    post={post}
-                    maxExtensions={5}
-                />
+                        <ExtensionPoint
+                            name="post.detail.content"
+                            post={post}
+                            maxExtensions={5}
+                        />
+                    </View>
+                </ScrollView>
+            </View>
 
+            {/* Comment Creation Section */}
+            <View
+                style={{
+                    backgroundColor: "#fff",
+                    borderBottomWidth: 1,
+                    borderBottomColor: "#e5e7eb",
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                }}
+            >
                 <ExtensionPoint
-                    name="post.detail.comments"
+                    name="post.detail.actions"
                     post={post}
+                    postId={post.id}
                     fallback={() => (
                         <View
                             style={{
-                                padding: 16,
-                                alignItems: "center",
                                 backgroundColor: "#f9fafb",
                                 borderRadius: 8,
-                                marginTop: 16,
+                                padding: 12,
+                                alignItems: "center",
                             }}
                         >
-                            <Text style={{ color: "#6D6D6D", fontSize: 14 }}>
-                                Comments will appear here when comments plugin
-                                is enabled
+                            <Text
+                                style={{
+                                    color: "#6D6D6D",
+                                    fontSize: 14,
+                                    textAlign: "center",
+                                }}
+                            >
+                                Comment creation will appear here when comments
+                                plugin is enabled
                             </Text>
                         </View>
                     )}
                 />
+            </View>
 
+            {/* Comments List Section - independent FlatList area */}
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: "#f9fafb",
+                }}
+            >
                 <ExtensionPoint
-                    name="post.detail.actions"
+                    name="post.detail.comments"
                     post={post}
-                    filterBy={{ tags: ["detail-actions"] }}
+                    postId={post.id}
+                    // Remove fallback since CommentList will handle empty state
                 />
             </View>
-        </ScrollView>
+        </View>
     );
 };
