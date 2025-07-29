@@ -26,23 +26,125 @@ are implemented as plugins.
 ## Project Structure
 
 ```
-src/
-├── core/
-│   ├── plugins/              # Enhanced Plugin System
-│   │   ├── PluginManager.ts  # Core plugin lifecycle management
-│   │   ├── ServiceRegistry.ts # Service registration/discovery
-│   │   ├── ExtensionPoint.tsx # UI extension points
-│   │   └── PluginProvider.tsx # React context provider
-│   ├── config/               # Configuration system
-│   ├── theming/              # Theme system with customization
-│   └── api/                  # Supabase client
-├── plugins/
-│   └── posts/                # Example plugin implementation
-├── components/               # Reusable UI components
-├── screens/                  # Main app screens
-├── hooks/                    # Custom React hooks
-├── services/                 # Business logic services
-└── store/                    # Redux store with dynamic reducers
+onevearth/
+├── App.tsx                   # Main app component with providers
+├── index.ts                  # Entry point
+├── app.json                  # Expo configuration
+├── package.json              # Dependencies and scripts
+├── metro.config.js           # Metro bundler configuration
+├── tsconfig.json             # TypeScript configuration
+├── 
+├── supabase/
+│   └── migrations/           # Database migration files
+│       └── 20250727173433_remote_schema.sql
+├── 
+└── src/
+    ├── core/                 # Core infrastructure
+    │   ├── api/
+    │   │   └── SupabaseClient.ts
+    │   ├── config/           # Configuration system
+    │   │   ├── ConfigProvider.tsx
+    │   │   ├── ConfigManager.ts
+    │   │   ├── appConfig.ts  # Main app configuration
+    │   │   └── types.ts
+    │   ├── theming/          # Theme system
+    │   │   ├── ThemeProvider.tsx
+    │   │   ├── useStyles.ts  # Theme hook
+    │   │   ├── ThemeCustomizer.ts
+    │   │   └── types.ts
+    │   └── plugins/          # Enhanced Plugin System
+    │       ├── PluginManager.ts     # Core plugin lifecycle
+    │       ├── ServiceRegistry.ts   # Service registry
+    │       ├── PluginReduxIntegration.ts # Redux integration
+    │       ├── ExtensionPoint.tsx   # UI extension points
+    │       ├── PluginProvider.tsx   # React context
+    │       ├── PluginLoader.tsx     # Plugin loading
+    │       ├── EventEmitter.ts      # Plugin communication
+    │       └── types.ts
+    ├── 
+    ├── components/           # Reusable UI components
+    │   ├── base/            # Base UI components
+    │   │   ├── Button.tsx
+    │   │   ├── Card.tsx
+    │   │   └── Input.tsx
+    │   ├── navigation/      # Navigation components
+    │   │   ├── AppNavigator.tsx
+    │   │   └── AuthGuard.tsx
+    │   ├── ui/              # UI utilities
+    │   │   ├── Icon.tsx
+    │   │   └── LoadingScreen.tsx
+    │   └── profile/         # Profile components
+    │       └── ProfileHeader.tsx
+    ├── 
+    ├── screens/             # Main app screens
+    │   ├── auth/
+    │   │   └── LoginScreen.tsx
+    │   └── main/
+    │       ├── HomeScreen.tsx
+    │       ├── SearchScreen.tsx
+    │       ├── CreateScreen.tsx
+    │       ├── NotificationsScreen.tsx
+    │       └── ProfileScreen.tsx
+    ├── 
+    ├── hooks/               # Custom React hooks
+    │   ├── index.ts         # Hook exports
+    │   ├── useAppDispatch.ts
+    │   ├── useAppSelector.ts
+    │   ├── useAuth.ts
+    │   ├── useAuthInitializer.ts
+    │   ├── useLocale.ts
+    │   ├── usePosts.ts
+    │   ├── useProfile.ts
+    │   └── useTranslation.ts
+    ├── 
+    ├── services/            # Business logic services
+    │   └── AuthService.ts
+    ├── 
+    ├── store/               # Redux store
+    │   ├── index.ts         # Store configuration with dynamic reducers
+    │   └── slices/
+    │       ├── authSlice.ts
+    │       ├── configSlice.ts
+    │       └── usersSlice.ts
+    ├── 
+    ├── types/               # TypeScript type definitions
+    │   ├── posts.ts
+    │   └── database.ts      # Generated from Supabase
+    ├── 
+    ├── i18n/                # Internationalization
+    │   ├── index.ts         # i18n configuration
+    │   └── types.ts
+    ├── 
+    ├── locales/             # Translation files
+    │   ├── en.json
+    │   └── es.json
+    ├── 
+    ├── themes/              # Theme system
+    │   ├── base/
+    │   │   └── baseTheme.ts
+    │   ├── presets/         # Pre-built themes
+    │   │   ├── lightTheme.ts
+    │   │   └── darkTheme.ts
+    │   └── components/      # Component styling
+    │       └── createComponentStyles.ts
+    └── 
+    └── plugins/             # Plugin implementations
+        └── posts/           # Posts plugin (example)
+            ├── index.ts     # Plugin definition
+            ├── components/  # Plugin components
+            │   ├── PostCard.tsx
+            │   ├── PostCreator.tsx
+            │   ├── PostList.tsx
+            │   └── PostDetailScreen.tsx
+            ├── services/    # Plugin services
+            │   └── PostService.ts
+            ├── store/       # Plugin state
+            │   ├── postsSlice.ts
+            │   └── selectors.ts
+            ├── hooks/       # Plugin hooks
+            │   └── usePosts.ts
+            └── types/       # Plugin types
+                └── index.ts
 ```
 
 ## Database Setup
