@@ -1,7 +1,8 @@
 import { ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useStyles } from "@/core/theming/useStyles";
+import { useColors, useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useTheme } from "@/core/theming/ThemeProvider";
 import { useAuth } from "@/hooks/useAuth";
 import { ExtensionPoint } from "@/core/plugins/ExtensionPoint";
 import { Button } from "@/components/base/Button";
@@ -10,12 +11,22 @@ import { Icon } from "@/components/ui/Icon";
 
 export const ProfileScreen = () => {
     const styles = useStyles("Screen");
+    const colors = useColors();
+    const { theme } = useTheme();
     const { t } = useTranslation();
     const { user, signOut } = useAuth();
     const insets = useSafeAreaInsets();
 
     return (
-        <ScrollView style={[styles.base, { paddingTop: insets.top }]}>
+        <ScrollView
+            style={[
+                styles.base,
+                {
+                    paddingTop: insets.top,
+                    backgroundColor: colors.background.primary,
+                },
+            ]}
+        >
             <ExtensionPoint
                 name="profile.header"
                 user={user}
@@ -27,24 +38,34 @@ export const ProfileScreen = () => {
                                     width: 80,
                                     height: 80,
                                     borderRadius: 40,
-                                    backgroundColor: "#f3f4f6",
+                                    backgroundColor: colors.surface.secondary,
                                     alignItems: "center",
                                     justifyContent: "center",
                                     marginBottom: 16,
                                 }}
                             >
-                                <Icon name="user" size={40} color="#6D6D6D" />
+                                <Icon
+                                    name="user"
+                                    size={40}
+                                    color={colors.text.secondary}
+                                />
                             </View>
                             <Text
                                 style={{
                                     fontSize: 18,
                                     fontWeight: "600",
                                     marginBottom: 4,
+                                    color: colors.text.primary,
                                 }}
                             >
                                 {user?.email || "User"}
                             </Text>
-                            <Text style={{ color: "#6D6D6D", fontSize: 14 }}>
+                            <Text
+                                style={{
+                                    color: colors.text.secondary,
+                                    fontSize: 14,
+                                }}
+                            >
                                 Enable profile plugin for full profile features
                             </Text>
                         </View>

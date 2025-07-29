@@ -1,6 +1,6 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useStyles } from "@/core/theming/useStyles";
+import { useColors, useStyles } from "@/core/theming/useStyles";
 import { useTheme } from "@/core/theming/ThemeProvider";
 import { useAuth } from "@/hooks/useAuth";
 import { ExtensionPoint } from "@/core/plugins/ExtensionPoint";
@@ -8,6 +8,7 @@ import { Icon } from "@/components/ui/Icon";
 
 export const HomeScreen = () => {
     const styles = useStyles("Screen");
+    const colors = useColors();
     const { theme } = useTheme();
     const { user } = useAuth();
     const insets = useSafeAreaInsets();
@@ -17,7 +18,15 @@ export const HomeScreen = () => {
     };
 
     return (
-        <View style={[styles.base, { paddingTop: insets.top }]}>
+        <View
+            style={[
+                styles.base,
+                {
+                    paddingTop: insets.top,
+                    backgroundColor: colors.background.primary,
+                },
+            ]}
+        >
             <View
                 style={{
                     flexDirection: "row",

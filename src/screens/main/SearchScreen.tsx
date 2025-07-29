@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { FlatList, View } from "react-native";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useStyles } from "@/core/theming/useStyles";
+import { useColors, useStyles } from "@/core/theming/useStyles";
+import { useTheme } from "@/core/theming/ThemeProvider";
 import { Input } from "@/components/base/Input";
 import { PostCard } from "@/plugins/posts/components/PostCard";
 
@@ -11,6 +12,8 @@ export const SearchScreen = () => {
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
     const styles = useStyles("Screen");
+    const colors = useColors();
+    const { theme } = useTheme();
 
     const handleSearch = async (searchQuery: string) => {
         if (!searchQuery.trim()) {
@@ -31,7 +34,12 @@ export const SearchScreen = () => {
     const renderResult = ({ item }: { item: any }) => <PostCard post={item} />;
 
     return (
-        <View style={styles.base}>
+        <View
+            style={[
+                styles.base,
+                { backgroundColor: colors.background.primary },
+            ]}
+        >
             <View style={styles.content}>
                 <Input
                     placeholder={t("navigation.search")}

@@ -1,6 +1,6 @@
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useStyles } from "@/core/theming/useStyles";
+import { useColors, useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useTheme } from "@/core/theming/ThemeProvider";
 import { useConfig } from "@/core/config/ConfigProvider";
@@ -11,6 +11,7 @@ import { Icon } from "@/components/ui/Icon";
 
 export const SettingsScreen = () => {
     const styles = useStyles("Screen");
+    const colors = useColors();
     const { t } = useTranslation();
     const { theme, themeName, setTheme, availableThemes } = useTheme();
     const { config, updateConfig } = useConfig();
@@ -41,7 +42,15 @@ export const SettingsScreen = () => {
     const isLargeText = config.ui?.accessibility?.largeText || false;
 
     return (
-        <ScrollView style={[styles.base, { paddingTop: insets.top + 20 }]}>
+        <ScrollView
+            style={[
+                styles.base,
+                {
+                    paddingTop: insets.top + 20,
+                    backgroundColor: colors.background.primary,
+                },
+            ]}
+        >
             <View style={styles.content}>
                 <Text
                     style={{
@@ -140,100 +149,76 @@ export const SettingsScreen = () => {
                         <View
                             style={{
                                 flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-between",
+                                gap: 12,
                             }}
                         >
                             <TouchableOpacity
                                 style={{
-                                    width: 44,
-                                    height: 44,
-                                    borderRadius: 22,
-                                    backgroundColor:
-                                        theme.colors.surface.tertiary,
+                                    flex: 1,
+                                    padding: 12,
+                                    borderRadius: 8,
+                                    borderWidth: 2,
+                                    borderColor: !isLargeText
+                                        ? theme.colors.primary[500]
+                                        : theme.colors.border.primary,
+                                    backgroundColor: !isLargeText
+                                        ? theme.colors.primary[50]
+                                        : theme.colors.surface.secondary,
                                     alignItems: "center",
-                                    justifyContent: "center",
                                 }}
                                 onPress={() => handleTextSizeChange(false)}
-                                disabled={!isLargeText}
                             >
                                 <Text
                                     style={{
-                                        fontSize: 20,
-                                        fontWeight: "bold",
-                                        color: isLargeText
-                                            ? theme.colors.text.primary
-                                            : theme.colors.text.disabled,
+                                        fontSize: 14,
+                                        fontWeight: !isLargeText
+                                            ? "600"
+                                            : "normal",
+                                        color: !isLargeText
+                                            ? theme.colors.primary[700]
+                                            : theme.colors.text.primary,
                                     }}
                                 >
-                                    A-
+                                    Normal
                                 </Text>
                             </TouchableOpacity>
-
-                            <Text
-                                style={{
-                                    fontSize: isLargeText ? 18 : 16,
-                                    color: theme.colors.text.secondary,
-                                }}
-                            >
-                                {isLargeText ? "Large Text" : "Normal Text"}
-                            </Text>
-
                             <TouchableOpacity
                                 style={{
-                                    width: 44,
-                                    height: 44,
-                                    borderRadius: 22,
-                                    backgroundColor:
-                                        theme.colors.surface.tertiary,
+                                    flex: 1,
+                                    padding: 12,
+                                    borderRadius: 8,
+                                    borderWidth: 2,
+                                    borderColor: isLargeText
+                                        ? theme.colors.primary[500]
+                                        : theme.colors.border.primary,
+                                    backgroundColor: isLargeText
+                                        ? theme.colors.primary[50]
+                                        : theme.colors.surface.secondary,
                                     alignItems: "center",
-                                    justifyContent: "center",
                                 }}
                                 onPress={() => handleTextSizeChange(true)}
-                                disabled={isLargeText}
                             >
                                 <Text
                                     style={{
-                                        fontSize: 20,
-                                        fontWeight: "bold",
-                                        color: !isLargeText
-                                            ? theme.colors.text.primary
-                                            : theme.colors.text.disabled,
+                                        fontSize: 14,
+                                        fontWeight: isLargeText
+                                            ? "600"
+                                            : "normal",
+                                        color: isLargeText
+                                            ? theme.colors.primary[700]
+                                            : theme.colors.text.primary,
                                     }}
                                 >
-                                    A+
+                                    Large
                                 </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </Card>
 
-                <Card>
-                    <Button
-                        onPress={signOut}
-                    >
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                gap: 8,
-                            }}
-                        >
-                            <Icon
-                                name="arrow-left"
-                                size={16}
-                                color={theme.colors.error[500]}
-                            />
-                            <Text
-                                style={{
-                                    color: theme.colors.error[500],
-                                    fontSize: 16,
-                                    fontWeight: "500",
-                                }}
-                            >
-                                {t("auth.logout")}
-                            </Text>
-                        </View>
+                <Card style={{ marginBottom: 16 }}>
+                    <Button onPress={signOut} variant="ghost">
+                        {t("auth.logout")}
                     </Button>
                 </Card>
             </View>

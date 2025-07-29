@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useStyles } from "@/core/theming/useStyles";
+import { useColors, useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useTheme } from "@/core/theming/ThemeProvider";
 import { ExtensionPoint } from "@/core/plugins/ExtensionPoint";
@@ -14,6 +14,7 @@ type NotificationsScreenNavigationProp = StackNavigationProp<
 
 export const NotificationsScreen = () => {
     const styles = useStyles("Screen");
+    const colors = useColors();
     const { t } = useTranslation();
     const { theme } = useTheme();
     const insets = useSafeAreaInsets();
@@ -26,7 +27,15 @@ export const NotificationsScreen = () => {
     };
 
     return (
-        <View style={[{ flex: 1, paddingTop: insets.top }]}>
+        <View
+            style={[
+                {
+                    flex: 1,
+                    paddingTop: insets.top,
+                    backgroundColor: colors.background.primary,
+                },
+            ]}
+        >
             <ExtensionPoint
                 name="notifications.content"
                 autoRefresh={true}
