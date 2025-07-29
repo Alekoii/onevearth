@@ -126,12 +126,12 @@ const createDarkColors = () => ({
         tertiary: "#374151",
         overlay: "rgba(0, 0, 0, 0.7)",
         modal: "#1F2937",
-        card: "#1F2937",
+        card: "#111111",
     },
 
     // Dark theme surfaces
     surface: {
-        primary: "#1F2937",
+        primary: "#111111",
         secondary: "#374151",
         tertiary: "#4B5563",
         elevated: "#374151",
@@ -151,8 +151,8 @@ const createDarkColors = () => ({
 
     // Dark theme borders
     border: {
-        primary: "#374151",
-        secondary: "#4B5563",
+        primary: "#2C2E32",
+        secondary: "#2C2E32",
         focus: BRAND_COLORS.primary,
         error: BRAND_COLORS.error,
         success: BRAND_COLORS.success,

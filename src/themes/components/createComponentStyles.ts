@@ -4,7 +4,7 @@ import { ComponentStyles, Theme } from "@/core/theming/types";
 const createBaseStyle = (theme: Theme, backgroundColor = "primary") => ({
     backgroundColor: theme.colors
         .surface[backgroundColor as keyof typeof theme.colors.surface],
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: 0,
     padding: theme.spacing.md,
 });
 
