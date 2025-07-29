@@ -1,9 +1,6 @@
 # OneVEarth Social Network
 
-A **plugin-first** social network built with React Native Expo where all
-features are modular and configurable. Core provides infrastructure (auth,
-theming, plugin management) while social features (posts, comments, reactions)
-are implemented as plugins.
+A **plugin-first** social network built with React Native Expo where all features are modular and configurable. Core provides infrastructure (auth, theming, plugin management) while social features (posts, comments, reactions) are implemented as plugins.
 
 ## Architecture Philosophy
 
@@ -15,13 +12,14 @@ are implemented as plugins.
 
 ## Tech Stack
 
-- **Frontend**: React Native Expo, TypeScript
+- **Frontend**: React Native Expo 53, TypeScript
 - **State**: Redux Toolkit with dynamic plugin reducers
 - **Database**: Supabase (PostgreSQL)
 - **Authentication**: Supabase Auth
 - **Theming**: Custom theme system with light/dark modes
-- **Navigation**: React Navigation with plugin extensions
+- **Navigation**: React Navigation v7 with plugin extensions
 - **Internationalization**: i18next
+- **Icons**: Lucide React Native
 
 ## Project Structure
 
@@ -52,17 +50,48 @@ onevearth/
     │   │   ├── useStyles.ts  # Theme hook
     │   │   ├── ThemeCustomizer.ts
     │   │   └── types.ts
-    │   └── plugins/          # Enhanced Plugin System
-    │       ├── PluginManager.ts     # Core plugin lifecycle
-    │       ├── ServiceRegistry.ts   # Service registry
-    │       ├── PluginReduxIntegration.ts # Redux integration
-    │       ├── ExtensionPoint.tsx   # UI extension points
-    │       ├── PluginProvider.tsx   # React context
-    │       ├── PluginLoader.tsx     # Plugin loading
-    │       ├── EventEmitter.ts      # Plugin communication
-    │       └── types.ts
+    │   ├── plugins/          # Enhanced Plugin System
+    │   │   ├── PluginManager.ts     # Core plugin lifecycle
+    │   │   ├── ServiceRegistry.ts   # Service registry
+    │   │   ├── PluginReduxIntegration.ts # Redux integration
+    │   │   ├── ExtensionPoint.tsx   # UI extension points
+    │   │   ├── PluginProvider.tsx   # React context
+    │   │   ├── PluginLoader.tsx     # Plugin loading
+    │   │   ├── EventEmitter.ts      # Plugin communication
+    │   │   └── types.ts
+    │   └── services/
+    │       └── AuthService.ts
     ├── 
-    ├── components/           # Reusable UI components
+    ├── store/               # Redux store
+    │   ├── index.ts         # Store configuration with dynamic reducers
+    │   └── slices/
+    │       ├── authSlice.ts
+    │       ├── configSlice.ts
+    │       └── usersSlice.ts
+    ├── 
+    ├── types/               # TypeScript type definitions
+    │   ├── posts.ts
+    │   ├── navigation.ts
+    │   └── database.ts      # Generated from Supabase
+    ├── 
+    ├── i18n/                # Internationalization
+    │   ├── index.ts         # i18n configuration
+    │   └── types.ts
+    ├── 
+    ├── locales/             # Translation files
+    │   ├── en.json
+    │   └── es.json
+    ├── 
+    ├── themes/              # Theme system
+    │   ├── base/
+    │   │   └── baseTheme.ts
+    │   ├── presets/         # Pre-built themes
+    │   │   ├── lightTheme.ts
+    │   │   └── darkTheme.ts
+    │   └── components/      # Component styling
+    │       └── createComponentStyles.ts
+    ├── 
+    ├── components/          # Reusable UI components
     │   ├── base/            # Base UI components
     │   │   ├── Button.tsx
     │   │   ├── Card.tsx
@@ -84,6 +113,7 @@ onevearth/
     │       ├── SearchScreen.tsx
     │       ├── CreateScreen.tsx
     │       ├── NotificationsScreen.tsx
+    │       ├── SettingsScreen.tsx
     │       └── ProfileScreen.tsx
     ├── 
     ├── hooks/               # Custom React hooks
@@ -100,136 +130,145 @@ onevearth/
     ├── services/            # Business logic services
     │   └── AuthService.ts
     ├── 
-    ├── store/               # Redux store
-    │   ├── index.ts         # Store configuration with dynamic reducers
-    │   └── slices/
-    │       ├── authSlice.ts
-    │       ├── configSlice.ts
-    │       └── usersSlice.ts
-    ├── 
-    ├── types/               # TypeScript type definitions
-    │   ├── posts.ts
-    │   └── database.ts      # Generated from Supabase
-    ├── 
-    ├── i18n/                # Internationalization
-    │   ├── index.ts         # i18n configuration
-    │   └── types.ts
-    ├── 
-    ├── locales/             # Translation files
-    │   ├── en.json
-    │   └── es.json
-    ├── 
-    ├── themes/              # Theme system
-    │   ├── base/
-    │   │   └── baseTheme.ts
-    │   ├── presets/         # Pre-built themes
-    │   │   ├── lightTheme.ts
-    │   │   └── darkTheme.ts
-    │   └── components/      # Component styling
-    │       └── createComponentStyles.ts
-    └── 
     └── plugins/             # Plugin implementations
-        └── posts/           # Posts plugin (example)
-            ├── index.ts     # Plugin definition
-            ├── components/  # Plugin components
-            │   ├── PostCard.tsx
-            │   ├── PostCreator.tsx
-            │   ├── PostList.tsx
-            │   └── PostDetailScreen.tsx
-            ├── services/    # Plugin services
-            │   └── PostService.ts
-            ├── store/       # Plugin state
-            │   ├── postsSlice.ts
-            │   └── selectors.ts
-            ├── hooks/       # Plugin hooks
-            │   └── usePosts.ts
-            └── types/       # Plugin types
-                └── index.ts
+        ├── posts/           # Posts plugin
+        │   ├── index.ts     # Plugin definition
+        │   ├── components/  # Plugin components
+        │   │   ├── PostCard.tsx
+        │   │   ├── PostCreator.tsx
+        │   │   ├── PostList.tsx
+        │   │   └── PostDetailScreen.tsx
+        │   ├── services/    # Plugin services
+        │   │   └── PostService.ts
+        │   ├── store/       # Plugin state
+        │   │   ├── postsSlice.ts
+        │   │   └── selectors.ts
+        │   ├── hooks/       # Plugin hooks
+        │   │   └── usePosts.ts
+        │   └── types/       # Plugin types
+        │       └── index.ts
+        ├── comments/        # Comments plugin
+        │   ├── index.ts
+        │   ├── components/
+        │   │   ├── CommentItem.tsx
+        │   │   ├── CommentList.tsx
+        │   │   ├── CommentCreator.tsx
+        │   │   └── CommentActionButton.tsx
+        │   ├── services/
+        │   │   └── CommentService.ts
+        │   ├── store/
+        │   │   └── commentsSlice.ts
+        │   ├── hooks/
+        │   │   └── useComments.ts
+        │   └── types/
+        │       └── index.ts
+        └── notifications/   # Notifications plugin
+            ├── index.ts
+            ├── components/
+            │   └── NotificationBadge.tsx
+            ├── services/
+            │   └── NotificationService.ts
+            ├── store/
+            │   └── notificationsSlice.ts
+            └── hooks/
+                └── useNotifications.ts
 ```
 
-## Database Setup
+## Installation & Setup
 
-### 1. Create Supabase Project
+### 1. Clone and Install
 
-1. Go to [https://supabase.com](https://supabase.com)
-2. Create new project
-3. Note your project URL and anon key
+```bash
+git clone <repository-url>
+cd onevearth
+npm install
+```
 
-### 2. Run Database Migration
+### 2. Supabase Setup
 
 ```bash
 # Install Supabase CLI
 npm install -g supabase
 
+# Create new Supabase project at https://supabase.com
 # Link to your project
 supabase link --project-ref YOUR_PROJECT_REF
 
 # Run migrations
 supabase db push
+
+# Generate TypeScript types
+supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/database.ts
 ```
 
-The schema includes:
+### 3. Environment Configuration
 
-**Core Tables**:
-
-- `profiles` - User profiles and metadata
-- `posts` - User posts with visibility controls
-- `comments` - Nested comments system
-- `post_reactions` - Reaction system
-- `followers` - Follow relationships
-- `notifications` - Real-time notifications
-
-**Advanced Features**:
-
-- `groups` - Group functionality
-- `emotions` - Emotion tagging
-- `hashtags` - Hashtag system with trending
-- `media_attachments` - File uploads
-- `blocks` - User blocking
-- `reports` - Content moderation
-- `user_preferences` - User settings
-- `app_configuration` - Admin configuration
-
-### 3. Configure Environment
-
-Create environment configuration:
+Update `src/core/api/SupabaseClient.ts` with your Supabase credentials:
 
 ```typescript
-// Update src/core/api/SupabaseClient.ts
 const supabaseUrl = "YOUR_SUPABASE_URL";
 const supabaseKey = "YOUR_SUPABASE_ANON_KEY";
 ```
 
-The migrations in `supabase/migrations/` include:
+### 4. Configure Plugins
 
-**Core Tables**:
-
-- `profiles` - User profiles and metadata
-- `posts` - User posts with visibility controls
-- `comments` - Nested comments system
-- `post_reactions` - Reaction system
-- `followers` - Follow relationships
-- `notifications` - Real-time notifications
-
-**Advanced Features**:
-
-- `groups` - Group functionality
-- `emotions` - Emotion tagging
-- `hashtags` - Hashtag system with trending
-- `media_attachments` - File uploads
-- `blocks` - User blocking
-- `reports` - Content moderation
-- `user_preferences` - User settings
-- `app_configuration` - Admin configuration
-
-### 4. Configure Environment
-
-Create environment configuration:
+Edit `src/core/config/appConfig.ts` to enable desired plugins:
 
 ```typescript
-// Update src/core/api/SupabaseClient.ts
-const supabaseUrl = "YOUR_SUPABASE_URL";
-const supabaseKey = "YOUR_SUPABASE_ANON_KEY";
+export const defaultAppConfig: AppConfig = {
+    plugins: {
+        enabled: [
+            "posts",        // ✅ Implemented
+            "comments",     // ✅ Implemented  
+            "notifications" // ✅ Implemented
+        ],
+        config: {
+            posts: {
+                maxLength: 280,
+                allowMedia: true,
+                requireModeration: false,
+            },
+            comments: {
+                allowNested: true,
+                maxDepth: 3,
+                allowEditing: true,
+            },
+        },
+    },
+};
+```
+
+## Development
+
+### Run Development Server
+
+```bash
+# Start Expo development server
+npm start
+
+# Run on platforms
+npm run ios
+npm run android
+npm run web
+```
+
+### Database Development
+
+```bash
+# Start local Supabase instance
+supabase start
+
+# Create new migration
+supabase migration new your_migration_name
+
+# Apply migrations locally
+supabase db reset
+
+# Generate TypeScript types
+supabase gen types typescript --local > src/types/database.ts
+
+# Push to production
+supabase db push
 ```
 
 ## Plugin System Architecture
@@ -268,471 +307,7 @@ interface EnhancedPlugin {
 }
 ```
 
-### Plugin Development Example
-
-```typescript
-// src/plugins/posts/index.ts
-export const PostsPlugin: EnhancedPlugin = {
-    id: "posts",
-    name: "Posts",
-    version: "1.0.0",
-    description: "Core posting functionality",
-    author: "OneVEarth Team",
-
-    services: {
-        PostService: PostService,
-    },
-
-    reducers: {
-        posts: postsReducer,
-    },
-
-    components: {
-        PostCard: PostCard,
-        PostList: PostList,
-        PostCreator: PostCreator,
-    },
-
-    async install(api) {
-        api.registerService("PostService", PostService);
-        api.registerReducer("posts", postsReducer);
-        api.registerComponent("PostCard", PostCard);
-    },
-
-    async activate(api) {
-        api.registerExtension("home.content", PostList, 100);
-        api.registerExtension("create.content", PostCreator, 100);
-
-        api.subscribeToEvent("user:login", (user) => {
-            console.log("Posts plugin: User logged in");
-        });
-    },
-};
-```
-
-### Extension Points
-
-The app provides extension points throughout the UI:
-
-```typescript
-// Use in components
-<ExtensionPoint
-    name="home.content"
-    maxExtensions={5}
-    filterBy={{ tags: ["featured"], minPriority: 10 }}
-    fallback={DefaultContent}
-/>;
-```
-
-Available extension points:
-
-- `home.content` - Home screen content
-- `create.content` - Create screen content
-- `post.actions` - Post action buttons
-- `post.header` - Post header elements
-- `profile.header` - Profile header
-- `profile.content` - Profile sections
-
-### Service Registry
-
-Plugins register services for cross-plugin communication:
-
-```typescript
-// Register service
-api.registerService("PostService", PostService);
-
-// Use service in other plugins
-const { getService } = useEnhancedPlugins();
-const postService = getService<PostService>("PostService");
-```
-
-## Installation & Setup
-
-### Enhanced Plugin Interface
-
-```typescript
-interface EnhancedPlugin {
-    id: string;
-    name: string;
-    version: string;
-    description: string;
-    author: string;
-
-    // Dependencies
-    dependencies?: string[];
-    peerDependencies?: string[];
-    conflicts?: string[];
-
-    // UI Components
-    components?: Record<string, ComponentType<any>>;
-    screens?: Record<string, ComponentType<any>>;
-
-    // State Management
-    reducers?: Record<string, Reducer<any, any>>;
-    middleware?: Middleware[];
-
-    // Services
-    services?: Record<string, any>;
-
-    // Lifecycle hooks
-    install?: (api: EnhancedPluginAPI) => Promise<void>;
-    activate?: (api: EnhancedPluginAPI) => Promise<void>;
-    deactivate?: (api: EnhancedPluginAPI) => Promise<void>;
-    uninstall?: (api: EnhancedPluginAPI) => Promise<void>;
-}
-```
-
-### Plugin Development Example
-
-```typescript
-// src/plugins/posts/index.ts
-export const PostsPlugin: EnhancedPlugin = {
-    id: "posts",
-    name: "Posts",
-    version: "1.0.0",
-    description: "Core posting functionality",
-    author: "OneVEarth Team",
-
-    services: {
-        PostService: PostService,
-    },
-
-    reducers: {
-        posts: postsReducer,
-    },
-
-    components: {
-        PostCard: PostCard,
-        PostList: PostList,
-        PostCreator: PostCreator,
-    },
-
-    async install(api) {
-        api.registerService("PostService", PostService);
-        api.registerReducer("posts", postsReducer);
-        api.registerComponent("PostCard", PostCard);
-    },
-
-    async activate(api) {
-        api.registerExtension("home.content", PostList, 100);
-        api.registerExtension("create.content", PostCreator, 100);
-
-        api.subscribeToEvent("user:login", (user) => {
-            console.log("Posts plugin: User logged in");
-        });
-    },
-};
-```
-
-### Extension Points
-
-The app provides extension points throughout the UI:
-
-```typescript
-// Use in components
-<ExtensionPoint
-    name="home.content"
-    maxExtensions={5}
-    filterBy={{ tags: ["featured"], minPriority: 10 }}
-    fallback={DefaultContent}
-/>;
-```
-
-Available extension points:
-
-- `home.content` - Home screen content
-- `create.content` - Create screen content
-- `post.actions` - Post action buttons
-- `post.header` - Post header elements
-- `profile.header` - Profile header
-- `profile.content` - Profile sections
-
-### Service Registry
-
-Plugins register services for cross-plugin communication:
-
-```typescript
-// Register service
-api.registerService("PostService", PostService);
-
-// Use service in other plugins
-const { getService } = useEnhancedPlugins();
-const postService = getService<PostService>("PostService");
-```
-
-## Installation & Setup
-
-### 1. Clone and Install
-
-```bash
-git clone <repository-url>
-cd onevearth
-npm install
-
-# Install Supabase CLI for database management
-npm install -g supabase
-```
-
-### 2. Environment Setup
-
-Configure your Supabase credentials in `src/core/api/SupabaseClient.ts`
-
-### 3. Database Migration
-
-Run the provided SQL schema in your Supabase project
-
-### 4. Configure App
-
-Edit `src/core/config/appConfig.ts`:
-
-```typescript
-export const defaultAppConfig: AppConfig = {
-    plugins: {
-        enabled: [
-            "posts", // Enable posts plugin
-            // "comments",  // Uncomment to enable
-            // "reactions", // Uncomment to enable
-        ],
-        config: {
-            posts: {
-                maxLength: 280,
-                allowMedia: true,
-                requireModeration: false,
-            },
-        },
-    },
-};
-```
-
-### 5. Local Development (Optional)
-
-For local development with Supabase:
-
-```bash
-# Start local Supabase instance
-supabase start
-
-# This will provide local URLs for development
-# Update your SupabaseClient.ts to use local URLs when in development
-```
-
-## Development
-
-### Run Development Server
-
-```bash
-# Start Expo development server
-npm start
-
-# Run on specific platforms
-npm run ios
-npm run android
-npm run web
-```
-
-### Database Development
-
-```bash
-# Start local Supabase instance
-supabase start
-
-# Create new migration
-supabase migration new your_migration_name
-
-# Apply migrations locally
-supabase db reset
-
-# Generate TypeScript types
-supabase gen types typescript --local > src/types/database.ts
-
-# Push to production
-supabase db push
-```
-
-### Plugin Development Workflow
-
-1. **Create Plugin Structure**:
-
-```
-src/plugins/my-plugin/
-├── index.ts              # Plugin definition
-├── components/           # React components
-├── services/            # Business services
-├── store/               # Redux slice
-└── types/               # TypeScript types
-```
-
-2. **Implement Plugin**:
-
-```typescript
-export const MyPlugin: EnhancedPlugin = {
-    id: "my-plugin",
-    name: "My Plugin",
-    version: "1.0.0",
-    // ... implementation
-};
-```
-
-3. **Register Plugin**:
-
-```typescript
-// Add to src/core/plugins/PluginLoader.tsx
-const availablePlugins = {
-    posts: PostsPlugin,
-    "my-plugin": MyPlugin, // Add here
-};
-```
-
-4. **Enable in Config**:
-
-```typescript
-// src/core/config/appConfig.ts
-plugins: {
-    enabled: ["posts", "my-plugin"];
-}
-```
-
-### Theme Customization
-
-```typescript
-// Customize themes in src/themes/presets/
-export const customTheme = customizeLightTheme({
-    primaryColor: "#DB00FF",
-    secondaryColor: "#6D6D6D",
-    accentColor: "#00DBFF",
-    borderRadius: "rounded",
-    spacing: "normal",
-});
-```
-
-### Adding Extension Points
-
-```tsx
-// In any component
-<ExtensionPoint
-    name="my.extension.point"
-    customProp="value"
-    fallback={DefaultComponent}
-/>;
-```
-
-## Configuration
-
-### App Configuration
-
-Main config in `src/core/config/appConfig.ts`:
-
-```typescript
-export const defaultAppConfig: AppConfig = {
-    app: {
-        name: "OneVearth",
-        version: "1.0.0",
-        environment: "development",
-    },
-
-    features: {
-        posts: {
-            enabled: true,
-            allowPhotos: true,
-            maxLength: 280,
-            requireModeration: false,
-        },
-
-        comments: {
-            enabled: true,
-            allowNested: true,
-            maxDepth: 3,
-        },
-    },
-
-    ui: {
-        theme: {
-            name: "default",
-            allowUserThemes: true,
-            darkModeDefault: false,
-        },
-
-        navigation: {
-            type: "tabs",
-            showLabels: true,
-        },
-    },
-
-    plugins: {
-        enabled: ["posts"],
-        config: {
-            posts: {
-                maxLength: 280,
-                allowMedia: true,
-            },
-        },
-    },
-};
-```
-
-### User Preferences
-
-Users can override certain settings:
-
-- Theme selection (light/dark/auto)
-- Language preferences
-- Accessibility settings
-- Notification preferences
-
-## Current Status
-
-### ✅ Implemented
-
-- Enhanced plugin system with lifecycle management
-- Service registry with dependency injection
-- Redux integration with dynamic reducers
-- Extension points with filtering
-- Complete theming system
-- Authentication flow
-- Database schema
-- Configuration system
-- Internationalization
-
-### 🏗️ In Progress
-
-- Posts plugin (core functionality)
-- Navigation integration with extension points
-
-### 📋 Planned
-
-- Comments plugin
-- Reactions plugin
-- Notifications plugin
-- Groups plugin
-- Media upload plugin
-
-## Development Commands
-
-```bash
-# Start development server
-npm start
-
-# Run on platforms
-npm run ios
-npm run android
-npm run web
-
-# Database commands
-supabase db reset          # Reset local database
-supabase db push           # Push migrations to remote
-supabase db pull           # Pull schema from remote
-supabase gen types typescript --local > src/types/database.ts
-
-# Type checking
-npx tsc --noEmit
-
-# Clear cache
-npx expo start --clear
-```
-
-## Plugin API Reference
-
-### Plugin Lifecycle
+### Plugin API Reference
 
 ```typescript
 interface EnhancedPluginAPI {
@@ -766,27 +341,270 @@ interface EnhancedPluginAPI {
 }
 ```
 
+### Extension Points
+
+Available extension points throughout the app:
+
+- `home.content` - Home screen content
+- `create.content` - Create screen content  
+- `post.actions` - Post action buttons
+- `post.detail.comments` - Post detail comments section
+- `post.detail.actions` - Post detail action buttons
+- `profile.header` - Profile header elements
+- `profile.content` - Profile content sections
+
+Usage example:
+```tsx
+<ExtensionPoint
+    name="home.content"
+    maxExtensions={5}
+    fallback={DefaultContent}
+    customProp="value"
+/>
+```
+
 ### Event System
+
+Cross-plugin communication via events:
 
 ```typescript
 // Emit events
 api.emitEvent("post:created", { postId: post.id });
-api.emitEvent("user:activity", { type: "post_create" });
+api.emitEvent("user:login", { userId: user.id });
 
-// Listen to events
+// Listen to events  
 api.subscribeToEvent("post:created", (data) => {
     console.log("New post:", data.postId);
 });
 ```
 
+## Plugin Development Workflow
+
+### 1. Create Plugin Structure
+
+```
+src/plugins/my-plugin/
+├── index.ts              # Plugin definition
+├── components/           # React components
+├── services/            # Business services  
+├── store/               # Redux slice
+├── hooks/               # Custom hooks
+└── types/               # TypeScript types
+```
+
+### 2. Implement Plugin
+
+```typescript
+export const MyPlugin: EnhancedPlugin = {
+    id: "my-plugin",
+    name: "My Plugin", 
+    version: "1.0.0",
+    description: "Plugin description",
+    author: "Your Name",
+
+    services: {
+        MyService: MyService,
+    },
+
+    reducers: {
+        myPlugin: myPluginReducer,
+    },
+
+    components: {
+        MyComponent: MyComponent,
+    },
+
+    async install(api) {
+        api.registerService("MyService", MyService);
+        api.registerReducer("myPlugin", myPluginReducer);
+        api.registerComponent("MyComponent", MyComponent);
+    },
+
+    async activate(api) {
+        api.registerExtension("home.content", MyComponent, 100);
+        
+        api.subscribeToEvent("user:login", (user) => {
+            console.log("My plugin: User logged in");
+        });
+    },
+};
+```
+
+### 3. Register Plugin
+
+Add to `src/core/plugins/PluginLoader.tsx`:
+
+```typescript
+const availablePlugins = {
+    posts: PostsPlugin,
+    comments: CommentsPlugin,  
+    notifications: NotificationsPlugin,
+    "my-plugin": MyPlugin, // Add here
+};
+```
+
+### 4. Enable in Configuration
+
+Update `src/core/config/appConfig.ts`:
+
+```typescript
+plugins: {
+    enabled: ["posts", "comments", "notifications", "my-plugin"]
+}
+```
+
+## Database Schema
+
+The Supabase migration includes comprehensive tables:
+
+**Core Tables:**
+- `profiles` - User profiles and metadata
+- `posts` - User posts with visibility controls
+- `comments` - Nested comments system
+- `post_reactions` - Reaction system  
+- `followers` - Follow relationships
+- `notifications` - Real-time notifications
+
+**Advanced Features:**
+- `groups` - Group functionality
+- `emotions` - Emotion tagging
+- `hashtags` - Hashtag system with trending
+- `media_attachments` - File uploads
+- `blocks` - User blocking
+- `reports` - Content moderation
+- `user_preferences` - User settings
+- `app_configuration` - Admin configuration
+- `moderation_queue` - Content moderation workflow
+
+## Theme System
+
+### Custom Theme Creation
+
+```typescript
+// src/themes/presets/customTheme.ts
+export const customTheme = customizeLightTheme({
+    primaryColor: "#DB00FF",
+    secondaryColor: "#6D6D6D", 
+    accentColor: "#00DBFF",
+    borderRadius: "rounded",
+    spacing: "normal",
+});
+```
+
+### Theme Usage in Components
+
+```typescript
+const { theme } = useTheme();
+const styles = useStyles("ComponentName");
+
+// Access theme values
+theme.colors.primary[500]
+theme.typography.fontSize.lg
+theme.spacing.md
+```
+
+## Configuration System
+
+### App Configuration
+
+Environment-specific configuration with development and production overrides:
+
+```typescript
+// Development config
+const developmentConfig: Partial<AppConfig> = {
+    app: {
+        environment: "development",
+    },
+    features: {
+        comments: {
+            requireApproval: false,
+            allowEditing: true,
+        },
+    },
+};
+
+// Production config  
+const productionConfig: Partial<AppConfig> = {
+    app: {
+        environment: "production", 
+    },
+    moderation: {
+        autoModeration: true,
+        toxicityFiltering: {
+            enabled: true,
+            threshold: 0.8,
+        },
+    },
+};
+```
+
+### User Preferences
+
+Users can override settings:
+- Theme selection (light/dark/auto)
+- Language preferences
+- Accessibility settings
+- Notification preferences
+
+## Current Status
+
+### ✅ Implemented
+
+- **Core Infrastructure**
+  - Enhanced plugin system with lifecycle management
+  - Service registry with dependency injection
+  - Redux integration with dynamic reducers
+  - Extension points with filtering and priorities
+  - Complete theming system with light/dark modes
+  - Authentication flow with Supabase
+  - Comprehensive database schema
+  - Configuration system with environment overrides
+  - Internationalization with i18next
+
+- **Navigation**
+  - Tab-based navigation (Home, Search, Create, Notifications, Settings)
+  - Stack navigation for detail screens
+  - Auth guards and protected routes
+
+- **Plugins**
+  - **Posts Plugin**: Full posting functionality with media support
+  - **Comments Plugin**: Nested comments with threading
+  - **Notifications Plugin**: Real-time notifications with badges
+
+### 🏗️ In Progress
+
+- Media upload and processing
+- Real-time features (live updates, typing indicators)
+- Advanced moderation tools
+- Push notifications
+
+### 📋 Planned Features
+
+- **Reactions Plugin**: Like, love, laugh reactions
+- **Groups Plugin**: Community groups and discussions  
+- **Search Plugin**: Advanced search with filters
+- **Messages Plugin**: Direct messaging
+- **Media Plugin**: Advanced media handling
+- **Analytics Plugin**: Usage analytics and insights
+
 ## Contributing
 
 1. Fork the repository
 2. Create feature branch: `git checkout -b feature/my-feature`
-3. Follow the plugin development workflow
-4. Ensure TypeScript compliance
-5. Test thoroughly
-6. Submit pull request
+3. Follow TypeScript and plugin development patterns
+4. Keep files under 200 lines when possible
+5. No verbose code or unnecessary comments
+6. Test thoroughly on all platforms
+7. Submit pull request
+
+## Development Guidelines
+
+- **TypeScript**: Full type safety required
+- **File Size**: Keep files under ~200 lines
+- **Code Style**: Concise, readable code without verbose comments
+- **Plugin Architecture**: Follow established plugin patterns
+- **Theming**: Use theme system for all styling
+- **Accessibility**: Ensure accessibility compliance
 
 ## License
 
