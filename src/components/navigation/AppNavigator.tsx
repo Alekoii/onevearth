@@ -9,7 +9,7 @@ import { HomeScreen } from "@/screens/main/HomeScreen";
 import { SearchScreen } from "@/screens/main/SearchScreen";
 import { CreateScreen } from "@/screens/main/CreateScreen";
 import { NotificationsScreen } from "@/screens/main/NotificationsScreen";
-import { ProfileScreen } from "@/screens/main/ProfileScreen";
+import { SettingsScreen } from "@/screens/main/SettingsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -81,11 +81,11 @@ export const AppNavigator = () => {
                         }}
                     />
                     <Tab.Screen
-                        name="Profile"
-                        component={ProfileScreen}
+                        name="Settings"
+                        component={SettingsScreen}
                         options={{
-                            title: t("navigation.profile"),
-                            tabBarIcon: createTabIcon("user"),
+                            title: t("settings.title"),
+                            tabBarIcon: createTabIcon("settings"),
                         }}
                     />
                 </Tab.Navigator>

@@ -49,5 +49,31 @@
         "deletePost": "Eliminar publicación",
         "editPost": "Editar publicación",
         "noPosts": "No hay publicaciones disponibles"
+    },
+    "profile": {
+        "editProfile": "Editar Perfil",
+        "followers": "Seguidores",
+        "following": "Siguiendo",
+        "posts": "Publicaciones",
+        "bio": "Biografía",
+        "location": "Ubicación",
+        "website": "Sitio web",
+        "joinedDate": "Se unió en {{date}}",
+        "follow": "Seguir",
+        "unfollow": "Dejar de seguir",
+        "block": "Bloquear",
+        "unblock": "Desbloquear"
+    },
+    "settings": {
+        "title": "Configuración",
+        "account": "Cuenta",
+        "privacy": "Privacidad",
+        "notifications": "Notificaciones",
+        "appearance": "Apariencia",
+        "language": "Idioma",
+        "about": "Acerca de",
+        "help": "Ayuda",
+        "termsOfService": "Términos de Servicio",
+        "privacyPolicy": "Política de Privacidad"
     }
 }

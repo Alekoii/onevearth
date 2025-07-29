@@ -30,7 +30,6 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
     // Card component
     Card: {
         base: { ...createBaseStyle(theme), marginBottom: theme.spacing.sm },
-        shadow: theme.shadows.sm,
         border: { borderWidth: 1, borderColor: theme.colors.border.primary },
         variants: {
             elevated: theme.shadows.md,
@@ -244,10 +243,8 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
 
     // Post Card component
     PostCard: {
-        base: { ...createBaseStyle(theme), ...theme.shadows.sm },
+        base: { ...createBaseStyle(theme)},
         ...createBaseStyle(theme),
-        ...theme.shadows.sm,
-        marginBottom: theme.spacing.sm,
         header: {
             flexDirection: "row",
             alignItems: "center",
@@ -298,7 +295,6 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             flexDirection: "row",
             flexWrap: "wrap",
             marginBottom: theme.spacing.md,
-            borderRadius: theme.borderRadius.md,
             overflow: "hidden",
         },
         mediaImage: {

@@ -121,7 +121,7 @@ const createDarkColors = () => ({
 
     // Dark theme backgrounds
     background: {
-        primary: "#111827",
+        primary: "#111111",
         secondary: "#1F2937",
         tertiary: "#374151",
         overlay: "rgba(0, 0, 0, 0.7)",

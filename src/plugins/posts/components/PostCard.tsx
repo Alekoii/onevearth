@@ -1,5 +1,3 @@
-// src/plugins/posts/components/PostCard.tsx
-
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
