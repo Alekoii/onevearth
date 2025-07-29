@@ -1,25 +1,25 @@
 import {
     ArrowLeft,
     ArrowRight,
-    Attachment,
     Bell,
     Camera,
-    ChatBubble,
     Check,
-    EditPencil,
+    Edit3,
     Heart,
     Home,
-    MediaImage,
+    Image,
     Menu,
+    MessageCircle,
+    Paperclip,
     Plus,
     Search,
     Settings,
-    ShareAndroid,
-    Trash,
+    Share,
+    Trash2,
     User,
-    VideoCamera,
-    Xmark,
-} from "iconoir-react-native";
+    Video,
+    X,
+} from "lucide-react-native";
 
 interface IconProps {
     name: IconName;
@@ -57,20 +57,20 @@ const iconMap = {
     bell: Bell,
     user: User,
     heart: Heart,
-    comment: ChatBubble,
-    share: ShareAndroid,
+    comment: MessageCircle,
+    share: Share,
     settings: Settings,
     menu: Menu,
     "arrow-left": ArrowLeft,
     "arrow-right": ArrowRight,
     check: Check,
-    x: Xmark,
-    edit: EditPencil,
-    trash: Trash,
+    x: X,
+    edit: Edit3,
+    trash: Trash2,
     camera: Camera,
-    image: MediaImage,
-    video: VideoCamera,
-    paperclip: Attachment,
+    image: Image,
+    video: Video,
+    paperclip: Paperclip,
 };
 
 export const Icon = ({
@@ -88,8 +88,7 @@ export const Icon = ({
     return (
         <IconComponent
             color={color}
-            width={size}
-            height={size}
+            size={size}
             strokeWidth={strokeWidth}
         />
     );
