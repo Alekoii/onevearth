@@ -771,6 +771,8 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
     },
 
     // Comment Creator component styles
+    // Add this to the CommentCreator section in createComponentStyles.ts
+
     CommentCreator: {
         base: {
             backgroundColor: theme.colors.surface.primary,
@@ -805,87 +807,130 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             borderColor: theme.colors.error[500],
             borderWidth: 2,
         },
+        inputFooter: {
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginTop: theme.spacing.xs,
+        },
         charCounter: {
-            position: "absolute",
-            bottom: theme.spacing.xs,
-            right: theme.spacing.xs,
             fontSize: theme.typography.fontSize.xs,
             color: theme.colors.text.secondary,
-            backgroundColor: theme.colors.surface.primary,
-            paddingHorizontal: theme.spacing.xs,
-            borderRadius: theme.borderRadius.xs,
+            fontFamily: theme.typography.fontFamily.primary,
+        },
+        charCount: {
+            fontSize: theme.typography.fontSize.xs,
+            color: theme.colors.text.secondary,
+            fontFamily: theme.typography.fontFamily.primary,
+        },
+        toolbar: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: theme.spacing.sm,
+        },
+        cancelButton: {
+            paddingHorizontal: theme.spacing.md,
+            paddingVertical: theme.spacing.sm,
+            borderRadius: theme.borderRadius.sm,
+            backgroundColor: theme.colors.surface.secondary,
+        },
+        cancelButtonText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.primary,
+            fontWeight: theme.typography.fontWeight.medium,
+            fontFamily: theme.typography.fontFamily.primary,
+        },
+        cancelText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.primary,
+            fontWeight: theme.typography.fontWeight.medium,
+            fontFamily: theme.typography.fontFamily.primary,
+        },
+        submitButton: {
+            paddingHorizontal: theme.spacing.md,
+            paddingVertical: theme.spacing.sm,
+            borderRadius: theme.borderRadius.sm,
+            backgroundColor: theme.colors.primary[500],
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        submitButtonText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.inverse,
+            fontWeight: theme.typography.fontWeight.semibold,
+            fontFamily: theme.typography.fontFamily.primary,
+        },
+        submitText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.inverse,
+            fontWeight: theme.typography.fontWeight.semibold,
+            fontFamily: theme.typography.fontFamily.primary,
         },
         errorContainer: {
             flexDirection: "row",
             alignItems: "center",
             marginBottom: theme.spacing.sm,
             padding: theme.spacing.xs,
-            backgroundColor: theme.colors.error[50],
+            backgroundColor: theme.colors.error[50] ||
+                theme.colors.surface.secondary,
             borderRadius: theme.borderRadius.sm,
             borderWidth: 1,
-            borderColor: theme.colors.error[200],
+            borderColor: theme.colors.error[200] || theme.colors.border.primary,
         },
         errorText: {
-            fontSize: theme.typography.fontSize.xs,
-            color: theme.colors.error[700],
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.error[700] || theme.colors.text.primary,
             marginLeft: theme.spacing.xs,
-            flex: 1,
+            fontFamily: theme.typography.fontFamily.primary,
         },
         actions: {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
+            marginTop: theme.spacing.sm,
         },
         buttonGroup: {
             flexDirection: "row",
             alignItems: "center",
             gap: theme.spacing.sm,
         },
-        cancelButton: {
-            paddingHorizontal: theme.spacing.md,
-            paddingVertical: theme.spacing.xs,
-            borderRadius: theme.borderRadius.sm,
-            backgroundColor: "transparent",
-            borderWidth: 1,
-            borderColor: theme.colors.border.primary,
-        },
-        cancelButtonText: {
-            fontSize: theme.typography.fontSize.sm,
-            color: theme.colors.text.secondary,
-            fontWeight: theme.typography.fontWeight.medium,
-        },
-        submitButton: {
-            paddingHorizontal: theme.spacing.md,
-            paddingVertical: theme.spacing.xs,
-            borderRadius: theme.borderRadius.sm,
-            backgroundColor: theme.colors.primary[500],
-            minWidth: 80,
-            alignItems: "center",
-            justifyContent: "center",
-        },
-        submitButtonDisabled: {
-            backgroundColor: theme.colors.neutral[300],
-            opacity: 0.6,
-        },
-        submitButtonText: {
-            fontSize: theme.typography.fontSize.sm,
-            color: theme.colors.text.inverse,
-            fontWeight: theme.typography.fontWeight.medium,
-        },
-        placeholder: {
-            color: theme.colors.text.placeholder,
-            fontSize: theme.typography.fontSize.sm,
-            padding: theme.spacing.sm,
-        },
         variants: {
+            footer: {
+                backgroundColor: theme.colors.surface.primary,
+                borderTopWidth: 1,
+                borderTopColor: theme.colors.border.primary,
+                borderRadius: 0,
+                margin: 0,
+                padding: theme.spacing.md,
+            },
+            default: {
+                backgroundColor: theme.colors.surface.primary,
+                borderRadius: theme.borderRadius.md,
+                padding: theme.spacing.md,
+                marginBottom: theme.spacing.md,
+            },
             reply: {
-                backgroundColor: theme.colors.surface.secondary,
-                marginLeft: theme.spacing.lg,
+                backgroundColor: theme.colors.background.secondary,
+                borderRadius: theme.borderRadius.sm,
                 padding: theme.spacing.sm,
+                marginTop: theme.spacing.sm,
+                marginLeft: theme.spacing.md,
             },
             inline: {
                 backgroundColor: "transparent",
                 padding: theme.spacing.xs,
+                margin: 0,
+            },
+        },
+        sizes: {
+            compact: {
+                padding: theme.spacing.sm,
+            },
+            normal: {
+                padding: theme.spacing.md,
+            },
+            large: {
+                padding: theme.spacing.lg,
             },
         },
         states: {
@@ -895,10 +940,14 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             },
             error: {
                 borderColor: theme.colors.error[500],
+                borderWidth: 2,
             },
             disabled: {
-                backgroundColor: theme.colors.surface.secondary,
                 opacity: 0.6,
+                backgroundColor: theme.colors.surface.tertiary,
+            },
+            loading: {
+                opacity: 0.8,
             },
         },
     },
