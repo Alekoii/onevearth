@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/core/theming/ThemeProvider";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useStyles } from "@/core/theming/useStyles";
@@ -23,6 +24,7 @@ export const AppNavigator = () => {
     const { theme } = useTheme();
     const { t } = useTranslation();
     const styles = useStyles("AppNavigator");
+    const insets = useSafeAreaInsets();
 
     const createTabIcon =
         (iconName: IconName) => ({ focused, color, size }: TabIconProps) => (
@@ -38,7 +40,11 @@ export const AppNavigator = () => {
             <AuthGuard>
                 <Tab.Navigator
                     screenOptions={{
-                        tabBarStyle: styles.tabBar,
+                        tabBarStyle: {
+                            ...styles.tabBar,
+                            paddingBottom: insets.bottom + 8,
+                            height: 60 + insets.bottom + 8,
+                        },
                         tabBarActiveTintColor: theme.colors.primary[500],
                         tabBarInactiveTintColor: theme.colors.text.secondary,
                         headerShown: false,
