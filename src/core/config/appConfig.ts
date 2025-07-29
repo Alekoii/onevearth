@@ -104,6 +104,7 @@ export const defaultAppConfig: AppConfig = {
         enabled: [
             "posts",
             "comments",
+            "notifications",
             
         ],
         config: {
