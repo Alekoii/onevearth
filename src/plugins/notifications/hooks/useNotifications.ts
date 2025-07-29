@@ -1,174 +1,205 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { useEnhancedPlugins } from "@/core/plugins/PluginProvider";
-import { useAppSelector } from "@/hooks/useAppSelector";
-import { useDynamicSelector } from "@/hooks/useDynamicSelector";
+import { useCallback, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { useAuth } from "@/hooks/useAuth";
 import {
     clearError,
-    deleteNotification as deleteNotificationAction,
+    deleteNotification,
     fetchNotifications,
     loadMoreNotifications,
     markAllNotificationsAsRead,
     markNotificationsAsRead,
     refreshNotifications,
 } from "../store/notificationsSlice";
-import { NotificationsState, UseNotificationsReturn } from "../types";
+import { FetchNotificationsOptions, UseNotificationsReturn } from "../types";
 
 export const useNotifications = (
-    skipInitialLoad = false,
+    autoFetch: boolean = true,
+    options?: FetchNotificationsOptions,
 ): UseNotificationsReturn => {
-    const { pluginManager } = useEnhancedPlugins();
-    const store = pluginManager.getStore();
+    const dispatch = useAppDispatch();
+    const { user } = useAuth();
 
-    // Get current user from auth state
-    const currentUser = useAppSelector((state) => state.auth.user);
+    // Select state from Redux store
+    const {
+        groupedItems,
+        loading,
+        refreshing,
+        loadingMore,
+        error,
+        hasMore,
+        nextCursor,
+        unreadCount,
+        lastFetch,
+    } = useAppSelector((state) => state.notifications);
 
-    // Default state in case the reducer isn't loaded yet
-    const defaultState: NotificationsState = {
-        items: [],
-        groupedItems: [],
-        loading: false,
-        refreshing: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        nextCursor: null,
-        unreadCount: 0,
-        lastFetch: null,
-    };
-
-    // Use dynamic selector to access notifications state
-    const state = useDynamicSelector<NotificationsState>(
-        "notifications",
-        defaultState,
-    );
-
-    // Load initial notifications
+    // Auto-fetch notifications on mount if user is authenticated
     useEffect(() => {
-        if (
-            !skipInitialLoad && currentUser?.id && !state.items.length &&
-            !state.loading && store
-        ) {
-            store.dispatch(fetchNotifications({
-                userId: currentUser.id,
-                options: { limit: 20 },
-            }));
+        if (autoFetch && user?.id && !lastFetch && !loading) {
+            handleFetch();
         }
-    }, [
-        skipInitialLoad,
-        currentUser?.id,
-        state.items.length,
-        state.loading,
-        store,
-    ]);
+    }, [autoFetch, user?.id, lastFetch, loading]);
 
-    // Actions
-    const refresh = useCallback(async () => {
-        if (!currentUser?.id || !store) return;
+    // Clear error when component unmounts or user changes
+    useEffect(() => {
+        return () => {
+            dispatch(clearError());
+        };
+    }, [dispatch, user?.id]);
+
+    /**
+     * Fetch initial notifications
+     */
+    const handleFetch = useCallback(async () => {
+        if (!user?.id) return;
 
         try {
-            await store.dispatch(refreshNotifications(currentUser.id)).unwrap();
+            await dispatch(fetchNotifications({
+                userId: user.id,
+                options,
+            })).unwrap();
+        } catch (error) {
+            console.error("Failed to fetch notifications:", error);
+        }
+    }, [dispatch, user?.id, options]);
+
+    /**
+     * Refresh notifications (pull-to-refresh)
+     */
+    const refresh = useCallback(async () => {
+        if (!user?.id) return;
+
+        try {
+            await dispatch(refreshNotifications(user.id)).unwrap();
         } catch (error) {
             console.error("Failed to refresh notifications:", error);
         }
-    }, [currentUser?.id, store]);
+    }, [dispatch, user?.id]);
 
+    /**
+     * Load more notifications (infinite scroll)
+     */
     const loadMore = useCallback(async () => {
-        if (!currentUser?.id || !store || !state.hasMore || state.loadingMore) {
-            return;
-        }
+        if (!user?.id || !hasMore || loadingMore || !nextCursor) return;
 
         try {
-            await store.dispatch(loadMoreNotifications({
-                userId: currentUser.id,
-                cursor: state.nextCursor || "",
+            await dispatch(loadMoreNotifications({
+                userId: user.id,
+                cursor: nextCursor,
             })).unwrap();
         } catch (error) {
             console.error("Failed to load more notifications:", error);
         }
-    }, [
-        currentUser?.id,
-        store,
-        state.hasMore,
-        state.loadingMore,
-        state.nextCursor,
-    ]);
+    }, [dispatch, user?.id, hasMore, loadingMore, nextCursor]);
 
+    /**
+     * Mark specific notifications as read
+     */
     const markAsRead = useCallback(async (notificationIds: number[]) => {
-        if (!currentUser?.id || !store) return;
+        if (!user?.id || notificationIds.length === 0) return;
 
         try {
-            await store.dispatch(markNotificationsAsRead({
-                userId: currentUser.id,
+            await dispatch(markNotificationsAsRead({
+                userId: user.id,
                 notificationIds,
             })).unwrap();
         } catch (error) {
             console.error("Failed to mark notifications as read:", error);
         }
-    }, [currentUser?.id, store]);
+    }, [dispatch, user?.id]);
 
+    /**
+     * Mark all notifications as read
+     */
     const markAllAsRead = useCallback(async () => {
-        if (!currentUser?.id || !store) return;
+        if (!user?.id) return;
 
         try {
-            await store.dispatch(markAllNotificationsAsRead(currentUser.id))
-                .unwrap();
+            await dispatch(markAllNotificationsAsRead(user.id)).unwrap();
         } catch (error) {
             console.error("Failed to mark all notifications as read:", error);
         }
-    }, [currentUser?.id, store]);
+    }, [dispatch, user?.id]);
 
-    const deleteNotification = useCallback(async (notificationId: number) => {
-        if (!currentUser?.id || !store) return;
+    /**
+     * Delete a notification
+     */
+    const deleteNotificationItem = useCallback(
+        async (notificationId: number) => {
+            if (!user?.id) return;
 
-        try {
-            await store.dispatch(deleteNotificationAction({
-                userId: currentUser.id,
-                notificationId,
-            })).unwrap();
-        } catch (error) {
-            console.error("Failed to delete notification:", error);
-        }
-    }, [currentUser?.id, store]);
+            try {
+                await dispatch(deleteNotification({
+                    userId: user.id,
+                    notificationId,
+                })).unwrap();
+            } catch (error) {
+                console.error("Failed to delete notification:", error);
+            }
+        },
+        [dispatch, user?.id],
+    );
 
-    const clearNotificationError = useCallback(() => {
-        if (!store) return;
-        store.dispatch(clearError());
-    }, [store]);
+    /**
+     * Clear current error
+     */
+    const clearCurrentError = useCallback(() => {
+        dispatch(clearError());
+    }, [dispatch]);
 
+    /**
+     * Get notifications by type
+     */
+    const getNotificationsByType = useCallback((type: string) => {
+        return groupedItems.filter((notification) =>
+            notification.type === type
+        );
+    }, [groupedItems]);
+
+    /**
+     * Get unread notifications only
+     */
+    const getUnreadNotifications = useCallback(() => {
+        return groupedItems.filter((notification) => !notification.read);
+    }, [groupedItems]);
+
+    /**
+     * Check if there are any unread notifications
+     */
     const hasUnreadNotifications = useCallback(() => {
-        return state.unreadCount > 0;
-    }, [state.unreadCount]);
+        return unreadCount > 0;
+    }, [unreadCount]);
 
-    // Memoize the return value to prevent unnecessary re-renders
-    const returnValue = useMemo((): UseNotificationsReturn => ({
-        notifications: state.groupedItems,
-        unreadCount: state.unreadCount,
-        loading: state.loading,
-        refreshing: state.refreshing,
-        error: state.error,
-        hasMore: state.hasMore,
+    /**
+     * Get total notification count
+     */
+    const getTotalCount = useCallback(() => {
+        return groupedItems.length;
+    }, [groupedItems]);
+
+    return {
+        // Data
+        notifications: groupedItems,
+        unreadCount,
+        loading,
+        refreshing,
+        error,
+        hasMore,
+
+        // Actions
         refresh,
         loadMore,
         markAsRead,
         markAllAsRead,
-        deleteNotification,
-        clearError: clearNotificationError,
-        hasUnreadNotifications,
-    }), [
-        state.groupedItems,
-        state.unreadCount,
-        state.loading,
-        state.refreshing,
-        state.error,
-        state.hasMore,
-        refresh,
-        loadMore,
-        markAsRead,
-        markAllAsRead,
-        deleteNotification,
-        clearNotificationError,
-        hasUnreadNotifications,
-    ]);
+        deleteNotification: deleteNotificationItem,
 
-    return returnValue;
+        // Utility methods
+        clearError: clearCurrentError,
+        getNotificationsByType,
+        getUnreadNotifications,
+        hasUnreadNotifications,
+        getTotalCount,
+
+        // Manual fetch (useful for testing or manual refresh)
+        fetch: handleFetch,
+    };
 };
