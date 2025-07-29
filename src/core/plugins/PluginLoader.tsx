@@ -2,9 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useEnhancedPlugins } from "./PluginProvider";
 import { useConfig } from "@/core/config/ConfigProvider";
 import { PostsPlugin } from "@/plugins/posts";
+import { CommentsPlugin } from "@/plugins/comments";
 
 const availablePlugins = {
     posts: PostsPlugin,
+    comments: CommentsPlugin, // Add the comments plugin
 };
 
 export const PluginLoader = () => {
@@ -32,6 +34,7 @@ export const PluginLoader = () => {
                 if (plugin) {
                     try {
                         await loadPlugin(plugin);
+                        console.log(`Successfully loaded plugin: ${pluginId}`);
                     } catch (error) {
                         if (
                             !(error as Error).message.includes("already loaded")
@@ -58,6 +61,16 @@ export const PluginLoader = () => {
             loadEnabledPlugins();
         }
     }, [loadEnabledPlugins]);
+
+    // Debug logging
+    useEffect(() => {
+        if (plugins.length > 0) {
+            console.log(
+                "Loaded plugins:",
+                plugins.map((p) => `${p.id} (${p.state})`),
+            );
+        }
+    }, [plugins]);
 
     return null;
 };

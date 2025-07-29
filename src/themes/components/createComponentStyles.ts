@@ -4,17 +4,14 @@ import { ComponentStyles, Theme } from "@/core/theming/types";
 const createBaseStyle = (theme: Theme, backgroundColor = "primary") => ({
     backgroundColor: theme.colors
         .surface[backgroundColor as keyof typeof theme.colors.surface],
-    borderRadius: 0,
+    borderRadius: theme.borderRadius.lg,
     padding: theme.spacing.md,
 });
 
 export const createComponentStyles = (theme: Theme): ComponentStyles => ({
     // Screen layout
     Screen: {
-        base: {
-            flex: 1,
-            backgroundColor: theme.colors.background.primary,
-        },
+        base: { flex: 1, backgroundColor: theme.colors.background.primary },
         content: {
             paddingHorizontal: theme.spacing.md,
             paddingBottom: theme.spacing.xl,
@@ -23,13 +20,13 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
         variants: {
             centered: { justifyContent: "center", alignItems: "center" },
             padded: { padding: theme.spacing.lg },
-            safe: { flex: 1 }, // For screens that handle their own safe area
         },
     },
 
     // Card component
     Card: {
         base: { ...createBaseStyle(theme), marginBottom: theme.spacing.sm },
+        shadow: theme.shadows.sm,
         border: { borderWidth: 1, borderColor: theme.colors.border.primary },
         variants: {
             elevated: theme.shadows.md,
@@ -173,12 +170,6 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
     // Input component
     Input: {
         base: {
-            marginBottom: theme.spacing.sm,
-        },
-        container: { 
-            marginBottom: theme.spacing.sm,
-        },
-        input: {
             borderRadius: theme.borderRadius.md,
             borderWidth: 1,
             borderColor: theme.colors.border.primary,
@@ -188,19 +179,14 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             fontSize: theme.typography.fontSize.md,
             color: theme.colors.text.primary,
             fontFamily: theme.typography.fontFamily.primary,
-            minHeight: 44,
-            textAlignVertical: "center",
         },
+        container: { marginBottom: theme.spacing.sm },
         label: {
             fontSize: theme.typography.fontSize.sm,
             fontWeight: theme.typography.fontWeight.medium,
             color: theme.colors.text.primary,
             marginBottom: theme.spacing.xs,
             fontFamily: theme.typography.fontFamily.primary,
-        },
-        required: {
-            color: theme.colors.error[500],
-            marginLeft: 2,
         },
         error: {
             fontSize: theme.typography.fontSize.xs,
@@ -214,26 +200,16 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             marginTop: theme.spacing.xs,
             fontFamily: theme.typography.fontFamily.primary,
         },
-        placeholder: {
-            color: theme.colors.text.placeholder,
-        },
         states: {
-            focused: { 
-                borderColor: theme.colors.border.focus, 
-                borderWidth: 2,
-            },
-            error: { 
-                borderColor: theme.colors.error[500],
-            },
+            focused: { borderColor: theme.colors.border.focus, borderWidth: 2 },
+            error: { borderColor: theme.colors.error[500] },
             disabled: {
                 backgroundColor: theme.colors.surface.secondary,
                 opacity: 0.6,
             },
         },
         variants: {
-            outline: { 
-                backgroundColor: "transparent",
-            },
+            outline: { backgroundColor: "transparent" },
             filled: {
                 backgroundColor: theme.colors.surface.secondary,
                 borderWidth: 0,
@@ -243,8 +219,10 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
 
     // Post Card component
     PostCard: {
-        base: { ...createBaseStyle(theme)},
+        base: { ...createBaseStyle(theme), ...theme.shadows.sm },
         ...createBaseStyle(theme),
+        ...theme.shadows.sm,
+        marginBottom: theme.spacing.sm,
         header: {
             flexDirection: "row",
             alignItems: "center",
@@ -295,6 +273,7 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             flexDirection: "row",
             flexWrap: "wrap",
             marginBottom: theme.spacing.md,
+            borderRadius: theme.borderRadius.md,
             overflow: "hidden",
         },
         mediaImage: {
@@ -361,26 +340,17 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
     // Post Creator component
 
     PostCreator: {
-        base: {
-            backgroundColor: theme.colors.surface.primary,
-            borderRadius: theme.borderRadius.lg,
-            padding: theme.spacing.md,
-            flex: 1,
-        },
+        base: createBaseStyle(theme),
+        ...createBaseStyle(theme),
         inputContainer: {
             marginBottom: theme.spacing.md,
-            flex: 1,
         },
         input: {
+            minHeight: 100,
             fontSize: theme.typography.fontSize.md,
             color: theme.colors.text.primary,
-            padding: theme.spacing.sm,
-            backgroundColor: theme.colors.background.secondary,
-            borderRadius: theme.borderRadius.md,
-            borderWidth: 1,
-            borderColor: theme.colors.border.primary,
+            padding: 0,
             textAlignVertical: "top",
-            fontFamily: theme.typography.fontFamily.primary,
         },
         inputFooter: {
             flexDirection: "row",
@@ -404,7 +374,6 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             paddingTop: theme.spacing.sm,
             borderTopWidth: 1,
             borderTopColor: theme.colors.border.primary,
-            marginTop: "auto",
         },
         toolbarLeft: {
             flexDirection: "row",
@@ -418,8 +387,6 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
         toolbarButton: {
             padding: theme.spacing.xs,
             marginRight: theme.spacing.sm,
-            borderRadius: theme.borderRadius.md,
-            backgroundColor: theme.colors.surface.secondary,
         },
         visibilityButton: {
             flexDirection: "row",
@@ -593,6 +560,350 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
             fontSize: theme.typography.fontSize.sm,
             color: theme.colors.text.secondary,
             marginTop: theme.spacing.xs,
+        },
+    },
+
+    // Comment Item component styles
+    CommentItem: {
+        base: {
+            marginBottom: theme.spacing.sm,
+        },
+        container: {
+            marginBottom: theme.spacing.sm,
+        },
+        commentContainer: {
+            backgroundColor: theme.colors.surface.primary,
+            borderRadius: theme.borderRadius.md,
+            padding: theme.spacing.sm,
+            borderLeftWidth: 2,
+            borderLeftColor: theme.colors.border.primary,
+        },
+        header: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: theme.spacing.xs,
+        },
+        avatar: {
+            width: 32,
+            height: 32,
+            borderRadius: 16,
+            marginRight: theme.spacing.sm,
+        },
+        avatarPlaceholder: {
+            width: 32,
+            height: 32,
+            borderRadius: 16,
+            backgroundColor: theme.colors.surface.secondary,
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: theme.spacing.sm,
+        },
+        userInfo: {
+            flex: 1,
+        },
+        userDetails: {
+            flexDirection: "row",
+            alignItems: "center",
+            flexWrap: "wrap",
+        },
+        username: {
+            fontSize: theme.typography.fontSize.sm,
+            fontWeight: theme.typography.fontWeight.semibold,
+            color: theme.colors.text.primary,
+            marginRight: theme.spacing.xs,
+        },
+        timestamp: {
+            fontSize: theme.typography.fontSize.xs,
+            color: theme.colors.text.secondary,
+        },
+        content: {
+            marginBottom: theme.spacing.sm,
+        },
+        contentText: {
+            fontSize: theme.typography.fontSize.sm,
+            lineHeight: theme.typography.lineHeight.normal *
+                theme.typography.fontSize.sm,
+            color: theme.colors.text.primary,
+        },
+        actions: {
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        defaultActions: {
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        actionButton: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginRight: theme.spacing.md,
+            paddingVertical: theme.spacing.xs,
+            paddingHorizontal: theme.spacing.sm,
+            borderRadius: theme.borderRadius.sm,
+            backgroundColor: "transparent",
+        },
+        actionText: {
+            fontSize: theme.typography.fontSize.xs,
+            color: theme.colors.text.secondary,
+            marginLeft: theme.spacing.xs,
+            fontWeight: theme.typography.fontWeight.medium,
+        },
+        replyForm: {
+            marginTop: theme.spacing.sm,
+            padding: theme.spacing.sm,
+            backgroundColor: theme.colors.surface.secondary,
+            borderRadius: theme.borderRadius.md,
+            marginLeft: theme.spacing.lg,
+        },
+        replyFormText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.secondary,
+            marginBottom: theme.spacing.xs,
+        },
+        cancelText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.primary[500],
+            fontWeight: theme.typography.fontWeight.medium,
+        },
+        repliesSection: {
+            marginTop: theme.spacing.sm,
+            marginLeft: theme.spacing.lg,
+        },
+        toggleReplies: {
+            flexDirection: "row",
+            alignItems: "center",
+            paddingVertical: theme.spacing.xs,
+            marginBottom: theme.spacing.sm,
+        },
+        toggleText: {
+            fontSize: theme.typography.fontSize.xs,
+            color: theme.colors.text.secondary,
+            marginLeft: theme.spacing.xs,
+            fontWeight: theme.typography.fontWeight.medium,
+        },
+        nestedReplies: {
+            borderLeftWidth: 1,
+            borderLeftColor: theme.colors.border.secondary,
+            paddingLeft: theme.spacing.md,
+        },
+        variants: {
+            nested: {
+                marginLeft: theme.spacing.md,
+                borderLeftWidth: 1,
+                borderLeftColor: theme.colors.border.secondary,
+            },
+        },
+        sizes: {
+            compact: {
+                padding: theme.spacing.xs,
+            },
+        },
+    },
+
+    // Comment List component styles
+    CommentList: {
+        base: {
+            flex: 1,
+        },
+        container: {
+            padding: theme.spacing.md,
+        },
+        emptyContainer: {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: theme.spacing.xl,
+        },
+        emptyText: {
+            fontSize: theme.typography.fontSize.md,
+            color: theme.colors.text.secondary,
+            textAlign: "center",
+        },
+        loadingContainer: {
+            padding: theme.spacing.md,
+            alignItems: "center",
+        },
+        loadingText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.secondary,
+            marginTop: theme.spacing.xs,
+        },
+        errorContainer: {
+            padding: theme.spacing.md,
+            backgroundColor: theme.colors.error[50],
+            borderRadius: theme.borderRadius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.error[200],
+            margin: theme.spacing.sm,
+        },
+        errorText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.error[700],
+            textAlign: "center",
+            marginBottom: theme.spacing.sm,
+        },
+        retryButton: {
+            alignSelf: "center",
+            paddingHorizontal: theme.spacing.md,
+            paddingVertical: theme.spacing.xs,
+            backgroundColor: theme.colors.error[500],
+            borderRadius: theme.borderRadius.sm,
+        },
+        retryButtonText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.inverse,
+            fontWeight: theme.typography.fontWeight.medium,
+        },
+        header: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: theme.spacing.md,
+            paddingBottom: theme.spacing.sm,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.border.primary,
+        },
+        headerTitle: {
+            fontSize: theme.typography.fontSize.lg,
+            fontWeight: theme.typography.fontWeight.semibold,
+            color: theme.colors.text.primary,
+        },
+        commentCount: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.secondary,
+        },
+    },
+
+    // Comment Creator component styles
+    CommentCreator: {
+        base: {
+            backgroundColor: theme.colors.surface.primary,
+            borderRadius: theme.borderRadius.md,
+            padding: theme.spacing.md,
+            marginBottom: theme.spacing.md,
+        },
+        container: {
+            marginBottom: theme.spacing.md,
+        },
+        inputContainer: {
+            marginBottom: theme.spacing.sm,
+            position: "relative",
+        },
+        input: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.primary,
+            padding: theme.spacing.sm,
+            backgroundColor: theme.colors.background.secondary,
+            borderRadius: theme.borderRadius.sm,
+            borderWidth: 1,
+            borderColor: theme.colors.border.primary,
+            textAlignVertical: "top",
+            fontFamily: theme.typography.fontFamily.primary,
+            minHeight: 80,
+        },
+        inputFocused: {
+            borderColor: theme.colors.border.focus,
+            borderWidth: 2,
+        },
+        inputError: {
+            borderColor: theme.colors.error[500],
+            borderWidth: 2,
+        },
+        charCounter: {
+            position: "absolute",
+            bottom: theme.spacing.xs,
+            right: theme.spacing.xs,
+            fontSize: theme.typography.fontSize.xs,
+            color: theme.colors.text.secondary,
+            backgroundColor: theme.colors.surface.primary,
+            paddingHorizontal: theme.spacing.xs,
+            borderRadius: theme.borderRadius.xs,
+        },
+        errorContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: theme.spacing.sm,
+            padding: theme.spacing.xs,
+            backgroundColor: theme.colors.error[50],
+            borderRadius: theme.borderRadius.sm,
+            borderWidth: 1,
+            borderColor: theme.colors.error[200],
+        },
+        errorText: {
+            fontSize: theme.typography.fontSize.xs,
+            color: theme.colors.error[700],
+            marginLeft: theme.spacing.xs,
+            flex: 1,
+        },
+        actions: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+        },
+        buttonGroup: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: theme.spacing.sm,
+        },
+        cancelButton: {
+            paddingHorizontal: theme.spacing.md,
+            paddingVertical: theme.spacing.xs,
+            borderRadius: theme.borderRadius.sm,
+            backgroundColor: "transparent",
+            borderWidth: 1,
+            borderColor: theme.colors.border.primary,
+        },
+        cancelButtonText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.secondary,
+            fontWeight: theme.typography.fontWeight.medium,
+        },
+        submitButton: {
+            paddingHorizontal: theme.spacing.md,
+            paddingVertical: theme.spacing.xs,
+            borderRadius: theme.borderRadius.sm,
+            backgroundColor: theme.colors.primary[500],
+            minWidth: 80,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        submitButtonDisabled: {
+            backgroundColor: theme.colors.neutral[300],
+            opacity: 0.6,
+        },
+        submitButtonText: {
+            fontSize: theme.typography.fontSize.sm,
+            color: theme.colors.text.inverse,
+            fontWeight: theme.typography.fontWeight.medium,
+        },
+        placeholder: {
+            color: theme.colors.text.placeholder,
+            fontSize: theme.typography.fontSize.sm,
+            padding: theme.spacing.sm,
+        },
+        variants: {
+            reply: {
+                backgroundColor: theme.colors.surface.secondary,
+                marginLeft: theme.spacing.lg,
+                padding: theme.spacing.sm,
+            },
+            inline: {
+                backgroundColor: "transparent",
+                padding: theme.spacing.xs,
+            },
+        },
+        states: {
+            focused: {
+                borderColor: theme.colors.border.focus,
+                borderWidth: 2,
+            },
+            error: {
+                borderColor: theme.colors.error[500],
+            },
+            disabled: {
+                backgroundColor: theme.colors.surface.secondary,
+                opacity: 0.6,
+            },
         },
     },
 });

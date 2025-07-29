@@ -1,6 +1,8 @@
 import {
+    ArrowDown01,
     ArrowLeft,
     ArrowRight,
+    ArrowUp01,
     Bell,
     Camera,
     Check,
@@ -48,7 +50,9 @@ export type IconName =
     | "camera"
     | "image"
     | "video"
-    | "paperclip";
+    | "paperclip"
+    | "arrow-up"
+    | "arrow-down";
 
 const iconMap = {
     home: Home,
@@ -63,6 +67,8 @@ const iconMap = {
     menu: Menu,
     "arrow-left": ArrowLeft,
     "arrow-right": ArrowRight,
+    "arrow-up": ArrowUp01,
+    "arrow-down": ArrowDown01,
     check: Check,
     x: X,
     edit: Edit3,

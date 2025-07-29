@@ -103,6 +103,7 @@ export const defaultAppConfig: AppConfig = {
     plugins: {
         enabled: [
             "posts",
+            "comments",
         ],
         config: {
             emotions: {
@@ -123,6 +124,18 @@ export const defaultAppConfig: AppConfig = {
                 allowHashtags: true,
                 enableRealTimeUpdates: false,
                 maxLines: 4,
+            },
+            comments: {
+                allowNested: true,
+                maxDepth: 3,
+                requireApproval: false,
+                allowEditing: true,
+                allowReactions: true,
+                autoRefresh: false,
+                maxLength: 500,
+                enableMentions: false,
+                showTimestamps: true,
+                collapseLongThreads: true,
             },
         },
     },
@@ -164,6 +177,14 @@ const developmentConfig: Partial<AppConfig> = {
         ...defaultAppConfig.app,
         environment: "development",
     },
+    features: {
+        ...defaultAppConfig.features,
+        comments: {
+            ...defaultAppConfig.features.comments,
+            requireApproval: false, // No approval needed in dev
+            allowEditing: true, // Allow editing in dev
+        },
+    },
     moderation: {
         ...defaultAppConfig.moderation,
         autoModeration: false,
@@ -174,6 +195,14 @@ const productionConfig: Partial<AppConfig> = {
     app: {
         ...defaultAppConfig.app,
         environment: "production",
+    },
+    features: {
+        ...defaultAppConfig.features,
+        comments: {
+            ...defaultAppConfig.features.comments,
+            requireApproval: false, // Can be set to true for production moderation
+            allowEditing: true, // Allow editing in production
+        },
     },
     moderation: {
         ...defaultAppConfig.moderation,
