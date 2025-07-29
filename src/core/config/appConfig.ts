@@ -1,6 +1,5 @@
 import { AppConfig } from "./types";
 
-// This is your main configuration file - modify this to customize your app
 export const defaultAppConfig: AppConfig = {
     app: {
         name: "OneVearth",
@@ -17,7 +16,7 @@ export const defaultAppConfig: AppConfig = {
             maxLength: 280,
             requireModeration: false,
             allowEditing: true,
-            editTimeLimit: 15, // 15 minutes
+            editTimeLimit: 15,
         },
 
         comments: {
@@ -59,7 +58,7 @@ export const defaultAppConfig: AppConfig = {
         },
 
         premium: {
-            enabled: false, // Set to true to enable premium features
+            enabled: false,
             features: [
                 "unlimited-posts",
                 "custom-themes",
@@ -88,7 +87,6 @@ export const defaultAppConfig: AppConfig = {
             allowUserThemes: true,
             darkModeDefault: false,
             customColors: {
-                // Add custom brand colors here
                 primary: "#DB00FF",
                 secondary: "#6D6D6D",
             },
@@ -105,15 +103,8 @@ export const defaultAppConfig: AppConfig = {
     plugins: {
         enabled: [
             "posts",
-            // "comments",
-            // "reactions",
-            // "emotions",
-            // 'groups',     // Uncomment to enable
-            // 'premium',    // Uncomment to enable
-            // 'analytics'   // Uncomment to enable
         ],
         config: {
-            // Plugin-specific configuration
             emotions: {
                 allowCustomEmotions: false,
                 maxEmotionsPerPost: 1,
@@ -131,6 +122,7 @@ export const defaultAppConfig: AppConfig = {
                 showTimestamps: true,
                 allowHashtags: true,
                 enableRealTimeUpdates: false,
+                maxLines: 4,
             },
         },
     },
@@ -149,14 +141,14 @@ export const defaultAppConfig: AppConfig = {
     },
 
     privacy: {
-        dataRetention: 365, // days
+        dataRetention: 365,
         allowDataExport: true,
         allowAccountDeletion: true,
     },
 
     security: {
         twoFactorAuth: false,
-        sessionTimeout: 1440, // 24 hours in minutes
+        sessionTimeout: 1440,
         passwordComplexity: {
             minLength: 8,
             requireUppercase: true,
@@ -167,7 +159,6 @@ export const defaultAppConfig: AppConfig = {
     },
 };
 
-// Environment-specific overrides
 const developmentConfig: Partial<AppConfig> = {
     app: {
         ...defaultAppConfig.app,
@@ -175,7 +166,7 @@ const developmentConfig: Partial<AppConfig> = {
     },
     moderation: {
         ...defaultAppConfig.moderation,
-        autoModeration: false, // Disable for easier development
+        autoModeration: false,
     },
 };
 
@@ -198,11 +189,9 @@ const productionConfig: Partial<AppConfig> = {
     },
 };
 
-// Get config based on environment
 export const getEnvironmentConfig = (): AppConfig => {
     const baseConfig = { ...defaultAppConfig };
 
-    // Apply environment-specific overrides
     if (__DEV__) {
         return deepMerge(baseConfig, developmentConfig);
     } else {
@@ -210,7 +199,6 @@ export const getEnvironmentConfig = (): AppConfig => {
     }
 };
 
-// Helper function for deep merging
 function deepMerge(target: any, source: any): any {
     const result = { ...target };
 

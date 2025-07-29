@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { FlatList, ListRenderItem, RefreshControl, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
+import { RootStackParamList } from "@/types/navigation";
 import { PostCard } from "./PostCard";
 import {
     PaginationLoadingSkeleton,
@@ -17,6 +20,8 @@ import {
 } from "./ErrorComponents";
 import { usePosts } from "../hooks/usePosts";
 import { Post } from "../types";
+
+type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 interface PostListProps {
     variant?: "default" | "compact";
@@ -38,6 +43,7 @@ export const PostList = ({
     const styles = useStyles("PostList", { variant });
     const { t } = useTranslation();
     const insets = useSafeAreaInsets();
+    const navigation = useNavigation<NavigationProp>();
 
     const {
         posts,
@@ -89,21 +95,25 @@ export const PostList = ({
         }
     }, [shouldPrefetch, prefetchNextPage]);
 
+    const handlePostPress = useCallback((postId: number) => {
+        navigation.navigate("PostDetail", { postId });
+    }, [navigation]);
+
+    const handleUserPress = useCallback((userId: string) => {
+        console.log("User pressed:", userId);
+    }, []);
+
     const renderPost: ListRenderItem<Post> = useCallback(
         ({ item, index }) => (
             <PostCard
                 key={item.id}
                 post={item}
                 variant={variant}
-                onPress={() => {
-                    console.log("Post pressed:", item.id);
-                }}
-                onUserPress={() => {
-                    console.log("User pressed:", item.user_id);
-                }}
+                onPress={() => handlePostPress(item.id)}
+                onUserPress={() => handleUserPress(item.user_id)}
             />
         ),
-        [variant],
+        [variant, handlePostPress, handleUserPress],
     );
 
     const renderEmpty = useCallback(() => {

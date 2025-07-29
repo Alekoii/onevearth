@@ -12,23 +12,16 @@ export class ConfigManager {
         }
 
         try {
-            // Start with environment-based configuration
             const baseConfig = getEnvironmentConfig();
-
-            // Load any local user overrides (for user preferences)
             const localOverrides = await this.loadLocalOverrides();
-
-            // Merge configurations
             const finalConfig = this.mergeConfigs(baseConfig, localOverrides);
 
-            // Validate the final configuration
             const validation = this.validate(finalConfig);
             if (!validation.valid) {
                 console.warn(
                     "Configuration validation failed:",
                     validation.errors,
                 );
-                // Use base config if validation fails
                 this.cache = baseConfig;
             } else {
                 this.cache = finalConfig;
@@ -59,22 +52,18 @@ export class ConfigManager {
             const keys = path.split(".");
             let current = overrides as any;
 
-            // Navigate to the parent object
             for (let i = 0; i < keys.length - 1; i++) {
                 if (!current[keys[i]]) current[keys[i]] = {};
                 current = current[keys[i]];
             }
 
-            // Set the value
             current[keys[keys.length - 1]] = value;
 
-            // Save back to storage
             await AsyncStorage.setItem(
                 this.LOCAL_OVERRIDES_KEY,
                 JSON.stringify(overrides),
             );
 
-            // Clear cache to force reload
             this.cache = null;
         } catch (error) {
             console.error("Failed to save local override:", error);
@@ -117,7 +106,6 @@ export class ConfigManager {
     static validate(config: Partial<AppConfig>): ValidationResult {
         const errors: string[] = [];
 
-        // Validate post max length
         if (
             config.features?.posts?.maxLength &&
             config.features.posts.maxLength > 10000
@@ -132,7 +120,6 @@ export class ConfigManager {
             errors.push("Post max length must be at least 1 character");
         }
 
-        // Validate session timeout
         if (
             config.security?.sessionTimeout &&
             config.security.sessionTimeout < 5
@@ -140,7 +127,6 @@ export class ConfigManager {
             errors.push("Session timeout cannot be less than 5 minutes");
         }
 
-        // Validate toxicity threshold
         if (config.moderation?.toxicityFiltering?.threshold !== undefined) {
             const threshold = config.moderation.toxicityFiltering.threshold;
             if (threshold < 0 || threshold > 1) {
@@ -148,7 +134,6 @@ export class ConfigManager {
             }
         }
 
-        // Validate password complexity
         if (
             config.security?.passwordComplexity?.minLength &&
             config.security.passwordComplexity.minLength < 6
@@ -158,7 +143,6 @@ export class ConfigManager {
             );
         }
 
-        // Validate comment max depth
         if (
             config.features?.comments?.maxDepth &&
             config.features.comments.maxDepth > 10
@@ -166,12 +150,21 @@ export class ConfigManager {
             errors.push("Comment max depth cannot exceed 10 levels");
         }
 
-        // Validate group max members
         if (
             config.features?.groups?.maxMembers &&
             config.features.groups.maxMembers > 100000
         ) {
             errors.push("Group max members cannot exceed 100,000");
+        }
+
+        if (config.plugins?.config?.posts?.maxLines !== undefined) {
+            const maxLines = config.plugins.config.posts.maxLines;
+            if (maxLines < 0) {
+                errors.push("Post max lines cannot be negative");
+            }
+            if (maxLines > 20) {
+                errors.push("Post max lines cannot exceed 20");
+            }
         }
 
         return {
@@ -188,7 +181,6 @@ export class ConfigManager {
         this.cache = null;
     }
 
-    // Utility methods for common config operations
     static isFeatureEnabled(config: AppConfig, feature: string): boolean {
         const parts = feature.split(".");
         let current: any = config.features;

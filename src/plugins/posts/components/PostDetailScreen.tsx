@@ -1,28 +1,20 @@
+// src/plugins/posts/components/PostDetailScreen.tsx
 import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import { useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ExtensionPoint } from "@/core/plugins/ExtensionPoint";
 import { Button } from "@/components/base/Button";
+import { RootStackParamList } from "@/types/navigation";
 import { PostCard } from "./PostCard";
 import { PostService } from "../services/PostService";
 import { Post } from "../types";
 
-interface PostDetailScreenProps {
-    route: {
-        params: {
-            postId: number;
-        };
-    };
-    navigation: {
-        goBack: () => void;
-        setOptions: (options: any) => void;
-    };
-}
+type PostDetailRouteProp = RouteProp<RootStackParamList, "PostDetail">;
 
-export const PostDetailScreen = (
-    { route, navigation }: PostDetailScreenProps,
-) => {
+export const PostDetailScreen = () => {
+    const route = useRoute<PostDetailRouteProp>();
     const { postId } = route.params;
     const styles = useStyles("Screen");
     const { t } = useTranslation();
@@ -52,10 +44,19 @@ export const PostDetailScreen = (
         loadPost();
     };
 
+    const handleUserPress = (userId: string) => {
+        console.log("Navigate to user profile:", userId);
+    };
+
     if (loading) {
         return (
-            <View style={[styles.base, styles.variants?.centered]}>
-                <ActivityIndicator size="large" />
+            <View
+                style={[styles.base, {
+                    justifyContent: "center",
+                    alignItems: "center",
+                }]}
+            >
+                <ActivityIndicator size="large" color="#DB00FF" />
                 <Text style={{ marginTop: 16, color: "#6D6D6D" }}>
                     {t("common.loading")}
                 </Text>
@@ -65,7 +66,13 @@ export const PostDetailScreen = (
 
     if (error || !post) {
         return (
-            <View style={[styles.base, styles.variants?.centered]}>
+            <View
+                style={[styles.base, {
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: 24,
+                }]}
+            >
                 <Text
                     style={{
                         color: "#ef4444",
@@ -89,9 +96,8 @@ export const PostDetailScreen = (
                 <PostCard
                     post={post}
                     variant="default"
-                    onUserPress={() => {
-                        console.log("Navigate to user profile:", post.user_id);
-                    }}
+                    maxLines={0}
+                    onUserPress={() => handleUserPress(post.user_id)}
                 />
 
                 <ExtensionPoint

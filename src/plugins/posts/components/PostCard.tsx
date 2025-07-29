@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useStyles } from "@/core/theming/useStyles";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useConfig } from "@/core/config/ConfigProvider";
 import { Icon } from "@/components/ui/Icon";
 import { ExtensionPoint } from "@/core/plugins/ExtensionPoint";
 import { Post } from "../types";
@@ -10,6 +12,7 @@ interface PostCardProps {
     onPress?: () => void;
     onUserPress?: () => void;
     variant?: "default" | "compact";
+    maxLines?: number;
 }
 
 export const PostCard = ({
@@ -17,9 +20,17 @@ export const PostCard = ({
     onPress,
     onUserPress,
     variant = "default",
+    maxLines,
 }: PostCardProps) => {
     const styles = useStyles("PostCard", { variant });
     const { t } = useTranslation();
+    const { config } = useConfig();
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [shouldShowButton, setShouldShowButton] = useState(false);
+
+    const configMaxLines = config.plugins?.config?.posts?.maxLines ?? 4;
+    const effectiveMaxLines = maxLines ?? configMaxLines;
+    const shouldTruncate = effectiveMaxLines > 0;
 
     const formatTimeAgo = (dateString: string) => {
         const date = new Date(dateString);
@@ -44,6 +55,17 @@ export const PostCard = ({
         if (onPress) {
             onPress();
         }
+    };
+
+    const handleTextLayout = (event: any) => {
+        const { lines } = event.nativeEvent;
+        if (shouldTruncate && lines.length > effectiveMaxLines) {
+            setShouldShowButton(true);
+        }
+    };
+
+    const toggleExpanded = () => {
+        setIsExpanded(!isExpanded);
     };
 
     return (
@@ -90,9 +112,37 @@ export const PostCard = ({
 
             {post.content && (
                 <View style={styles.content}>
-                    <Text style={styles.contentText}>
+                    <Text
+                        style={styles.contentText}
+                        numberOfLines={shouldTruncate && !isExpanded
+                            ? effectiveMaxLines
+                            : undefined}
+                        onTextLayout={handleTextLayout}
+                    >
                         {post.content}
                     </Text>
+
+                    {shouldShowButton && !isExpanded && (
+                        <TouchableOpacity
+                            onPress={toggleExpanded}
+                            style={{ marginTop: 4 }}
+                        >
+                            <Text style={styles.expandText}>
+                                Show more
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+
+                    {shouldShowButton && isExpanded && (
+                        <TouchableOpacity
+                            onPress={toggleExpanded}
+                            style={{ marginTop: 4 }}
+                        >
+                            <Text style={styles.expandText}>
+                                Show less
+                            </Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             )}
 
