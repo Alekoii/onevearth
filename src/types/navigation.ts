@@ -1,5 +1,6 @@
 export type RootStackParamList = {
     MainTabs: undefined;
+    Profile: undefined;
     PostDetail: { postId: number };
 };
 

@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useStyles } from "@/core/theming/useStyles";
+import { useColors, useStyles } from "@/core/theming/useStyles";
+import { useTheme } from "@/core/theming/ThemeProvider";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ExtensionPoint } from "@/core/plugins/ExtensionPoint";
 import { Button } from "@/components/base/Button";
@@ -24,6 +25,8 @@ export const PostDetailScreen = () => {
     const route = useRoute<PostDetailRouteProp>();
     const { postId } = route.params;
     const styles = useStyles("Screen");
+    const colors = useColors();
+    const { theme } = useTheme();
     const { t } = useTranslation();
     const insets = useSafeAreaInsets();
 
@@ -59,13 +62,26 @@ export const PostDetailScreen = () => {
     if (loading) {
         return (
             <View
-                style={[styles.base, {
-                    justifyContent: "center",
-                    alignItems: "center",
-                }]}
+                style={[
+                    styles.base,
+                    {
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: colors.background.primary,
+                    },
+                ]}
             >
-                <ActivityIndicator size="large" color="#DB00FF" />
-                <Text style={{ marginTop: 16, color: "#6D6D6D" }}>
+                <ActivityIndicator
+                    size="large"
+                    color={theme.colors.primary[500]}
+                />
+                <Text
+                    style={{
+                        marginTop: theme.spacing.md,
+                        color: colors.text.secondary,
+                        fontSize: theme.typography.fontSize.md,
+                    }}
+                >
                     {t("common.loading")}
                 </Text>
             </View>
@@ -75,18 +91,22 @@ export const PostDetailScreen = () => {
     if (error || !post) {
         return (
             <View
-                style={[styles.base, {
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: 24,
-                }]}
+                style={[
+                    styles.base,
+                    {
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: theme.spacing.xl,
+                        backgroundColor: colors.background.primary,
+                    },
+                ]}
             >
                 <Text
                     style={{
-                        color: "#ef4444",
+                        color: colors.error(500),
                         textAlign: "center",
-                        marginBottom: 16,
-                        fontSize: 16,
+                        marginBottom: theme.spacing.md,
+                        fontSize: theme.typography.fontSize.md,
                     }}
                 >
                     {error || "Post not found"}
@@ -104,27 +124,31 @@ export const PostDetailScreen = () => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
         >
-            <View style={{ flex: 1, backgroundColor: "#fff" }}>
-                {/* Main Content - Scrollable */}
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: colors.background.primary,
+                }}
+            >
                 <ScrollView
                     style={{ flex: 1 }}
-                    contentContainerStyle={{ paddingBottom: 20 }}
+                    contentContainerStyle={{ paddingBottom: theme.spacing.lg }}
                     showsVerticalScrollIndicator={false}
                     bounces={true}
                 >
                     {/* Post Content */}
                     <View
                         style={{
-                            backgroundColor: "#fff",
+                            backgroundColor: colors.surface.primary,
                             borderBottomWidth: 1,
-                            borderBottomColor: "#e5e7eb",
-                            padding: 16,
+                            borderBottomColor: colors.border.primary,
+                            padding: theme.spacing.md,
                         }}
                     >
                         <PostCard
                             post={post}
                             variant="default"
-                            maxLines={0} // No line limit in detail view
+                            maxLines={0}
                             onUserPress={() => handleUserPress(post.user_id)}
                         />
 
@@ -136,7 +160,12 @@ export const PostDetailScreen = () => {
                     </View>
 
                     {/* Comments Section */}
-                    <View style={{ flex: 1, backgroundColor: "#f9fafb" }}>
+                    <View
+                        style={{
+                            flex: 1,
+                            backgroundColor: colors.background.secondary,
+                        }}
+                    >
                         <ExtensionPoint
                             name="post.detail.comments"
                             post={post}
@@ -144,7 +173,7 @@ export const PostDetailScreen = () => {
                             fallback={() => (
                                 <View
                                     style={{
-                                        padding: 16,
+                                        padding: theme.spacing.md,
                                         alignItems: "center",
                                         minHeight: 200,
                                         justifyContent: "center",
@@ -152,8 +181,9 @@ export const PostDetailScreen = () => {
                                 >
                                     <Text
                                         style={{
-                                            color: "#6D6D6D",
-                                            fontSize: 16,
+                                            color: colors.text.secondary,
+                                            fontSize:
+                                                theme.typography.fontSize.md,
                                             textAlign: "center",
                                         }}
                                     >
@@ -169,20 +199,13 @@ export const PostDetailScreen = () => {
                 {/* Sticky Comment Creator Footer */}
                 <View
                     style={{
-                        backgroundColor: "#fff",
+                        backgroundColor: colors.surface.primary,
                         borderTopWidth: 1,
-                        borderTopColor: "#e5e7eb",
-                        paddingHorizontal: 16,
-                        paddingTop: 12,
-                        paddingBottom: insets.bottom + 12,
-                        shadowColor: "#000",
-                        shadowOffset: {
-                            width: 0,
-                            height: -2,
-                        },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 3,
-                        elevation: 5,
+                        borderTopColor: colors.border.primary,
+                        paddingHorizontal: theme.spacing.md,
+                        paddingTop: theme.spacing.sm,
+                        paddingBottom: insets.bottom + theme.spacing.sm,
+                        ...theme.shadows.sm,
                     }}
                 >
                     <ExtensionPoint
@@ -194,18 +217,19 @@ export const PostDetailScreen = () => {
                                 style={{
                                     flexDirection: "row",
                                     alignItems: "center",
-                                    backgroundColor: "#f3f4f6",
-                                    borderRadius: 20,
-                                    paddingHorizontal: 16,
-                                    paddingVertical: 12,
+                                    backgroundColor:
+                                        colors.background.secondary,
+                                    borderRadius: theme.borderRadius.full,
+                                    paddingHorizontal: theme.spacing.md,
+                                    paddingVertical: theme.spacing.sm,
                                     minHeight: 44,
                                 }}
                             >
                                 <Text
                                     style={{
                                         flex: 1,
-                                        color: "#9ca3af",
-                                        fontSize: 16,
+                                        color: colors.text.tertiary,
+                                        fontSize: theme.typography.fontSize.md,
                                     }}
                                 >
                                     Write a comment...

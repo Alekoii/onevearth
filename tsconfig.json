@@ -13,7 +13,6 @@
       "@/themes/*": ["src/themes/*"],
       "@/hooks/*": ["src/hooks/*"],
       "@/services/*": ["src/services/*"],
-      "@/utils/*": ["src/utils/*"],
       "@/types/*": ["src/types/*"],
       "@/locales/*": ["src/locales/*"],
       "@/i18n/*": ["src/i18n/*"]

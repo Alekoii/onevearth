@@ -1,5 +1,6 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 import { useColors, useStyles } from "@/core/theming/useStyles";
 import { useTheme } from "@/core/theming/ThemeProvider";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,10 +12,11 @@ export const HomeScreen = () => {
     const colors = useColors();
     const { theme } = useTheme();
     const { user } = useAuth();
+    const navigation = useNavigation();
     const insets = useSafeAreaInsets();
 
     const handleProfilePress = () => {
-        console.log("Navigate to profile:", user?.id);
+        navigation.navigate("Profile" as never);
     };
 
     return (
@@ -55,7 +57,9 @@ export const HomeScreen = () => {
                         flexDirection: "row",
                         alignItems: "center",
                         padding: 4,
+                        borderRadius: 20,
                     }}
+                    activeOpacity={0.7}
                 >
                     {user?.user_metadata?.avatar_url
                         ? (
@@ -65,6 +69,8 @@ export const HomeScreen = () => {
                                     width: 32,
                                     height: 32,
                                     borderRadius: 16,
+                                    borderWidth: 2,
+                                    borderColor: theme.colors.border.secondary,
                                 }}
                             />
                         )
@@ -78,6 +84,8 @@ export const HomeScreen = () => {
                                         theme.colors.surface.secondary,
                                     alignItems: "center",
                                     justifyContent: "center",
+                                    borderWidth: 2,
+                                    borderColor: theme.colors.border.secondary,
                                 }}
                             >
                                 <Icon

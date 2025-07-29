@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { useStyles } from "@/core/theming/useStyles";
+import { useColors, useStyles } from "@/core/theming/useStyles";
+import { useTheme } from "@/core/theming/ThemeProvider";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import { Icon } from "@/components/ui/Icon";
@@ -17,6 +18,8 @@ export const CommentItem = ({
     showReplies = true,
 }: CommentItemProps) => {
     const styles = useStyles("CommentItem", { depth: currentDepth });
+    const colors = useColors();
+    const { theme } = useTheme();
     const { t } = useTranslation();
     const [showReplyForm, setShowReplyForm] = useState(false);
     const [isExpanded, setIsExpanded] = useState(true);
@@ -64,10 +67,8 @@ export const CommentItem = ({
 
     return (
         <View style={styles.container}>
-            {/* Main comment */}
             <View style={styles.commentContainer}>
                 <View style={styles.header}>
-                    {/* User avatar */}
                     {comment.profiles?.avatar_url
                         ? (
                             <Image
@@ -77,11 +78,14 @@ export const CommentItem = ({
                         )
                         : (
                             <View style={styles.avatarPlaceholder}>
-                                <Icon name="user" size={16} color="#6D6D6D" />
+                                <Icon
+                                    name="user"
+                                    size={16}
+                                    color={colors.text.secondary}
+                                />
                             </View>
                         )}
 
-                    {/* User info and metadata */}
                     <View style={styles.userInfo}>
                         <View style={styles.userDetails}>
                             <Text style={styles.username}>
@@ -94,24 +98,14 @@ export const CommentItem = ({
                             </Text>
                         </View>
                     </View>
-
-                    {/* Extension point for additional header actions */}
-                    <ExtensionPoint
-                        name="comment.header.actions"
-                        comment={comment}
-                        isOwner={isOwner}
-                        maxExtensions={2}
-                    />
                 </View>
 
-                {/* Comment content */}
                 <View style={styles.content}>
                     <Text style={styles.contentText}>
                         {comment.content}
                     </Text>
                 </View>
 
-                {/* Comment actions */}
                 <View style={styles.actions}>
                     <ExtensionPoint
                         name="comment.actions"
@@ -128,7 +122,7 @@ export const CommentItem = ({
                                         <Icon
                                             name="comment"
                                             size={14}
-                                            color="#6D6D6D"
+                                            color={colors.text.secondary}
                                         />
                                         <Text style={styles.actionText}>
                                             Reply
@@ -145,7 +139,7 @@ export const CommentItem = ({
                                             <Icon
                                                 name="edit"
                                                 size={14}
-                                                color="#6D6D6D"
+                                                color={colors.text.secondary}
                                             />
                                             <Text style={styles.actionText}>
                                                 Edit
@@ -159,12 +153,17 @@ export const CommentItem = ({
                                             <Icon
                                                 name="trash"
                                                 size={14}
-                                                color="#EF4444"
+                                                color={colors.error(500)}
                                             />
                                             <Text
-                                                style={[styles.actionText, {
-                                                    color: "#EF4444",
-                                                }]}
+                                                style={[
+                                                    styles.actionText,
+                                                    {
+                                                        color: colors.error(
+                                                            500,
+                                                        ),
+                                                    },
+                                                ]}
                                             >
                                                 Delete
                                             </Text>
@@ -177,7 +176,6 @@ export const CommentItem = ({
                 </View>
             </View>
 
-            {/* Extension point for reply form */}
             {showReplyForm && (
                 <ExtensionPoint
                     name="comment.reply.form"
@@ -198,10 +196,8 @@ export const CommentItem = ({
                 />
             )}
 
-            {/* Replies section */}
             {showReplies && hasReplies && (
                 <View style={styles.repliesSection}>
-                    {/* Toggle replies button */}
                     <TouchableOpacity
                         style={styles.toggleReplies}
                         onPress={toggleReplies}
@@ -209,7 +205,7 @@ export const CommentItem = ({
                         <Icon
                             name={isExpanded ? "arrow-up" : "arrow-down"}
                             size={14}
-                            color="#6D6D6D"
+                            color={colors.text.secondary}
                         />
                         <Text style={styles.toggleText}>
                             {isExpanded ? "Hide" : "Show"}{" "}
@@ -220,7 +216,6 @@ export const CommentItem = ({
                         </Text>
                     </TouchableOpacity>
 
-                    {/* Nested replies */}
                     {isExpanded && (
                         <View style={styles.nestedReplies}>
                             {comment.replies!.map((reply) => (
@@ -240,7 +235,6 @@ export const CommentItem = ({
                 </View>
             )}
 
-            {/* Extension point for additional comment content */}
             <ExtensionPoint
                 name="comment.content.extensions"
                 comment={comment}

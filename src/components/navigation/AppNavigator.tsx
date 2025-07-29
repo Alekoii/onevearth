@@ -13,6 +13,7 @@ import { SearchScreen } from "@/screens/main/SearchScreen";
 import { CreateScreen } from "@/screens/main/CreateScreen";
 import { NotificationsScreen } from "@/screens/main/NotificationsScreen";
 import { SettingsScreen } from "@/screens/main/SettingsScreen";
+import { ProfileScreen } from "@/screens/main/ProfileScreen";
 import { PostDetailScreen } from "@/plugins/posts/components/PostDetailScreen";
 import { RootStackParamList, TabParamList } from "@/types/navigation";
 
@@ -44,7 +45,6 @@ const MainTabs = () => {
             />
         );
 
-    // Enhanced notifications tab icon with badge
     const createNotificationsTabIcon = (
         { focused, color, size }: TabIconProps,
     ) => (
@@ -105,7 +105,7 @@ const MainTabs = () => {
                 component={NotificationsScreen}
                 options={{
                     title: t("navigation.notifications"),
-                    tabBarIcon: createNotificationsTabIcon, // Use enhanced icon with badge
+                    tabBarIcon: createNotificationsTabIcon,
                 }}
             />
             <Tab.Screen
@@ -146,41 +146,23 @@ export const AppNavigator = () => {
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen
+                        name="Profile"
+                        component={ProfileScreen}
+                        options={{
+                            title: "Profile",
+                            headerStyle: {
+                                backgroundColor: theme.colors.surface.primary,
+                            },
+                        }}
+                    />
+                    <Stack.Screen
                         name="PostDetail"
                         component={PostDetailScreen}
                         options={({ navigation }) => ({
                             title: "Post",
                             headerStyle: {
                                 backgroundColor: theme.colors.surface.primary,
-                                borderBottomWidth: 1,
-                                borderBottomColor: theme.colors.border.primary,
                             },
-                            // ✅ Use Icon.tsx directly in headerLeft
-                            headerLeft: () => (
-                                <TouchableOpacity
-                                    onPress={() => navigation.goBack()}
-                                    style={{
-                                        paddingLeft: 16,
-                                        paddingRight: 8,
-                                        paddingVertical: 8,
-                                    }}
-                                    hitSlop={{
-                                        top: 10,
-                                        bottom: 10,
-                                        left: 10,
-                                        right: 10,
-                                    }}
-                                >
-                                    <Icon
-                                        name="arrow-left"
-                                        color={theme.colors.text.primary}
-                                        size={24}
-                                        strokeWidth={2}
-                                    />
-                                </TouchableOpacity>
-                            ),
-                            // Hide the default back button
-                            headerBackVisible: false,
                         })}
                     />
                 </Stack.Navigator>

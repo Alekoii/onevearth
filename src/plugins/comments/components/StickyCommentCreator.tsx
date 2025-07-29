@@ -7,7 +7,8 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { useStyles } from "@/core/theming/useStyles";
+import { useColors, useStyles } from "@/core/theming/useStyles";
+import { useTheme } from "@/core/theming/ThemeProvider";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useConfig } from "@/core/config/ConfigProvider";
 import { useAppSelector } from "@/hooks/useAppSelector";
@@ -37,6 +38,8 @@ export const StickyCommentCreator = ({
     variant = "footer",
 }: StickyCommentCreatorProps) => {
     const styles = useStyles("CommentCreator", { variant });
+    const colors = useColors();
+    const { theme } = useTheme();
     const { t } = useTranslation();
     const { config } = useConfig();
     const { pluginManager } = useEnhancedPlugins();
@@ -48,7 +51,6 @@ export const StickyCommentCreator = ({
     const user = useAppSelector((state) => state.auth.user);
     const store = pluginManager.getStore();
 
-    // Get maxLength from configuration
     const maxLength = config.plugins?.config?.comments?.maxLength || 500;
 
     const handleSubmit = async () => {
@@ -67,7 +69,6 @@ export const StickyCommentCreator = ({
             const newComment = await CommentService.createComment(commentData);
             store.dispatch(addComment(newComment));
 
-            // Clear the input and dismiss keyboard
             setContent("");
             setIsFocused(false);
             Keyboard.dismiss();
@@ -95,133 +96,189 @@ export const StickyCommentCreator = ({
         return (
             <View
                 style={{
-                    flexDirection: isFocused ? "column" : "row",
-                    alignItems: isFocused ? "stretch" : "center",
+                    backgroundColor: colors.surface.primary,
+                    borderTopWidth: 1,
+                    borderTopColor: colors.border.primary,
+                    paddingHorizontal: theme.spacing.md,
+                    paddingTop: theme.spacing.sm,
+                    paddingBottom: theme.spacing.sm,
                 }}
             >
-                {/* Input Row */}
-                <View
+                {/* Main Input Container */}
+                <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                        // Focus the TextInput when container is pressed
+                        setIsFocused(true);
+                    }}
                     style={{
                         flexDirection: "row",
-                        alignItems: "center",
-                        backgroundColor: "#f3f4f6",
-                        borderRadius: 20,
-                        paddingHorizontal: 16,
-                        paddingVertical: isFocused ? 12 : 8,
+                        alignItems: isFocused ? "flex-start" : "center",
+                        backgroundColor: colors.background.secondary,
+                        borderRadius: theme.borderRadius.xl,
+                        paddingHorizontal: theme.spacing.md,
+                        paddingVertical: theme.spacing.sm,
                         minHeight: 44,
-                        flex: 1,
                     }}
                 >
                     <TextInput
+                        ref={(ref) => {
+                            if (isFocused && ref) {
+                                ref.focus();
+                            }
+                        }}
                         style={{
                             flex: 1,
-                            fontSize: 16,
-                            color: "#1f2937",
+                            fontSize: theme.typography.fontSize.md,
+                            color: colors.text.primary,
                             minHeight: isFocused ? 80 : 28,
+                            maxHeight: 120,
                             textAlignVertical: isFocused ? "top" : "center",
+                            paddingVertical: 0, // Remove default padding
                         }}
                         placeholder="Write a comment..."
-                        placeholderTextColor="#9ca3af"
+                        placeholderTextColor={colors.text.tertiary}
                         value={content}
                         onChangeText={setContent}
-                        multiline={isFocused}
+                        multiline={true}
                         onFocus={() => setIsFocused(true)}
-                        maxLength={maxLength + 50} // Allow some buffer
+                        maxLength={maxLength}
                         blurOnSubmit={false}
+                        editable={true}
+                        autoCorrect={true}
+                        autoCapitalize="sentences"
+                        returnKeyType="default"
+                        scrollEnabled={isFocused}
                     />
 
-                    {/* Send Button - only show when there's content */}
-                    {content.trim().length > 0 && (
-                        <TouchableOpacity
-                            onPress={handleSubmit}
-                            disabled={!isValid || loading}
-                            style={{
-                                marginLeft: 8,
-                                padding: 8,
-                                borderRadius: 16,
-                                backgroundColor: isValid
-                                    ? "#DB00FF"
-                                    : "#d1d5db",
-                            }}
-                        >
-                            <Icon
-                                name="arrow-right"
-                                color="#fff"
-                                size={16}
-                                strokeWidth={2}
-                            />
-                        </TouchableOpacity>
-                    )}
-                </View>
+                    {/* Send Button - always visible but conditionally enabled */}
+                    <TouchableOpacity
+                        onPress={handleSubmit}
+                        disabled={!isValid || loading}
+                        style={{
+                            marginLeft: theme.spacing.xs,
+                            padding: theme.spacing.xs,
+                            borderRadius: theme.borderRadius.full,
+                            backgroundColor: isValid && !loading
+                                ? theme.colors.primary[500]
+                                : colors.neutral(300),
+                            opacity: loading ? 0.6 : 1,
+                        }}
+                        activeOpacity={0.7}
+                    >
+                        {loading
+                            ? (
+                                <View
+                                    style={{
+                                        width: 20,
+                                        height: 20,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            fontSize: 8,
+                                            color: colors.text.inverse,
+                                        }}
+                                    >
+                                        ...
+                                    </Text>
+                                </View>
+                            )
+                            : (
+                                <Icon
+                                    name="arrow-right"
+                                    color={colors.text.inverse}
+                                    size={20}
+                                    strokeWidth={2}
+                                />
+                            )}
+                    </TouchableOpacity>
+                </TouchableOpacity>
 
-                {/* Expanded controls when focused */}
+                {/* Expanded Controls - only show when focused */}
                 {isFocused && (
                     <View
                         style={{
                             flexDirection: "row",
                             alignItems: "center",
                             justifyContent: "space-between",
-                            marginTop: 8,
-                            paddingHorizontal: 4,
+                            marginTop: theme.spacing.sm,
+                            paddingHorizontal: theme.spacing.xs,
                         }}
                     >
+                        {/* Cancel Button */}
                         <TouchableOpacity
                             onPress={handleCancel}
                             style={{
-                                padding: 8,
+                                paddingVertical: theme.spacing.xs,
+                                paddingHorizontal: theme.spacing.sm,
                             }}
+                            disabled={loading}
                         >
                             <Text
                                 style={{
-                                    color: "#6b7280",
-                                    fontSize: 14,
-                                    fontWeight: "500",
+                                    color: colors.text.secondary,
+                                    fontSize: theme.typography.fontSize.sm,
+                                    fontWeight:
+                                        theme.typography.fontWeight.medium,
                                 }}
                             >
                                 Cancel
                             </Text>
                         </TouchableOpacity>
 
+                        {/* Right Side Controls */}
                         <View
                             style={{
                                 flexDirection: "row",
                                 alignItems: "center",
-                                gap: 8,
+                                gap: theme.spacing.md,
                             }}
                         >
-                            {/* Character count */}
+                            {/* Character Count */}
                             <Text
                                 style={{
-                                    fontSize: 12,
+                                    fontSize: theme.typography.fontSize.xs,
                                     color: remainingChars < 50
-                                        ? "#ef4444"
-                                        : "#6b7280",
+                                        ? colors.error(500)
+                                        : remainingChars < 100
+                                        ? colors.warning(500)
+                                        : colors.text.secondary,
+                                    fontWeight:
+                                        theme.typography.fontWeight.medium,
                                 }}
                             >
                                 {remainingChars}
                             </Text>
 
-                            {/* Post button */}
+                            {/* Post Button */}
                             <TouchableOpacity
                                 onPress={handleSubmit}
                                 disabled={!isValid || loading}
                                 style={{
-                                    backgroundColor: isValid
-                                        ? "#DB00FF"
-                                        : "#d1d5db",
-                                    paddingHorizontal: 16,
-                                    paddingVertical: 8,
-                                    borderRadius: 16,
+                                    backgroundColor: isValid && !loading
+                                        ? theme.colors.primary[500]
+                                        : colors.neutral(300),
+                                    paddingHorizontal: theme.spacing.lg,
+                                    paddingVertical: theme.spacing.xs,
+                                    borderRadius: theme.borderRadius.md,
+                                    minWidth: 60,
+                                    alignItems: "center",
+                                    opacity: loading ? 0.6 : 1,
                                 }}
                             >
                                 <Text
                                     style={{
-                                        color: "#fff",
-                                        fontSize: 14,
-                                        fontWeight: "600",
+                                        color: colors.text.inverse,
+                                        fontSize: theme.typography.fontSize.sm,
+                                        fontWeight:
+                                            theme.typography.fontWeight
+                                                .semibold,
                                     }}
                                 >
-                                    {loading ? "Posting..." : "Post"}
+                                    {loading ? "..." : "Post"}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -231,51 +288,126 @@ export const StickyCommentCreator = ({
         );
     }
 
-    // Default variant (original CommentCreator)
+    // Default variant (non-sticky)
     return (
-        <View style={styles.container}>
-            <View style={styles.inputContainer}>
+        <View
+            style={{
+                backgroundColor: colors.surface.primary,
+                borderRadius: theme.borderRadius.md,
+                padding: theme.spacing.md,
+                marginBottom: theme.spacing.md,
+            }}
+        >
+            <View
+                style={{
+                    marginBottom: theme.spacing.sm,
+                    position: "relative",
+                }}
+            >
                 <TextInput
-                    style={styles.input}
+                    style={{
+                        fontSize: theme.typography.fontSize.sm,
+                        color: colors.text.primary,
+                        padding: theme.spacing.sm,
+                        backgroundColor: colors.background.secondary,
+                        borderRadius: theme.borderRadius.sm,
+                        borderWidth: 1,
+                        borderColor: isFocused
+                            ? colors.primary(500)
+                            : colors.border.primary,
+                        textAlignVertical: "top",
+                        minHeight: 80,
+                        maxHeight: 150,
+                    }}
                     placeholder="Write a comment..."
-                    placeholderTextColor="#9ca3af"
+                    placeholderTextColor={colors.text.tertiary}
                     value={content}
                     onChangeText={setContent}
-                    multiline
+                    multiline={true}
                     textAlignVertical="top"
                     maxLength={maxLength}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    editable={true}
+                    autoCorrect={true}
+                    autoCapitalize="sentences"
                 />
 
-                <View style={styles.inputFooter}>
+                {/* Character counter */}
+                {(isFocused || remainingChars < 50) && (
                     <Text
-                        style={[
-                            styles.charCount,
-                            remainingChars < 20 && styles.charCountWarning,
-                            remainingChars < 0 && styles.charCountError,
-                        ]}
+                        style={{
+                            position: "absolute",
+                            bottom: theme.spacing.xs,
+                            right: theme.spacing.xs,
+                            fontSize: theme.typography.fontSize.xs,
+                            color: remainingChars < 20
+                                ? colors.error(500)
+                                : remainingChars < 50
+                                ? colors.warning(500)
+                                : colors.text.secondary,
+                            backgroundColor: colors.surface.primary,
+                            paddingHorizontal: theme.spacing.xs,
+                            borderRadius: theme.borderRadius.xs,
+                        }}
                     >
                         {remainingChars}
                     </Text>
-                </View>
+                )}
             </View>
 
-            <View style={styles.toolbar}>
+            {/* Action buttons */}
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                }}
+            >
                 <TouchableOpacity
                     onPress={handleCancel}
-                    style={styles.cancelButton}
+                    style={{
+                        paddingHorizontal: theme.spacing.md,
+                        paddingVertical: theme.spacing.xs,
+                        borderRadius: theme.borderRadius.sm,
+                        borderWidth: 1,
+                        borderColor: colors.border.primary,
+                    }}
+                    disabled={loading}
                 >
-                    <Text style={styles.cancelText}>Cancel</Text>
+                    <Text
+                        style={{
+                            fontSize: theme.typography.fontSize.sm,
+                            color: colors.text.secondary,
+                            fontWeight: theme.typography.fontWeight.medium,
+                        }}
+                    >
+                        Cancel
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     onPress={handleSubmit}
                     disabled={!isValid || loading}
-                    style={[
-                        styles.submitButton,
-                        (!isValid || loading) && styles.submitButtonDisabled,
-                    ]}
+                    style={{
+                        paddingHorizontal: theme.spacing.lg,
+                        paddingVertical: theme.spacing.xs,
+                        borderRadius: theme.borderRadius.sm,
+                        backgroundColor: isValid && !loading
+                            ? theme.colors.primary[500]
+                            : colors.neutral(300),
+                        minWidth: 80,
+                        alignItems: "center",
+                        opacity: loading ? 0.6 : 1,
+                    }}
                 >
-                    <Text style={styles.submitText}>
+                    <Text
+                        style={{
+                            fontSize: theme.typography.fontSize.sm,
+                            color: colors.text.inverse,
+                            fontWeight: theme.typography.fontWeight.medium,
+                        }}
+                    >
                         {loading ? "Posting..." : "Post Comment"}
                     </Text>
                 </TouchableOpacity>
