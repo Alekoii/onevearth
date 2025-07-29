@@ -1,5 +1,3 @@
-// src/plugins/comments/components/CommentItem.tsx
-
 import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useStyles } from "@/core/theming/useStyles";

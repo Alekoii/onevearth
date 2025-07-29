@@ -1,19 +1,19 @@
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
-import { EnhancedPlugin } from "@/core/plugins/PluginManager";
-import { Icon } from "@/components/ui/Icon";
+import type { EnhancedPlugin } from "@/core/plugins/PluginManager";
 import { CommentService } from "./services/CommentService";
 import commentsReducer from "./store/commentsSlice";
 import { CommentItem } from "./components/CommentItem";
 import { CommentList } from "./components/CommentList";
 import { CommentCreator } from "./components/CommentCreator";
+import { CommentActionButton } from "./components/CommentActionButton";
 import { clearCommentsForPost } from "./store/commentsSlice";
 
 export const CommentsPlugin: EnhancedPlugin = {
     id: "comments",
     name: "Comments",
     version: "1.0.0",
-    description: "Comprehensive commenting system with nested replies and moderation",
+    description:
+        "Comprehensive commenting system with nested replies and moderation",
     author: "OneVEarth Team",
 
     dependencies: [],
@@ -24,6 +24,7 @@ export const CommentsPlugin: EnhancedPlugin = {
         CommentItem: CommentItem,
         CommentList: CommentList,
         CommentCreator: CommentCreator,
+        CommentActionButton: CommentActionButton,
     },
 
     reducers: {
@@ -76,6 +77,7 @@ export const CommentsPlugin: EnhancedPlugin = {
         api.registerComponent("CommentItem", CommentItem);
         api.registerComponent("CommentList", CommentList);
         api.registerComponent("CommentCreator", CommentCreator);
+        api.registerComponent("CommentActionButton", CommentActionButton);
 
         console.log("Comments plugin installed successfully");
     },
@@ -99,7 +101,9 @@ export const CommentsPlugin: EnhancedPlugin = {
         });
 
         api.subscribeToEvent("user:logout", () => {
-            console.log("Comments plugin: User logged out, clearing comment cache");
+            console.log(
+                "Comments plugin: User logged out, clearing comment cache",
+            );
             // Could clear sensitive comment data here
         });
 
@@ -109,7 +113,10 @@ export const CommentsPlugin: EnhancedPlugin = {
         });
 
         api.subscribeToEvent("post:deleted", (data: { postId: number }) => {
-            console.log("Comments plugin: Post deleted, cleaning up comments", data.postId);
+            console.log(
+                "Comments plugin: Post deleted, cleaning up comments",
+                data.postId,
+            );
             // Clean up comments for deleted posts
             const store = api.getStore();
             store.dispatch(clearCommentsForPost(data.postId));
@@ -151,40 +158,11 @@ export const CommentsPlugin: EnhancedPlugin = {
     },
 };
 
-// Simple comment action button component for post cards
-const CommentActionButton: React.FC<{ post: any }> = ({ post }) => {
-    const handleCommentPress = () => {
-        console.log("Navigate to comments for post:", post.id);
-        // This would typically navigate to the post detail screen
-        // or open a comments modal
-    };
-
-    return (
-        <TouchableOpacity 
-            style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginRight: 24,
-            }}
-            onPress={handleCommentPress}
-        >
-            <Icon name="comment" size={20} color="#6D6D6D" />
-            <Text style={{
-                fontSize: 14,
-                color: "#6D6D6D",
-                marginLeft: 4,
-                fontWeight: "500",
-            }}>
-                {post._count?.comments || 0}
-            </Text>
-        </TouchableOpacity>
-    );
-};
-
 // Re-export types and components for external use
 export * from "./types";
 export * from "./components/CommentItem";
 export * from "./components/CommentList";
 export * from "./components/CommentCreator";
+export * from "./components/CommentActionButton";
 export * from "./hooks/useComments";
 export * from "./services/CommentService";
