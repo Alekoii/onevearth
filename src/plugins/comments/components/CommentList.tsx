@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import {
     ActivityIndicator,
     FlatList,
@@ -20,37 +20,10 @@ export const CommentList = ({
     postId,
     maxDepth,
     autoRefresh = false,
-    post, // Accept post prop to match PostDetailScreen
-    ...otherProps // Accept any other props from ExtensionPoint
-}: CommentListProps & { post?: any }) => {
+}: CommentListProps) => {
     const styles = useStyles("CommentList");
     const { t } = useTranslation();
     const { config } = useConfig();
-
-    // Debug logging
-    useEffect(() => {
-        console.log("CommentList rendered with props:", {
-            postId,
-            maxDepth,
-            autoRefresh,
-            hasPost: !!post,
-            otherProps: Object.keys(otherProps),
-        });
-    }, [postId, maxDepth, autoRefresh, post, otherProps]);
-
-    // Extract postId from post if needed (for compatibility)
-    const effectivePostId = postId || post?.id;
-
-    if (!effectivePostId) {
-        console.error("CommentList: No postId provided");
-        return (
-            <View style={[styles.base, { padding: 16 }]}>
-                <Text style={{ color: "#ff0000", textAlign: "center" }}>
-                    Error: No post ID provided to CommentList
-                </Text>
-            </View>
-        );
-    }
 
     // Get maxDepth from config if not provided
     const effectiveMaxDepth = maxDepth ?? config.features.comments?.maxDepth ??
@@ -72,38 +45,17 @@ export const CommentList = ({
         retryPagination,
         retryInitialLoad,
     } = useComments({
-        postId: effectivePostId,
+        postId,
         autoRefresh,
         maxDepth: effectiveMaxDepth,
     });
 
-    // Debug logging for hook state
-    useEffect(() => {
-        console.log("CommentList hook state:", {
-            postId: effectivePostId,
-            commentsCount: topLevelComments.length,
-            loading,
-            error,
-            isEmpty,
-            stats,
-        });
-    }, [
-        effectivePostId,
-        topLevelComments.length,
-        loading,
-        error,
-        isEmpty,
-        stats,
-    ]);
-
     const handleRefresh = useCallback(() => {
-        console.log("CommentList: Refreshing comments");
         refreshComments();
     }, [refreshComments]);
 
     const handleEndReached = useCallback(() => {
         if (canLoadMore) {
-            console.log("CommentList: Loading more comments");
             loadMoreComments();
         }
     }, [canLoadMore, loadMoreComments]);
@@ -154,7 +106,9 @@ export const CommentList = ({
             return (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="#DB00FF" />
-                    <Text style={styles.loadingText}>Loading comments...</Text>
+                    <Text style={styles.loadingText}>
+                        Loading comments...
+                    </Text>
                 </View>
             );
         }
@@ -162,48 +116,48 @@ export const CommentList = ({
         if (error) {
             return (
                 <View style={styles.errorContainer}>
-                    <Icon name="comment" size={48} color="#ff6b6b" />
+                    <Icon name="x" size={24} color="#EF4444" />
                     <Text style={styles.errorText}>
-                        Failed to load comments
-                    </Text>
-                    <Text style={styles.errorSubtext}>
                         {error}
                     </Text>
                     <TouchableOpacity
                         style={styles.retryButton}
                         onPress={retryInitialLoad}
                     >
-                        <Text style={styles.retryButtonText}>Try Again</Text>
+                        <Text style={styles.retryButtonText}>
+                            {t("common.retry")}
+                        </Text>
                     </TouchableOpacity>
                 </View>
             );
         }
 
-        return (
-            <View style={styles.emptyContainer}>
-                <Icon name="comment" size={48} color="#9ca3af" />
-                <Text style={styles.emptyText}>
-                    No comments yet
-                </Text>
-                <Text style={styles.emptySubtext}>
-                    Be the first to comment on this post
-                </Text>
-            </View>
-        );
+        if (isEmpty) {
+            return (
+                <View style={styles.emptyContainer}>
+                    <Icon name="comment" size={48} color="#9CA3AF" />
+                    <Text style={styles.emptyText}>
+                        No comments yet. Be the first to comment!
+                    </Text>
+                </View>
+            );
+        }
+
+        return null;
     }, [
         loading,
         error,
+        isEmpty,
         styles.loadingContainer,
         styles.loadingText,
         styles.errorContainer,
         styles.errorText,
-        styles.errorSubtext,
         styles.retryButton,
         styles.retryButtonText,
         styles.emptyContainer,
         styles.emptyText,
-        styles.emptySubtext,
         retryInitialLoad,
+        t,
     ]);
 
     const renderFooter = useCallback(() => {
@@ -217,7 +171,9 @@ export const CommentList = ({
                         style={styles.retryButton}
                         onPress={retryPagination}
                     >
-                        <Text style={styles.retryButtonText}>Try Again</Text>
+                        <Text style={styles.retryButtonText}>
+                            Try Again
+                        </Text>
                     </TouchableOpacity>
                 </View>
             );
@@ -252,25 +208,11 @@ export const CommentList = ({
         [],
     );
 
-    // Force render something visible for debugging
-    const baseStyle = styles.base || {
-        flex: 1,
-        backgroundColor: "#f9fafb",
-        minHeight: 200,
-    };
-
-    console.log("CommentList: About to render with", {
-        topLevelCommentsCount: topLevelComments.length,
-        loading,
-        error,
-        isEmpty,
-    });
-
     return (
-        <View style={baseStyle}>
+        <View style={styles.base}>
             <ExtensionPoint
                 name="comment.list.header"
-                postId={effectivePostId}
+                postId={postId}
                 stats={stats}
                 fallback={() => renderHeader()}
             />
@@ -296,7 +238,7 @@ export const CommentList = ({
                     styles.container,
                     topLevelComments.length === 0 && { flex: 1 },
                 ]}
-                removeClippedSubviews={false} // Disable for debugging
+                removeClippedSubviews={true}
                 maxToRenderPerBatch={10}
                 windowSize={10}
                 initialNumToRender={8}
@@ -304,7 +246,7 @@ export const CommentList = ({
 
             <ExtensionPoint
                 name="comment.list.footer"
-                postId={effectivePostId}
+                postId={postId}
                 canLoadMore={canLoadMore}
                 hasMore={hasMore}
             />
