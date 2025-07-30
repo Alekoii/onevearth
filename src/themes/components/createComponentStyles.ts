@@ -770,9 +770,6 @@ export const createComponentStyles = (theme: Theme): ComponentStyles => ({
         },
     },
 
-    // Comment Creator component styles
-    // Add this to the CommentCreator section in createComponentStyles.ts
-
     CommentCreator: {
         base: {
             backgroundColor: theme.colors.surface.primary,
